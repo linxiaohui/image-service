@@ -15,14 +15,16 @@ Dockers for Image Service
 
 # 内容
 
-## FaceDetect (人脸识别)
+## FaceDetect
+人脸识别
 
-## U-2-Net (AI抠图)
+## U-2-Net
+AI抠图
 
 ## BeautyPredict
 
 ## NSFW
-
+Not Suitalbe For Work
 
 
 
