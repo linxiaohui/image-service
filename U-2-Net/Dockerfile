@@ -13,8 +13,7 @@ RUN pip3 install --no-cache-dir setuptools
 RUN pip3 install --no-cache-dir numpy==1.15.2
 RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir scikit-image==0.14.0
-COPY torch-0.4.0-cp36-cp36m-linux_x86_64.whl /
-RUN pip3 install  torch-0.4.0-cp36-cp36m-linux_x86_64.whl && rm -f  torch-0.4.0-cp36-cp36m-linux_x86_64.whl
+RUN pip3 install --no-cache-dir torch-u2net==0.4.0
 RUN pip3 install --no-cache-dir torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
 COPY ./model /model
