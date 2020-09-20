@@ -9,3 +9,27 @@
 
 ## 其他方式
    [u2netp.pth](https://anonfiles.com/T6VaP9U0o8/u2netp_pth)
+   [百度云]()
+
+# 构建
+   1. 下载模型文件，名为`u2net.pth`，放在当前目录
+   2. `docker build -t u2net:1.0 .`
+
+# dockerhub
+
+   `docker run -d -p 54323:54323 linxiaohui/u2net:1.0`
+
+# 调用方式
+
+```python
+# -*- coding: utf-8 -*-
+s = zerorpc.Client(heartbeat=None, timeout=180)
+s.connect("tcp://127.0.0.1:54323")
+
+data_path = "/home/linxh/U-2-Net/test_data/test_images/girl.png"
+data = open(data_path, "rb").read()
+img = s.cutout([data])
+dat = img[0]
+with open("test.png", "wb") as fp:
+    fp.write(dat)
+```
