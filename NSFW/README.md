@@ -7,8 +7,9 @@
    [Keras 299x299 Image Model](https://s3.amazonaws.com/nsfwdetector/nsfw.299x299.h5)
    
 ## 其他方式
-   [百度云]()
+   [百度云](https://pan.baidu.com/s/15R-M4JdnjjhY04JgoVDYnw) 提取码: `uhkq`
 
+链接:  
 # 构建
    1. 下载模型文件，名为`nsfw.299x299.h5`，放在当前目录
    2. `docker build -t nsfw-service:1.0 .`

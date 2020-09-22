@@ -7,10 +7,16 @@
    [Label distribution learning model](https://pan.baidu.com/s/1d6jBWNxy3eXS5tz3TvCwsw)
 
 ## 其他方式
-    [百度云]()
+   [百度云](https://pan.baidu.com/s/1zsFHWFYzgeVGRRuy2kMV0w) 提取码: `zrvf`
 
 # 版本事项
-
+确定预训练模型的版本的方式
+```python
+import h5py
+f=h5py.File("models/model-ldl-resnet.h5", "r")
+f.attrs['keras_version']
+```
+输出`b'2.0.5'`
 
 # 构建
    1. 下载模型文件，名为`resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5`，放在当前目录

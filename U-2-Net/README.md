@@ -8,8 +8,18 @@
    [u2netp.pth (4.7 MB)](https://drive.google.com/file/d/1rbSTGKAE-MTxBYHd-51l2hMOQPT_7EPy/view?usp=sharing)
 
 ## 其他方式
-   [u2netp.pth](https://anonfiles.com/T6VaP9U0o8/u2netp_pth)
-   [百度云]()
+   [百度云](https://pan.baidu.com/s/1kfKINZ1REk4g7tCOZtTSVw) 提取码: `vxbh`
+
+
+# 版本事项
+确定预训练模型的版本的方式
+```python
+import h5py
+f=h5py.File("nsfw.299x299.h5", "r")
+f.attrs['keras_version']
+```
+输出`b'2.2.4'`
+
 
 # 构建
    1. 下载模型文件，名为`u2net.pth`，放在当前目录
