@@ -22,11 +22,16 @@ Dockers for Image Service
 AI抠图
 
 ## BeautyPredict
+AI颜值评分
 
 ## NSFW
 Not Suitalbe For Work
 
+# FaceSketch
+人脸素描
 
+# CertPhote
+证件照换背景
 
 
 # 声明

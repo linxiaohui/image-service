@@ -52,17 +52,16 @@ def gen_output(image_name,pred):
     predict = pred
     predict = predict.squeeze()
     predict_np = predict.cpu().data.numpy()
-    print("predict_np", type(predict_np), len(predict_np), predict_np.shape)
+    # predict_np 的类型为 numpy.ndarray， shape=(320, 320)
     im = Image.fromarray(predict_np*255).convert('RGB')
-    print("im", type(im), im.size)
+    # im 的类型为 PIL.Image.Image， size=(320, 320)
     image = skimage.io.imread(image_name)
-    print("image", type(image), image.shape)
+    # image 的类型为 numpy.ndarray， shape=(height,width, channel)
     ori = Image.open(image_name)
-    print("ori", type(ori))
+    # ori的类型为 PIL.JpegImagePlugin.JpegImageFile， size=(width, height)
     imo = im.resize((image.shape[1],image.shape[0]),resample=Image.BILINEAR)
     mask = np.asarray(imo)
-    print("mask", type(mask), mask.shape)
-    print("mask", type(mask[0][0][0]))
+    # mask 类型为 numpy.ndarray，元素为 np.uint8, shape=(height,width, channel)
     result = np.zeros((image.shape[0],image.shape[1],4),dtype=np.uint8)
     result[:,:,0]=image[:,:,0]
     result[:,:,1]=image[:,:,1]
@@ -73,12 +72,6 @@ def gen_output(image_name,pred):
     imo.save(b, "png")
     data = b.getvalue()
     return data
-
-# https://blog.csdn.net/ybcrazy/article/details/81206411
-# https://blog.csdn.net/c_qianbo/article/details/53364189
-# https://www.zhihu.com/question/57282522/answer/168260216
-# https://blog.csdn.net/hfutdog/article/details/82351549
-
 
 
 MODEL_NAME = 'u2net' #或者选择 u2netp

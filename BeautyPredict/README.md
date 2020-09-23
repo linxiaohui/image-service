@@ -41,3 +41,9 @@ beauty_score = z.beauty_score(data)
 print(beauty_score[0])
 ```
 
+# 关于dlib的说明
+安装dlib必须进行编译；在使用docker时，因为需要安装编译环境，会显著增大docker镜像的“体积”。因此，创建并上传到pypi上一个包`dlib-binary`, 在进行安装时直接安装编译好的dlib，而不用编译, 从而不需要在docker中安装编译环境。
+
+
+
+
