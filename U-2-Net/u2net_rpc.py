@@ -35,7 +35,7 @@ def normPRED(d):
 
     return dn
 
-def gen_output(image_name,pred):
+def gen_mask(image_name,pred):
     predict = pred
     predict = predict.squeeze()
     predict_np = predict.cpu().data.numpy()
@@ -47,6 +47,37 @@ def gen_output(image_name,pred):
     imo.save(b, "png")
     data = b.getvalue()
     return data
+
+def gen_output(image_name,pred):
+    predict = pred
+    predict = predict.squeeze()
+    predict_np = predict.cpu().data.numpy()
+    print("predict_np", type(predict_np), len(predict_np), predict_np.shape)
+    im = Image.fromarray(predict_np*255).convert('RGB')
+    print("im", type(im), im.size)
+    image = skimage.io.imread(image_name)
+    print("image", type(image), image.shape)
+    ori = Image.open(image_name)
+    print("ori", type(ori))
+    imo = im.resize((image.shape[1],image.shape[0]),resample=Image.BILINEAR)
+    mask = np.asarray(imo)
+    print("mask", type(mask), mask.shape)
+    print("mask", type(mask[0][0][0]))
+    result = np.zeros((image.shape[0],image.shape[1],4),dtype=np.uint8)
+    result[:,:,0]=image[:,:,0]
+    result[:,:,1]=image[:,:,1]
+    result[:,:,2]=image[:,:,2]
+    result[:,:,3]=mask[:,:,0]
+    imo = Image.fromarray(np.uint8(result)).convert("RGBA")
+    b = io.BytesIO()
+    imo.save(b, "png")
+    data = b.getvalue()
+    return data
+
+# https://blog.csdn.net/ybcrazy/article/details/81206411
+# https://blog.csdn.net/c_qianbo/article/details/53364189
+# https://www.zhihu.com/question/57282522/answer/168260216
+# https://blog.csdn.net/hfutdog/article/details/82351549
 
 
 
