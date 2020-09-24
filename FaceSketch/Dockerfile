@@ -18,5 +18,6 @@ RUN pip3 install --no-cache-dir torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
 COPY ./model /model
 COPY *.py /
+COPY FaceSketchData /FaceSketchData
 ENV IMAGESERVICE_ROOT /
 

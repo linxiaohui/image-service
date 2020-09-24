@@ -54,7 +54,7 @@ tra_label_dir = data_dir
 image_ext = '.png'
 label_ext = '.png'
 
-model_dir = os.path.join(os.getcwd(), 'saved_models', model_name + os.sep)
+model_dir = os.path.join(os.getcwd(), 'model', model_name + os.sep)
 
 epoch_num = 100000
 batch_size_train = 12
