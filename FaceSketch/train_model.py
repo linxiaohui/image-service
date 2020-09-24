@@ -103,14 +103,16 @@ ite_num4val = 0
 save_frq = 2000 # save the model every 2000 iterations
 
 for epoch in range(0, epoch_num):
+    print("epoch", epoch)
     net.train()
 
     for i, data in enumerate(salobj_dataloader):
+        print("i=",i)
         ite_num = ite_num + 1
         ite_num4val = ite_num4val + 1
+        print("ite_num,", ite_num)
 
         inputs, labels = data['image'], data['label']
-
         inputs = inputs.type(torch.FloatTensor)
         labels = labels.type(torch.FloatTensor)
 
