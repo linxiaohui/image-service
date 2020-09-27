@@ -28,7 +28,8 @@ from model import U2NET
 from model import U2NETP
 
 
-bce_loss = nn.BCELoss(size_average=True)
+#bce_loss = nn.BCELoss(size_average=True)
+bce_loss = nn.BCELoss(reduction='mean')
 
 def muti_bce_loss_fusion(d0, d1, d2, d3, d4, d5, d6, labels_v):
 
