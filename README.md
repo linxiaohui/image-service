@@ -27,11 +27,16 @@ AI颜值评分
 ## NSFW
 Not Suitalbe For Work
 
-# FaceSketch
+## FaceSketch
 人脸素描
 
-# CertPhote
+## CertPhote
 证件照换背景
+
+## Mosaic
+对图片中选择的区域马赛克
+
+
 
 
 # 声明
