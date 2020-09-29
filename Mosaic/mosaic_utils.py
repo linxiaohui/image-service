@@ -10,7 +10,7 @@ def infer_image_type(image_data):
     """根据图片的内容推断图片的格式"""
     if image_data[:8] == b'\x89PNG\r\n\x1a\n':
         return ".png"
-    if image_dta[:2] == b'\xff\xd8':
+    if image_data[:2] == b'\xff\xd8':
         return ".jpg"
     return ".jpg"
 
@@ -19,7 +19,7 @@ def domosaic(image_data, region, pixsize=5):
     image_type = infer_image_type(image_data[:20])
     (left, upper, width, hight) = region
     im = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
-    roi = im[upper:upper+hight,left:left+width]
+    roi = im[upper:upper+hight, left:left+width]
     xstep = width//pixsize
     ystep = hight//pixsize
     for i in range(ystep):
@@ -29,5 +29,3 @@ def domosaic(image_data, region, pixsize=5):
     is_success, im_buf_arr = cv2.imencode(image_type, im)
     byte_im = im_buf_arr.tobytes()
     return byte_im
-
-
