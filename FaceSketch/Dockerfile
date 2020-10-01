@@ -13,11 +13,13 @@ RUN pip3 install --no-cache-dir setuptools
 RUN pip3 install --no-cache-dir numpy==1.15.2
 RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir scikit-image==0.14.0
-RUN pip3 install --no-cache-dir torch-u2net==0.4.0
-RUN pip3 install --no-cache-dir torchvision==0.2.1
+RUN pip3 install --no-cache-dir torch-u2net==1.0.0
+RUN pip3 install --no-cache-dir --no-deps torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
 COPY ./model /model
 COPY *.py /
-ADD FaceSketchData.zip /FaceSketchData
+#ADD FaceSketchData.zip /FaceSketchData
+COPY sketch.pth /
 ENV IMAGESERVICE_ROOT /
+CMD python3 /face_sketch.py
 
