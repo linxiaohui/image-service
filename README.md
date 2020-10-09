@@ -36,7 +36,8 @@ Not Suitalbe For Work
 ## Mosaic
 对图片中选择的区域马赛克
 
-
+## Cartoonize
+图片卡通化
 
 
 # 声明
