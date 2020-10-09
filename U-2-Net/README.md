@@ -4,21 +4,11 @@
 # 模型下载
 
 ## 官方地址
-   [u2net.pth (176.3 MB)](https://drive.google.com/file/d/1ao1ovG1Qtx4b7EoskHXmi2E9rp5CHLcZ/view?usp=sharing)
-   [u2netp.pth (4.7 MB)](https://drive.google.com/file/d/1rbSTGKAE-MTxBYHd-51l2hMOQPT_7EPy/view?usp=sharing)
+   * [u2net.pth (176.3 MB)](https://drive.google.com/file/d/1ao1ovG1Qtx4b7EoskHXmi2E9rp5CHLcZ/view?usp=sharing)
+   * [u2netp.pth (4.7 MB)](https://drive.google.com/file/d/1rbSTGKAE-MTxBYHd-51l2hMOQPT_7EPy/view?usp=sharing)
 
 ## 其他方式
-   [百度云](https://pan.baidu.com/s/1kfKINZ1REk4g7tCOZtTSVw) 提取码: `vxbh`
-
-
-# 版本事项
-确定预训练模型的版本的方式
-```python
-import h5py
-f=h5py.File("nsfw.299x299.h5", "r")
-f.attrs['keras_version']
-```
-输出`b'2.2.4'`
+   * [百度云](https://pan.baidu.com/s/1kfKINZ1REk4g7tCOZtTSVw) 提取码: `vxbh`
 
 
 # 构建

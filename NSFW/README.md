@@ -9,13 +9,21 @@
 ## 其他方式
    [百度云](https://pan.baidu.com/s/15R-M4JdnjjhY04JgoVDYnw) 提取码: `uhkq`
 
-链接:  
+# 版本事项
+确定预训练模型的版本的方式
+```python
+import h5py
+f=h5py.File("nsfw.299x299.h5", "r")
+f.attrs['keras_version']
+```
+输出`b'2.2.4'`
+
+
 # 构建
    1. 下载模型文件，名为`nsfw.299x299.h5`，放在当前目录
    2. `docker build -t nsfw-service:1.0 .`
 
 # dockerhub
-
    `docker run -d -p 54322:54322 linxiaohui/nsfw-service:1.0`
 
 # 调用方式
