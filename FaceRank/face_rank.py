@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import io
 import time
-
+from math import sqrt, pow, fabs
 import zerorpc
 import cv2
 import dlib
@@ -69,10 +69,10 @@ def facial_rater(shape):
     final_score = init_score - deduction + 20
     return final_score
 
-def facial_processor(img, shape, image_type='png'):
+def facial_processor(img, shape, image_type='.png'):
     for i in range(68):
       cv2.circle(img, (shape.part(i).x, shape.part(i).y), 5, (0, 255, 0), -1, 8)
-    is_success, im_buf_arr = cv2.imencode(image_type, im)
+    is_success, im_buf_arr = cv2.imencode(image_type, img)
     byte_im = im_buf_arr.tobytes()
     return byte_im
 
@@ -85,13 +85,13 @@ def face_detector(image_data):
     with open(fn, "wb") as fp:
         fp.write(image_data)
     img = cv2.imread(fn)
-    faces = detector(img, 1)
+    faces = DETECTOR(img, 1)
     if len(faces)<=0:
         return None, None
     else:
         shape = LANDMARKER(img, faces[0])
         score = facial_rater(shape)
-        marked_img = facial_processor(img, shape)
+        marked_img = facial_processor(img, shape, ext)
         return marked_img, score
     
 
@@ -100,7 +100,7 @@ class FaceScorer(object):
         return face_detector(image_data)
 
 
-s = zerorpc.Server(ChangeBackGroundColor())
+s = zerorpc.Server(FaceScorer())
 s.bind("tcp://0.0.0.0:54327")
 s.run()
 
