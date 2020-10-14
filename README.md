@@ -37,10 +37,10 @@ Not Suitalbe For Work
 ## Mosaic
 对图片中选择的区域马赛克
 
-## Cartoonize
+## Cartoonization
 图片卡通化
 
-## Cartoonization
+## FaceCartoonization
 人脸图片卡通化
 
 ## StyleTransfer
