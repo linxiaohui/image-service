@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import time
 
 import zerorpc
 import cv2
@@ -131,5 +132,11 @@ def face_cartoonization(image_data):
     return byte_im
 
 
-        
-        
+class FaceCartoon(object):
+    def cartoonize(self, image_data):
+        return face_cartoonization(image_data)
+
+s = zerorpc.Server(FaceCartoon())
+s.bind("tcp://0.0.0.0:54329")
+s.run()
+
