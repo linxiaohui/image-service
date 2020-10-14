@@ -16,5 +16,5 @@ RUN pip3 install --no-cache-dir tornado
 RUN pip3 install --no-cache-dir torch-u2net==1.0.0
 COPY *.py /
 COPY *.pth /
-COPY images /images
-COPY results /results
+CMD python3 inference.py
+

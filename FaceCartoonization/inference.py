@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 import os
+
+import zerorpc
 import cv2
 import torch
 import numpy as np
@@ -92,37 +95,41 @@ class SimpleGenerator(nn.Module):
         up4 = self.up4(up3+down1)
         return up4
 
+weight = torch.load('weight.pth', map_location='cpu')
+MODEL = SimpleGenerator()
+MODEL.load_state_dict(weight)
+#torch.save(model.state_dict(), 'weight.pth')
+MODEL.eval()
 
 
-if __name__ == '__main__':
-    weight = torch.load('weight.pth', map_location='cpu')
-    model = SimpleGenerator()
-    model.load_state_dict(weight)
-    #torch.save(model.state_dict(), 'weight.pth')
-    model.eval()
-    
-    name_list = os.listdir('images')
-    name_list = [f for f in name_list if '.jpg' in f]
-    if not os.path.exists('results'):
-        os.mkdir('results')
-    for name in name_list:
-        load_path = os.path.join('images', name)
-        save_path = os.path.join('results', name)
-        raw_image = cv2.imread(load_path)
-        image = raw_image/127.5 - 1
-        image = image.transpose(2, 0, 1)
-        image = torch.tensor(image).unsqueeze(0)
-        output = model(image.float())
-        output = output.squeeze(0).detach().numpy()
-        output = output.transpose(1, 2, 0)
-        output = (output + 1) * 127.5
-        output = np.clip(output, 0, 255).astype(np.uint8)
-        output = np.concatenate([raw_image, output], axis=1)
-        cv2.imwrite(save_path, output)
-        
-        
-            
+def infer_image_type(image_data):
+    """根据图片的内容推断图片的格式"""
+    if image_data[:8] == b'\x89PNG\r\n\x1a\n':
+        return ".png"
+    if image_data[:2] == b'\xff\xd8':
+        return ".jpg"
+    return ".jpg"
+
+
+def face_cartoonization(image_data):
+    ext = infer_image_type(image_data)
+    fn = "{}{}".format(time.time(), ext)
+    with open(fn, "wb") as fp:
+        fp.write(image_data)
+    raw_image = cv2.imread(fn)
+    image = raw_image/127.5 - 1
+    image = image.transpose(2, 0, 1)
+    image = torch.tensor(image).unsqueeze(0)
+    output = MODEL(image.float())
+    output = output.squeeze(0).detach().numpy()
+    output = output.transpose(1, 2, 0)
+    output = (output + 1) * 127.5
+    output = np.clip(output, 0, 255).astype(np.uint8)
+    output = np.concatenate([raw_image, output], axis=1)
+    is_success, im_buf_arr = cv2.imencode(ext, output)
+    byte_im = im_buf_arr.tobytes()
+    return byte_im
+
 
         
         
-    
