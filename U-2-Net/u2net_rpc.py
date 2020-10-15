@@ -89,8 +89,15 @@ if torch.cuda.is_available():
     NET.cuda()
 NET.eval()
 
+def infer_image_type(image_data):
+    """根据图片的内容推断图片的格式"""
+    if image_data[:8] == b'\x89PNG\r\n\x1a\n':
+        return ".png"
+    if image_data[:2] == b'\xff\xd8':
+        return ".jpg"
+    return ".jpg"
 
-def image_cutout(image_data, ext='jpg'):
+def image_cutout(image_data):
     if isinstance(image_data, list):
         image_data_list = image_data
     else:
@@ -98,6 +105,7 @@ def image_cutout(image_data, ext='jpg'):
     
     img_name_list = []
     for image_data in image_data_list:
+        ext  = infer_image_type(image_data)
         fn = "{}.{}".format(time.time(), ext)
         with open(fn, "wb") as fp:
             fp.write(image_data)
