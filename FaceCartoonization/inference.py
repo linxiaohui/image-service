@@ -118,7 +118,10 @@ def face_cartoonization(image_data):
     with open(fn, "wb") as fp:
         fp.write(image_data)
     raw_image = cv2.imread(fn)
-    image = raw_image/127.5 - 1
+    h = raw_image.shape[0]
+    w = raw_image.shape[1]    
+    image = cv2.resize(raw_image, (256,256), interpolation=cv2.INTER_CUBIC)
+    image = image/127.5 - 1
     image = image.transpose(2, 0, 1)
     image = torch.tensor(image).unsqueeze(0)
     output = MODEL(image.float())
@@ -126,7 +129,9 @@ def face_cartoonization(image_data):
     output = output.transpose(1, 2, 0)
     output = (output + 1) * 127.5
     output = np.clip(output, 0, 255).astype(np.uint8)
-    output = np.concatenate([raw_image, output], axis=1)
+    # print(output.shape, image.shape)
+    # output = np.concatenate([image, output], axis=1)
+    output = cv2.resize(output, (w,h), interpolation=cv2.INTER_CUBIC)
     is_success, im_buf_arr = cv2.imencode(ext, output)
     byte_im = im_buf_arr.tobytes()
     return byte_im
