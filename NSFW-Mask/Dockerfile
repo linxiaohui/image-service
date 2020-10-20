@@ -17,7 +17,8 @@ RUN pip3 install --no-cache-dir pillow
 RUN pip3 install --no-cache-dir tensorflow==1.14
 RUN pip3 install --no-cache-dir --no-deps scikit-image==0.14.5
 RUN pip3 install --no-cache-dir keras==2.2.4
-COPY ./weights /weights
+COPY ./model /model
 COPY *.py /
-COPY ./testdata /testdata
+CMD python3 mosaic_nsfw.py
+
 
