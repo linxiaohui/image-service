@@ -13,6 +13,7 @@ import imghdr
 import cv2
 import keras
 import numpy as np
+import zerorpc
 import tensorflow as tf
 from tensorflow.python.platform import gfile
 from PIL import Image, ImageDraw
@@ -29,7 +30,7 @@ def load_imgpil(imgpil, image_size):
     return np.asarray(load_images)
 
 
-class NSFWMasker(obejct):
+class NSFWMasker(object):
     def __init__(self, mobile=False, USE_GPU=False):
         pb_file_path = 'model/inception_sp_0.9924_0.09_partialmodel.pb'
         if USE_GPU == True:
