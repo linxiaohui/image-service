@@ -31,7 +31,7 @@ def load_imgpil(imgpil, image_size):
 
 class NSFWMasker(obejct):
     def __init__(self, mobile=False, USE_GPU=False):
-        pb_file_path='model/inception_sp_0.9924_0.09_partialmodel.pb'
+        pb_file_path = 'model/inception_sp_0.9924_0.09_partialmodel.pb'
         if USE_GPU == True:
             os.environ["CUDA_VISIBLE_DEVICES"] = "0"
             config = tf.ConfigProto(allow_soft_placement=True)
@@ -51,7 +51,8 @@ class NSFWMasker(obejct):
                     tf.import_graph_def(graph_def, name='')
                 self.sess.run(tf.global_variables_initializer())
 
-                self.input_img = self.sess.graph.get_tensor_by_name('input_1:0')
+                self.input_img = self.sess.graph.get_tensor_by_name(
+                    'input_1:0')
                 if mobile == False:
                     self.conv_base_output = self.sess.graph.get_tensor_by_name(
                         'mixed10/concat:0')
@@ -96,14 +97,15 @@ class NSFWMasker(obejct):
 
 MASKER = NSFWMasker()
 
+
 def nsfw_mosaic_region(image_data):
-	ext = imghdr.what(None, image_data[:30])
-	fn = f"{time.time()}.{ext}"
-	with open(fn, "wb") as fp:
-		fp.write(image_data)
-	img = Image.open(fn).convert('RGB')
-	ret, hp = MASKER.classify_imgpil(img, True)
-	imgblur_general = MASKER.general_mosaic(img)
+    ext = imghdr.what(None, image_data[:30])
+    fn = f"{time.time()}.{ext}"
+    with open(fn, "wb") as fp:
+        fp.write(image_data)
+    img = Image.open(fn).convert('RGB')
+    ret, hp = MASKER.classify_imgpil(img, True)
+    imgblur_general = MASKER.general_mosaic(img)
     b = io.BytesIO()
     imgblur_general.save(b, ext)
     data = b.getvalue()
