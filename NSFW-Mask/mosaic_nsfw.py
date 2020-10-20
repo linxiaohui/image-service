@@ -109,11 +109,11 @@ def nsfw_mosaic_region(image_data):
     b = io.BytesIO()
     imgblur_general.save(b, ext)
     data = b.getvalue()
-	try:
-		os.remove(fn)
-	except:
-		pass
-	return data
+    try:
+        os.remove(fn)
+    except:
+        pass
+    return data
 
 class NSFWMaskerServer(object):
     def mark_nsfw(self, image_data):
