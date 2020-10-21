@@ -18,7 +18,7 @@ s.connect("tcp://127.0.0.1:54331")
 
 data_path = "x.jpg"
 data = open(data_path, "rb").read()
-img = s.style_transfer(data, "udnie")
+img = s.cartoonization(data)
 dat = img
 with open("r.jpg", "wb") as fp:
     fp.write(dat)
