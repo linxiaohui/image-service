@@ -15,4 +15,5 @@ RUN pip3 install --no-cache-dir zerorpc
 COPY models /models
 ENV IMAGESERVICE_ROOT /
 COPY *.py /
-COPY *.jpg /
+CMD python3 style-transfer.py
+
