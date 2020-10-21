@@ -28,19 +28,16 @@ def get_model_from_style(style):
         SUBPATH = "eccv16"
     model_path = os.path.join(MODELS_PATH, SUBPATH, style+".t7")
     model = cv2.dnn.readNetFromTorch(model_path)
-    model = setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+    model.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
     STYLE_TRANS_MODLES[style] = model
     return model
-
-net = get_model_from_style(3)
-net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 
 
 def transfer_stype(image_data, style):
     ext = imghdr.what(None, image_data)
     im = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
-    (h, w) = img.shape[:2]
-    blob = cv2.dnn.blobFromImage(img, 1.0, (w, h), (103.939, 116.779, 123.680), swapRB=False, crop=False)
+    (h, w) = im.shape[:2]
+    blob = cv2.dnn.blobFromImage(im, 1.0, (w, h), (103.939, 116.779, 123.680), swapRB=False, crop=False)
     net = get_model_from_style(style)
     net.setInput(blob)
     output = net.forward()
@@ -50,14 +47,15 @@ def transfer_stype(image_data, style):
     output[1] += 116.779
     output[2] += 123.680
     output = output.transpose(1, 2, 0)
-    is_success, im_buf_arr = cv2.imencode(ext, im)
+    is_success, im_buf_arr = cv2.imencode("."+ext, output)
     byte_im = im_buf_arr.tobytes()
+    return byte_im
 
 
 
 class StyleTransfer(object):
-    def style_transfer(self, image_data):
-        return transfer_stype(image_data)
+    def style_transfer(self, image_data, style):
+        return transfer_stype(image_data, style)
 
 
 if __name__ == "__main__":
