@@ -45,10 +45,10 @@ class Cartoonize(object):
         ext = imghdr.what(None, image_data)
         # im = cv2.imread(image_fn)
         im = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
-        image = resize_crop(image)
+        image = resize_crop(im)
         batch_image = image.astype(np.float32)/127.5 - 1
         batch_image = np.expand_dims(batch_image, axis=0)
-        output = sess.run(final_out, feed_dict={input_photo: batch_image})
+        output = Cartoonize.sess.run(Cartoonize.final_out, feed_dict={Cartoonize.input_photo: batch_image})
         output = (np.squeeze(output)+1)*127.5
         output = np.clip(output, 0, 255).astype(np.uint8)
         # cv2.imwrite(save_path, output)
