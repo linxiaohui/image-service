@@ -156,8 +156,8 @@ class ChangeBackGroundColor(object):
         print("ChangeBackGroundColor color=", bg_color)
         return change_background(image_data, bg_color)
 
-
-s = zerorpc.Server(ChangeBackGroundColor())
-s.bind("tcp://0.0.0.0:54326")
-s.run()
+if __name__ == "__main__":
+    s = zerorpc.Server(ChangeBackGroundColor())
+    s.bind("tcp://0.0.0.0:54326")
+    s.run()
 

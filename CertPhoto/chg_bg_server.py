@@ -58,7 +58,6 @@ class ChangeBackgroundHander(tornado.web.RequestHandler, ABC):
         _cursor = _conn.cursor()
         _cursor.execute("SELECT image_data FROM upload_images WHERE uuid=?", (image_uuid,))
         image = _cursor.fetchone()
-        _conn.close()
         if image:
             image_data = image[0]
             bg_color = self.get_argument("bg_color")
@@ -66,8 +65,10 @@ class ChangeBackgroundHander(tornado.web.RequestHandler, ABC):
             gen_uuid = str(uuid.uuid4())
             _cursor.execute("INSERT INTO change_bg_color(image_uuid, new_color, gen_uuid, image_data) VALUES (?,?,?,?)",
                             (image_uuid, bg_color, gen_uuid, _data))
+            _conn.close()
             self.redirect(f"/chg_bg/{gen_uuid}")
         else:
+            _conn.close()
             self.set_status(404)
     
     def get(self, gen_uuid):

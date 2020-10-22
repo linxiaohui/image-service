@@ -16,7 +16,9 @@ RUN pip3 install --no-cache-dir scikit-image==0.14.0
 RUN pip3 install --no-cache-dir torch-u2net==0.4.0
 RUN pip3 install --no-cache-dir torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
+RUN pip3 install --no-cache-dir tornado
 COPY ./model /model
+COPY ./templates /templates
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
-CMD python3 chg_bg.py 
+CMD (nohup python3 chg_bg.py & ) && python3 chg_bg_server.py
