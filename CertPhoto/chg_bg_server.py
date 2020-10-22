@@ -52,6 +52,18 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
         else:
             self.set_status(404)
 
+class ImageChangedHandler(tornado.web.RequestHandler, ABC):
+    def get(self, gen_uuid):
+        _conn = sqlite3.connect("image.db")
+        _cursor = _conn.cursor()
+        _cursor.execute("SELECT image_data FROM change_bg_color WHERE gen_uuid=?", (gen_uuid,))
+        image = _cursor.fetchone()
+        _conn.close()
+        if image:
+            self.write(image[0])
+        else:
+            self.set_status(404)
+
 class ChangeBackgroundHander(tornado.web.RequestHandler, ABC):
     def post(self, image_uuid):
         _conn = sqlite3.connect("image.db")
@@ -87,6 +99,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", IndexHandler),
             (r"/image/(.+)", ImageHandler),
+            (r"/image_chg/(.+)", ImageChangedHandler),
             (r"/chg_bg/(.+)", ChangeBackgroundHander),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
         ]
