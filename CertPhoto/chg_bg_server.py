@@ -77,6 +77,7 @@ class ChangeBackgroundHander(tornado.web.RequestHandler, ABC):
             gen_uuid = str(uuid.uuid4())
             _cursor.execute("INSERT INTO change_bg_color(image_uuid, new_color, gen_uuid, image_data) VALUES (?,?,?,?)",
                             (image_uuid, bg_color, gen_uuid, _data))
+            _conn.commit()
             _conn.close()
             self.redirect(f"/chg_bg/{gen_uuid}")
         else:
