@@ -13,38 +13,51 @@ Dockers for Image Service
    2. 使用docker的方式组织
    3. 梳理预训练模型的下载方式以便于获取
    4. 示例代码描述功能以及调用、返回形式
+   5. 提供Web界面以便直观展示效果
 
 # 内容
-
-## FaceDetect
-人脸识别
-
-## U-2-Net
-AI抠图
 
 ## BeautyPredict
 AI颜值评分
 
-## NSFW
-Not Suitalbe For Work
-
-## FaceSketch
-人脸素描
+## Cartoonization
+图片卡通化
 
 ## CertPhote
 证件照换背景
 
-## Mosaic
-对图片中选择的区域马赛克
-
-## Cartoonization
-图片卡通化
-
 ## FaceCartoonization
 人脸图片卡通化
 
+## FaceDetect
+人脸识别
+
+## FaceRank
+人脸关键点识别，并根据公式计算“颜值”
+
+## FaceSketch
+人脸素描
+
+## Mosaic
+对图片中选择的区域马赛克
+
+## NSFW
+NSFW（Not Suitalbe For Work） 图片的识别
+
+## NSFW-Mask
+实现对NSFW图片进行区域打码
+
 ## StyleTransfer
 风格迁移
+
+## U-2-Net
+AI抠图
+
+
+
+# 使用方式
+项目中每个子目录一个功能；子目录中包含`Dockerfile`文件，可以`build`镜像后，按照每个子目录的`README`进行测试。
+
 
 # 声明
 本项目仅对一些功能进行整理，并可能根据需要进行一定的适应性改动；目的是方便使用与可获取性；具体功能和模型所有权或著作权属于原作者。
