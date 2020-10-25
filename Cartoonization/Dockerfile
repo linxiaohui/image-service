@@ -15,6 +15,9 @@ RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir tensorflow==1.4
 RUN pip3 install --no-cache-dir --no-deps scikit-image==0.14.5
+RUN pip3 install --no-cache-dir tornado
 COPY *.py /
 COPY ./model /model
-CMD python3 cartoonize.py
+COPY ./templates /templates
+CMD (nohup python3 cartoonize.py &) && python3 cartoon_server.py
+
