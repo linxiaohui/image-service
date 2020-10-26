@@ -13,13 +13,12 @@ RUN pip3 install --no-cache-dir setuptools h5py
 RUN pip3 install --no-cache-dir opencv-python
 RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir tornado
-RUN pip3 install --no-cache-dir torch-u2net==1.0.0
+RUN pip3 install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip3 install --no-cache-dir pillow
-RUN pip3 install --no-cache-dir --no-deps torchvision==0.2.1
 COPY cores /cores
 COPY models /models
 COPY pretrained_models /pretrained_models
 COPY util /util
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
-CMD python3 deep_style.py
+CMD python3 -u deep_style.py

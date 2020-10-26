@@ -32,8 +32,10 @@ class DeepMosaic_Style(object):
         opt.model_path = os.path.join("pretrained_models", f"style_{style}.pth")
         netG = loadmodel.style(opt)
         img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+        print("image loaded")
         img = runmodel.run_styletransfer(opt, netG, img)
-        is_success, im_buf_arr = cv2.imencode(image_type, img)
+        print("transfered")
+        is_success, im_buf_arr = cv2.imencode("."+image_type, img)
         byte_im = im_buf_arr.tobytes()
         return byte_im
 

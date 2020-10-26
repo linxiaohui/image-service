@@ -5,4 +5,5 @@ class Opt(object):
         self.edges = False
         self.model_path = None
         self.output_size = 0
+        self.preprocess = ""
         
