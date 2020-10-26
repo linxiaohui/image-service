@@ -17,44 +17,6 @@ DCT_Q = np.array([[8,16,19,22,26,27,29,34],
                 [26,27,29,34,38,46,56,59],
                 [27,29,35,38,46,56,69,83]])
 
-def imread(file_path,mod = 'normal',loadsize = 0):
-    '''
-    mod:  'normal' | 'gray' | 'all'
-    loadsize: 0->original
-    '''
-    if system_type == 'Linux':
-        if mod == 'normal':
-            img = cv2.imread(file_path,1)
-        elif mod == 'gray':
-            img = cv2.imread(file_path,0)
-        elif mod == 'all':
-            img = cv2.imread(file_path,-1)
-    
-    #In windows, for chinese path, use cv2.imdecode insteaded.
-    #It will loss EXIF, I can't fix it
-    else: 
-        if mod == 'normal':
-            img = cv2.imdecode(np.fromfile(file_path,dtype=np.uint8),1)
-        elif mod == 'gray':
-            img = cv2.imdecode(np.fromfile(file_path,dtype=np.uint8),0)
-        elif mod == 'all':
-            img = cv2.imdecode(np.fromfile(file_path,dtype=np.uint8),-1)
-            
-    if loadsize != 0:
-        img = resize(img, loadsize, interpolation=cv2.INTER_CUBIC)
-
-    return img
-
-def imwrite(file_path,img):
-    '''
-    in other to save chinese path images in windows,
-    this fun just for save final output images
-    '''
-    if system_type == 'Linux':
-        cv2.imwrite(file_path, img)
-    else:
-        cv2.imencode('.jpg', img)[1].tofile(file_path)
-
 def resize(img,size,interpolation=cv2.INTER_LINEAR):
     '''
     cv2.INTER_NEAREST      最邻近插值点法

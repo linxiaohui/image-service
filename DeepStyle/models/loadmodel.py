@@ -64,18 +64,6 @@ def style(opt):
         netG.cuda()
     return netG
 
-def video(opt):
-    if 'HD' in opt.model_path:
-        netG = MosaicNet_HD(3*25+1, 3, norm='instance')
-    else:
-        netG = MosaicNet(3*25+1, 3,norm = 'batch')
-    show_paramsnumber(netG,'netG')
-    netG.load_state_dict(torch.load(opt.model_path))
-    netG.eval()
-    if opt.use_gpu != -1:
-        netG.cuda()
-    return netG
-
 def bisenet(opt,type='roi'):
     '''
     type: roi or mosaic

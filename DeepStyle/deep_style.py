@@ -1,86 +1,35 @@
+# -*- coding: utf-8 -*-
+# 基于[DeepMosaic项目](https://github.com/HypoX64/DeepMosaics)进行剪裁
+# 使用项目提供的预训练模型进行图片风格的迁移
+
 import os
 import sys
-import traceback
-from cores core
-from util import util
-from models import loadmodel
+import imghdr
 
-util.file_init(opt)
+import numpy as np
+import cv2
 
-def main():
-    
-    if os.path.isdir(opt.media_path):
-        files = util.Traversal(opt.media_path)
-    else:
-        files = [opt.media_path]        
-    if opt.mode == 'add':
-        netS = loadmodel.bisenet(opt,'roi')
-        for file in files:
-            opt.media_path = file
-            if util.is_img(file):
-                core.addmosaic_img(opt,netS)
-            elif util.is_video(file):
-                core.addmosaic_video(opt,netS)
-            else:
-                print('This type of file is not supported')
+from cores import Opt
+from models import loadmodel, runmodel
 
-    elif opt.mode == 'clean':
-        netM = loadmodel.bisenet(opt,'mosaic')
-        if opt.traditional:
-            netG = None
-        elif opt.netG == 'video':
-            netG = loadmodel.video(opt)
-        else:
-            netG = loadmodel.pix2pix(opt)
-        
-        for file in files:
-            opt.media_path = file
-            if util.is_img(file):
-                core.cleanmosaic_img(opt,netG,netM)
-            elif util.is_video(file):
-                if opt.netG == 'video' and not opt.traditional:            
-                    core.cleanmosaic_video_fusion(opt,netG,netM)
-                else:
-                    core.cleanmosaic_video_byframe(opt,netG,netM)
-            else:
-                print('This type of file is not supported')
-
-    elif opt.mode == 'style':
-        netG = loadmodel.style(opt)
-        for file in files:
-            opt.media_path = file
-            if util.is_img(file):
-                core.styletransfer_img(opt,netG)
-            elif util.is_video(file):
-                core.styletransfer_video(opt,netG)
-            else:
-                print('This type of file is not supported')
-
-    util.clean_tempfiles(opt, tmp_init = False)
-        
-if __name__ == '__main__':
-    try:
-        main()
-        print('Finished!')
-    except Exception as ex:
-        print('--------------------ERROR--------------------')
-        print('--------------Environment--------------')
-        print('DeepMosaics: 0.4.0')
-        print('Python:',sys.version)
-        import torch
-        print('Pytorch:',torch.__version__)
-        import cv2
-        print('OpenCV:',cv2.__version__)
-        import platform
-        print('Platform:',platform.platform())
-
-        print('--------------BUG--------------')
-        ex_type, ex_val, ex_stack = sys.exc_info()
-        print('Error Type:',ex_type)
-        print(ex_val)
-        for stack in traceback.extract_tb(ex_stack):
-            print(stack)
-        input('Please press any key to exit.\n')
-        #util.clean_tempfiles(tmp_init = False)
-        exit(0)
-
+def style_transfer(image_data, style):
+    """
+    style:
+        apple2orange
+        orange2apple
+        summer2winter
+        winter2summer.pth'
+        cezanne
+        monet
+        ukiyoe
+        vangogh
+    """
+    image_type = imghdr.what(None, image_data)
+    opt = Opt()
+    opt.model_path = os.path.join("pretrained_models", f"style_{style}.pth")
+    netG = loadmodel.style(opt)
+    img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+    img = runmodel.run_styletransfer(opt, netG, img)
+    is_success, im_buf_arr = cv2.imencode(image_type, img)
+    byte_im = im_buf_arr.tobytes()
+    return byte_im
