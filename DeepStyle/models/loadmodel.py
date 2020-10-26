@@ -1,15 +1,5 @@
 import torch
 from .pix2pix_model import define_G
-from .pix2pixHD_model import define_G as define_G_HD
-from .unet_model import UNet
-from .video_model import MosaicNet
-from .videoHD_model import MosaicNet as MosaicNet_HD
-from .BiSeNet_model import BiSeNet
-
-def show_paramsnumber(net,netname='net'):
-    parameters = sum(param.numel() for param in net.parameters())
-    parameters = round(parameters/1e6,2)
-    print(netname+' parameters: '+str(parameters)+'M')
 
 def __patch_instance_norm_state_dict(state_dict, module, keys, i=0):
     """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
@@ -24,19 +14,6 @@ def __patch_instance_norm_state_dict(state_dict, module, keys, i=0):
             state_dict.pop('.'.join(keys))
     else:
         __patch_instance_norm_state_dict(state_dict, getattr(module, key), keys, i + 1)
-
-def pix2pix(opt):
-    # print(opt.model_path,opt.netG)
-    if opt.netG == 'HD':
-        netG = define_G_HD(3, 3, 64, 'global' ,4)
-    else:
-        netG = define_G(3, 3, 64, opt.netG, norm='batch',use_dropout=True, init_type='normal', gpu_ids=[])
-    show_paramsnumber(netG,'netG')
-    netG.load_state_dict(torch.load(opt.model_path))
-    netG.eval()
-    if opt.use_gpu != -1:
-        netG.cuda()
-    return netG
 
 
 def style(opt):
@@ -63,18 +40,3 @@ def style(opt):
     if opt.use_gpu != -1:
         netG.cuda()
     return netG
-
-def bisenet(opt,type='roi'):
-    '''
-    type: roi or mosaic
-    '''
-    net = BiSeNet(num_classes=1, context_path='resnet18',train_flag=False)
-    show_paramsnumber(net,'segment')
-    if type == 'roi':
-        net.load_state_dict(torch.load(opt.model_path))
-    elif type == 'mosaic':
-        net.load_state_dict(torch.load(opt.mosaic_position_model_path))
-    net.eval()
-    if opt.use_gpu != -1:
-        net.cuda()
-    return net
