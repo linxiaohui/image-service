@@ -9,6 +9,11 @@
 ## 其他方式
    [百度云](https://pan.baidu.com/s/1zsFHWFYzgeVGRRuy2kMV0w) 提取码: `zrvf`
 
+```
+SHA256(model-ldl-resnet.h5)= c860946edbd58401dc6b5cea94b2e3c7246b4be08ce59e0eb7165ec25df8a436
+SHA256(resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5)= 751baea102ae63f0990607883ff819cfe18276d5116605673c5ff7e42e34e945
+```
+
 # 版本事项
 确定预训练模型的版本的方式
 ```python
@@ -43,7 +48,5 @@ print(beauty_score[0])
 
 # 关于dlib的说明
 安装dlib必须进行编译；在使用docker时，因为需要安装编译环境，会显著增大docker镜像的“体积”。因此，创建并上传到pypi上一个包`dlib-binary`, 在进行安装时直接安装编译好的dlib，而不用编译, 从而不需要在docker中安装编译环境。
-
-
 
 
