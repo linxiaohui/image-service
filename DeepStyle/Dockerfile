@@ -22,3 +22,4 @@ COPY pretrained_models /pretrained_models
 COPY util /util
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
+CMD python3 deep_style.py
