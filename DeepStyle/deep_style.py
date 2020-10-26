@@ -10,7 +10,7 @@ import zerorpc
 import numpy as np
 import cv2
 
-from cores import Opt
+from util import Opt
 from models import loadmodel, runmodel
 
 
