@@ -120,6 +120,7 @@ class NSFWMaskerServer(object):
     def mark_nsfw(self, image_data):
         return nsfw_mosaic_region(image_data)
 
-s = zerorpc.Server(NSFWMaskerServer())
-s.bind("tcp://0.0.0.0:54328")
-s.run()
+if __name__ == "__main__":
+    s = zerorpc.Server(NSFWMaskerServer())
+    s.bind("tcp://0.0.0.0:54328")
+    s.run()

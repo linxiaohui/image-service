@@ -17,8 +17,10 @@ RUN pip3 install --no-cache-dir pillow
 RUN pip3 install --no-cache-dir tensorflow==1.14
 RUN pip3 install --no-cache-dir --no-deps scikit-image==0.14.5
 RUN pip3 install --no-cache-dir keras==2.2.4
+RUN pip3 install --no-cache-dir tornado
 COPY ./model /model
 COPY *.py /
-CMD python3 mosaic_nsfw.py
+COPY templates /templates
+CMD (nohup python3 mosaic_nsfw.py &) && python3 mosaic_server.py
 
 
