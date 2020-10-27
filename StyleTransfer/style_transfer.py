@@ -33,7 +33,7 @@ def get_model_from_style(style):
     return model
 
 
-def transfer_stype(image_data, style):
+def transfer_style(image_data, style):
     ext = imghdr.what(None, image_data)
     im = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
     (h, w) = im.shape[:2]
@@ -55,7 +55,7 @@ def transfer_stype(image_data, style):
 
 class StyleTransfer(object):
     def style_transfer(self, image_data, style):
-        return transfer_stype(image_data, style)
+        return transfer_style(image_data, style)
 
 
 if __name__ == "__main__":

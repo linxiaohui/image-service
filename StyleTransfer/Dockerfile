@@ -12,8 +12,11 @@ RUN pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN pip3 install --no-cache-dir setuptools h5py
 RUN pip3 install --no-cache-dir opencv-python
 RUN pip3 install --no-cache-dir zerorpc
+RUN pip3 install --no-cache-dir tornado
 COPY models /models
+COPY templates /templates
 ENV IMAGESERVICE_ROOT /
 COPY *.py /
-CMD python3 style-transfer.py
+CMD (nohup python3 style_transfer.py &) && python3 style_transfer_server.py
+
 
