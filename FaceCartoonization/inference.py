@@ -141,7 +141,8 @@ class FaceCartoon(object):
     def cartoonize(self, image_data):
         return face_cartoonization(image_data)
 
-s = zerorpc.Server(FaceCartoon())
-s.bind("tcp://0.0.0.0:54329")
-s.run()
+if __name__ == "__main__":
+    s = zerorpc.Server(FaceCartoon())
+    s.bind("tcp://0.0.0.0:54329")
+    s.run()
 

@@ -16,5 +16,6 @@ RUN pip3 install --no-cache-dir tornado
 RUN pip3 install --no-cache-dir torch-u2net==1.0.0
 COPY *.py /
 COPY *.pth /
-CMD python3 inference.py
+COPY templates /templates
+CMD (nohup python3 inference.py &) && python3 cartoon_server.py
 
