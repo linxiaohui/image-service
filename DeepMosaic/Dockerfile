@@ -14,10 +14,13 @@ RUN pip3 install --no-cache-dir opencv-python
 RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir tornado
 RUN pip3 install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip3 install --no-cache-dir requests
 COPY models /models
 COPY pretrained_models /pretrained_models
 COPY util /util
 COPY *.py /
+COPY templates /templates
 ENV IMAGESERVICE_ROOT /
-CMD python3 -u deep_mosaic.py
+CMD (nohup python3 -u deep_mosaic.py &) && python3 -u dm_server.py
+
 
