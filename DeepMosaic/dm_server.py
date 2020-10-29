@@ -40,8 +40,8 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
             data = resp.content
             _data = MOSAICOR.deep_mosaic(data, roi_type)
             image_uuid = str(uuid.uuid4())
-            _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data, image_cartoonized) VALUES (?,?,?,?)",
-                          (image_uuid, url, roi_type, data,_data, roi_type))
+            _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data, image_mosaiced, roi_type) VALUES (?,?,?,?,?)",
+                          (image_uuid, url, data,_data, roi_type))
             _conn.commit()
         _conn.close()
         self.render("image.html", image_uuid=image_uuid)
