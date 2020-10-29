@@ -29,7 +29,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
 
     def post(self):
         _conn = sqlite3.connect("image.db")
-        url = self.get_argument("url", None)
+        url = self.get_argument("image_url", None)
         roi_type = self.get_argument("roi_type", "X")
         if roi_type == 'F':
             roi_type = 'face'
