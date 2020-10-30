@@ -48,5 +48,5 @@ with open("result.jpg", "wb") as fp:
 
 
 # 相关项目
-[Mosaic](../Mosaic) 提供了OpenCV实现对图片指定区域进行马赛克化的方式
+[DeepMosaic](../DeepMosaic) 同样的模型实现对ROI区域进行打码
 
