@@ -41,7 +41,10 @@ class DeepMosaics_ROIMarker(object):
         else:
             netS = netX
         mask, (x,y,w,h)= runmodel.get_ROI_position(img, netS, opt)
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        # cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        # OpenCV 4, findContours返回两个值
+        contours, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)  
+        img = cv2.drawContours(img,contours,-1,(0,255,0),3)  
         is_success, im_buf_arr = cv2.imencode("."+image_type, img)
         byte_im = im_buf_arr.tobytes()
         return byte_im
