@@ -27,7 +27,7 @@ cd ../../
 ```
 
 ## 其他地址
-[百度云]()
+[百度云](https://pan.baidu.com/s/1F2_qXkZ_4CZ7gHmaCkSAyQ)  提取码: `u8md`
 ```
 SHA256(models/eccv16/composition_vii.t7)= 34b66175dffa75d47300ca9f569e4da98face3bde3c23b3954ca5cb055e64904
 SHA256(models/eccv16/la_muse.t7)= 4b821d3b4d70a42bb5caee82e1ae45a7e3d85f42c9256adfa5c9bb296e881115
