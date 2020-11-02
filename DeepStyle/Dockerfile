@@ -19,4 +19,5 @@ COPY pretrained_models /pretrained_models
 COPY util /util
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
-CMD python3 -u deep_style.py
+CMD (nohup python3 -u deep_style.py & ) && python3 -u dm_server.py
+
