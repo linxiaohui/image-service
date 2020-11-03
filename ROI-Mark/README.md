@@ -7,6 +7,8 @@
    * [百度云](https://pan.baidu.com/s/10rN3U3zd5TmfGpO_PEShqQ) `1x0a`
 
 ```
+SHA256(add_face.pth)= 65586df107c2e0db5d07b1cb8d0948c5111f2766e5fb8b82c5b37a4eafb54847
+SHA256(add_youknow.pth)= bd6431edaf2157a0d30c00e1b8692c28b2b606a5d05ded23d1de093d36156a69
 ```
 
 # 构建与运行
@@ -16,9 +18,8 @@
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54334:54334 -p 65535:80 linxiaohui/roi-mark:1.0`
-
-其中 `54334`端口为容器中RPC服务的监听端口，`80`为Web界面的监听端口；
-对应的`54334`和`65535`端口为映射到的本机端口.
+   * 其中 `54334`端口为容器中RPC服务的监听端口，`80`为Web界面的监听端口；
+   * 对应的`54334`和`65535`端口为映射到的本机端口.
 
 # 调用方式
 

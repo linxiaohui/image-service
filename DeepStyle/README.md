@@ -7,6 +7,14 @@
    * [百度云](https://pan.baidu.com/s/10rN3U3zd5TmfGpO_PEShqQ) `1x0a`
 
 ```
+SHA256(style_apple2orange.pth)= ff989c98f3a077cd11c2623ed8742e2ef147e81d10b4e4c2ee6935796bda957a
+SHA256(style_cezanne.pth)= c4a4f978070cbd25d556809c214e9387ef1ccadb2fde79a8a97b4931493130a9
+SHA256(style_monet.pth)= efdad8782a185c2c423559449a2f3e33a6eeadc7d042ada98ffa848e6b055142
+SHA256(style_orange2apple.pth)= b736bd3919b12e19a6dd37bdbea2097ac00fa78c8656adcbf45d0d3bab52853e
+SHA256(style_summer2winter.pth)= 600d267609742d22dee8a518f40eec9f4008400ba6abe1f3a8b957b23d4925d5
+SHA256(style_ukiyoe.pth)= 2377efc6cf9afebd0053e5b540547d5cf3da651c745a86533c7f34e5076b5fa7
+SHA256(style_vangogh.pth)= 55c49585be54d2c9f1edd2dddf1251dff168f24a7663019fcac1dd714ef1bb89
+SHA256(style_winter2summer.pth)= 05824a39301a10c1501cf8dcaf43dda8ff23f0fe568a19cda6dde54d670a9071
 ```
 
 # 构建与运行

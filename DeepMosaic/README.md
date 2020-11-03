@@ -7,6 +7,8 @@
    * [百度云](https://pan.baidu.com/s/10rN3U3zd5TmfGpO_PEShqQ) `1x0a`
 
 ```
+SHA256(add_face.pth)= 65586df107c2e0db5d07b1cb8d0948c5111f2766e5fb8b82c5b37a4eafb54847
+SHA256(add_youknow.pth)= bd6431edaf2157a0d30c00e1b8692c28b2b606a5d05ded23d1de093d36156a69
 ```
 
 # 构建与运行
