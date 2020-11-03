@@ -16,6 +16,7 @@ RUN pip3 install --no-cache-dir tornado
 RUN pip3 install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip3 install --no-cache-dir requests
 COPY models /models
+COPY templates /templates
 COPY pretrained_models /pretrained_models
 COPY util /util
 COPY *.py /
