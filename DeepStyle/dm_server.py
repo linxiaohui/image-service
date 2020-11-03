@@ -42,7 +42,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
                           (image_uuid, url, data,_data, style))
             _conn.commit()
         _conn.close()
-        self.render("image.html", image_uuid=image_uuid)
+        self.render("image.html", image_uuid=image_uuid, style=style)
 
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid):
