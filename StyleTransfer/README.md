@@ -40,16 +40,25 @@ SHA256(models/instance_norm/mosaic.t7)= fbd7d882e9e02aafb57366e726762025ff6b2e12
 SHA256(models/instance_norm/the_scream.t7)= b8443f5573433f690cffafff55f441ac28a14c053179b0c33ddcf4da670f3732
 SHA256(models/instance_norm/udnie.t7)= 3a3a2cf3472085f26d8e4bc26a1e6b2eb48e6dfc4df8ec9a9b1b0d4085aefa36
 ```
-
-# 构建
+# 构建与运行
+## 构建
    1. 在当前目录执行下载预训练模型的脚本，下载模型文件；至`models`文件中
    2. `docker build -t style-transfer:1.0 .`
 
-# dockerhub
-   `docker run -d -p 54330:54330 linxiaohui/style-transfer:1.0`
+## 从DockerHub下载镜像并运行
+   `docker run -d -p 54330:54330 -p 65535:80 linxiaohui/style-transfer:1.0`
+   * 其中 `54330`端口为容器中RPC服务的监听端口，`80`为Web界面的监听端口；
+   * 对应的`54330`和`65535`端口为映射到的本机端口.
 
 # 调用方式
 
+## Web界面
+   * 浏览器打开，地址为宿主机地址+Web界面服务映射到的本机端口；
+   * 上传图片或输入图片的URL，点击提交；
+   * 选择要转换的风格
+   * 原图片和提取的前景图片会在页面中同时显示，以供对比模型效果；
+
+## RPC服务
 ```python
 # -*- coding: utf-8 -*-
 import zerorpc

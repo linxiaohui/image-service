@@ -24,9 +24,9 @@ SHA256(add_youknow.pth)= bd6431edaf2157a0d30c00e1b8692c28b2b606a5d05ded23d1de093
 # 调用方式
 
 ## Web界面
-   浏览器打开，地址为宿主机地址+Web界面服务映射到的本机端口；
-   上传图片或输入图片的URL，选择ROI区域的类型（F对应模型add_face，X对应模型add_youknow）；
-   提交后原图片和标记了ROI区域的图片会在页面中同时显示，以供对比；
+   * 浏览器打开，地址为宿主机地址+Web界面服务映射到的本机端口；
+   * 上传图片或输入图片的URL，选择ROI区域的类型（F对应模型add_face，X对应模型add_youknow）；
+   * 提交后原图片和标记了ROI区域的图片会在页面中同时显示，以供对比；
 
 ## RPC服务
 ```python
