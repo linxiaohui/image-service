@@ -16,8 +16,8 @@ RUN pip3 install --no-cache-dir scikit-image==0.14.0
 RUN pip3 install --no-cache-dir torch-u2net==0.4.0
 RUN pip3 install --no-cache-dir torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
+RUN pip3 install --no-cache-dir requests
 COPY ./model /model
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
-CMD python3 u2net_rpc.py
-
+CMD (nohup python3 u2net_rpc.py &) && python3 web_server.py

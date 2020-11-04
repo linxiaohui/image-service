@@ -148,8 +148,8 @@ class U2NetCutOut(object):
     def cutout(self, image_data):
         return image_cutout(image_data)
 
-
-s = zerorpc.Server(U2NetCutOut())
-s.bind("tcp://0.0.0.0:54323")
-s.run()
+if __name__ == "__main__":
+    s = zerorpc.Server(U2NetCutOut())
+    s.bind("tcp://0.0.0.0:54323")
+    s.run()
 
