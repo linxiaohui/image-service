@@ -35,7 +35,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
         else:
             resp = requests.get(url)
             data = resp.content
-            _data = PREDICTOR.cutout(data)
+            _data = PREDICTOR.cutout(data)[0]
             image_uuid = str(uuid.uuid4())
             _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data, image_fg) VALUES (?,?,?,?)",
                           (image_uuid, url, data, _data))

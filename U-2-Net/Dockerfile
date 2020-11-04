@@ -17,7 +17,9 @@ RUN pip3 install --no-cache-dir torch-u2net==0.4.0
 RUN pip3 install --no-cache-dir torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
 RUN pip3 install --no-cache-dir requests
+RUN pip3 install --no-cache-dir tornado
 COPY ./model /model
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
+COPY templates /templates
 CMD (nohup python3 u2net_rpc.py &) && python3 web_server.py
