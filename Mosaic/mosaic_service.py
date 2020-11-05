@@ -88,7 +88,7 @@ class Application(tornado.web.Application):
 def main():
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(8080)
+    http_server.listen(80)
     try:
         tornado.ioloop.IOLoop.instance().start()
     except Exception as e:
