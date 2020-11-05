@@ -20,10 +20,6 @@
 <div class="center-in-center">
     <form action="{{ request.path }}"  enctype="multipart/form-data" method="post">
         <input name="image_url" type="text" />
-        <select name="roi_type" >
-            <option value="X" selected="selected">X</option>
-            <option value="F">F</option>
-        </select>
         <input type="submit" value="提交" />
         {% module xsrf_form_html() %}
     </form>
