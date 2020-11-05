@@ -16,10 +16,10 @@ RUN pip3 install --no-cache-dir scikit-image==0.14.0
 RUN pip3 install --no-cache-dir torch-u2net==1.0.0
 RUN pip3 install --no-cache-dir --no-deps torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
+RUN pip3 install --no-cache-dir tornado
+RUN pip3 install --no-cache-dir requests
 COPY ./model /model
 COPY *.py /
-#ADD FaceSketchData.zip /FaceSketchData
 COPY sketch.pth /
 ENV IMAGESERVICE_ROOT /
-CMD python3 /face_sketch.py
-
+CMD (nohup python3 /face_sketch.py &) && python3 sketch_server.py
