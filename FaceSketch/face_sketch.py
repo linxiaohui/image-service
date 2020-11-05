@@ -116,7 +116,7 @@ class Sketcher(object):
     def face_sketch(self, image_data):
         return image_sketch(image_data)
 
-
-s = zerorpc.Server(Sketcher())
-s.bind("tcp://0.0.0.0:54325")
-s.run()
+if __name__ == "__main__":
+    s = zerorpc.Server(Sketcher())
+    s.bind("tcp://0.0.0.0:54325")
+    s.run()
