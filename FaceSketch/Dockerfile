@@ -19,6 +19,7 @@ RUN pip3 install --no-cache-dir pillow
 RUN pip3 install --no-cache-dir tornado
 RUN pip3 install --no-cache-dir requests
 COPY ./model /model
+COPY ./templates /templates
 COPY *.py /
 COPY sketch.pth /
 ENV IMAGESERVICE_ROOT /
