@@ -5,7 +5,7 @@
 
 
 # 训练数据
-## APDrawingDB
+[APDrawingDB](https://cg.cs.tsinghua.edu.cn/people/~Yongjin/APDrawingDB.zip)
 
 ## 训练数据处理代码
 代码库中有基于`Pillow`的处理版本； 下面的代码基于`opencv`
@@ -43,25 +43,32 @@ for f in os.listdir("."):
 # 预训练模型
 [百度云](https://pan.baidu.com/s/1kFO-lrRPnb57NL-gptFwzA) 提取码: `v42s`
 
-# 构建
+# 构建与运行
+## 构建
    1. 下载模型文件，名为`sketch.pth`，放在当前目录
    2. `docker build -t face-sketch:1.0 .`
 
-# dockerhub
-   `docker run -d -p 54325:54325 linxiaohui/face-sketch:1.0`
-
+## 从DockerHub下载镜像并运行
+   `docker run -d -p 54325:54325 -p 65535:80 linxiaohui/face-sketch:1.0`
+   * 其中 `54325`端口为容器中RPC服务的监听端口，`80`为Web界面的监听端口；
+   * 对应的`54325`和`65535`端口为映射到的本机端口.
 
 # 调用方式
+## Web界面
+   * 浏览器打开，地址为宿主机地址+Web界面服务映射到的本机端口；
+   * 上传图片或输入图片的URL，点击提交
+   * 提交后原图片和形成的素描图片会在页面中同时显示，以供对比模型的效果；
+
+## RPC服务
 ```python
 import zerorpc
 s = zerorpc.Client(heartbeat=None, timeout=60)
 s.connect("tcp://127.0.0.1:54325")
-data_path = "/home/linxh/x.jpg"
+data_path = "x.png"
 
 with open(data_path, "rb") as fp:
     image_data = fp.read()
     result = s.face_sketch(image_data)
     with open("r3.png", "wb") as fp2:
         fp2.write(result[0])
-
 ```
