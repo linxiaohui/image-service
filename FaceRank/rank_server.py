@@ -37,8 +37,8 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
             data = resp.content
             _data, fr_score = SCORER.face_score(data) 
             image_uuid = str(uuid.uuid4())
-            _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data, image_marked, face_score) VALUES (?,?,?,?,?)",
-                          (image_uuid, url, data, _data, face_score))
+            _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data, image_marked, fr_score) VALUES (?,?,?,?,?)",
+                          (image_uuid, url, data, _data, fr_score))
             _conn.commit()
         _conn.close()
         self.render("image.html", image_uuid=image_uuid, fr_score=fr_score)
