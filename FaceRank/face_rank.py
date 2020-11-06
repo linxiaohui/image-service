@@ -99,9 +99,8 @@ class FaceScorer(object):
     def face_score(self, image_data):
         return face_detector(image_data)
 
-
-s = zerorpc.Server(FaceScorer())
-s.bind("tcp://0.0.0.0:54327")
-s.run()
-
+if __name__ == "__main__":
+    s = zerorpc.Server(FaceScorer())
+    s.bind("tcp://0.0.0.0:54327")
+    s.run()
 

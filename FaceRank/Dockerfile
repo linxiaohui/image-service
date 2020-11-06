@@ -13,8 +13,9 @@ RUN pip3 install --no-cache-dir setuptools h5py
 RUN pip3 install --no-cache-dir opencv-python
 RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir zerorpc
+RUN pip3 install --no-cache-dir tornado requests
 COPY shape_predictor_68_face_landmarks.dat /shape_predictor_68_face_landmarks.dat
 COPY *.py /
+COPY templates /templates
 ENV IMAGESERVICE_ROOT /
-CMD python3 /face_rank.py
-
+CMD (nohup python3 /face_rank.py &) && python3 rank_server.py
