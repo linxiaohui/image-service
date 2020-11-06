@@ -1,10 +1,15 @@
 # 主页
 参考[github上的项目FaceRank](https://github.com/pwfee/FaceRank)
 
-该项目使用dlib进行人脸检测，利用公式计算“颜值”；
+该项目使用[dlib](http://dlib.net/)进行人脸检测，利用公式计算“颜值”；
 
 # 模型文件
-shape_predictor_68_face_landmarks.dat
+人脸识别68个特征点检测 `shape_predictor_68_face_landmarks.dat`
+[官方下载地址](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2)
+
+```
+SHA256(shape_predictor_68_face_landmarks.dat)= fbdc2cb80eb9aa7a758672cbfdda32ba6300efe9b6e6c7a299ff7e736b11b92f
+```
 
 # 构建与运行
 ## 构建
@@ -48,3 +53,8 @@ print(score)
 
 更多信息可以参见上述项目的主页.
 
+# More For dlib
+pip安装dlib必须进行编译安装，在Windows中必须有编译环境；
+如果需要在没有编译环境的Windows上安装dlib，可以安装编译好的 `dlib-binary`
+
+`pip install dlib-binary`
