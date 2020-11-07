@@ -15,10 +15,13 @@ RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir tensorflow==1.4 
 RUN pip3 install --no-cache-dir keras==2.0.5
+RUN pip3 install --no-cache-dir tornado requests
 COPY models /models
+COPY templates /templates
 COPY resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5 /root/.keras/models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5
 COPY beauty_predict.py /beauty_predict.py
 COPY beauty_rpc.py /beauty_rpc.py
+COPY score_server.py /score_server.py
 ENV IMAGESERVICE_ROOT /
-CMD python3 /beauty_rpc.py
+CMD (nohup python3 /beauty_rpc.py &) && python3 /score_server.py
 
