@@ -14,5 +14,6 @@ RUN pip3 install --no-cache-dir opencv-python
 RUN pip3 install --no-cache-dir zerorpc
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
-CMD python3 /face_decet_rpc.py
+CMD (nohup python3 /face_decet_rpc.py &) && python3 detect_server.py
+
 
