@@ -26,4 +26,5 @@ COPY StyleTransfer/models /models
 COPY StyleTransfer/style_transfer.py /style_transfer.py
 COPY StyleTransfer/templates /templates
 COPY StyleTransfer/style_transfer_server.py /style_transfer_server.py
+ENV IMAGESERVICE_ROOT /
 CMD python3 style_transfer_server.py
