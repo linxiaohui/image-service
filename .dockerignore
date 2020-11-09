@@ -9,5 +9,6 @@
 !CertPhoto
 !FaceSketch
 !FaceRank
+!FaceDetect
 !templates
 !*.py

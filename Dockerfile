@@ -44,10 +44,11 @@ COPY FaceSketch/face_sketch.py /face_sketch.py
 COPY FaceRank/dlib_landmarks.py /dlib_landmarks.py
 COPY FaceRank/face_rank.py /face_rank.py
 COPY FaceRank/shape_predictor_68_face_landmarks.dat /shape_predictor_68_face_landmarks.dat
-COPY FaceRank/templates /templates
-COPY FaceRank/rank_server.py /rank_server.py
+COPY FaceDetect/face_decet_rpc.py /face_decet_rpc.py
+COPY FaceDetect/templates /templates
+COPY FaceDetect/detect_server.py /detect_server.py
 
 ENV IMAGESERVICE_ROOT /
-CMD python3 rank_server.py
+CMD python3 detect_server.py
 
 
