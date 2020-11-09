@@ -24,7 +24,11 @@ COPY U-2-Net/u2net_rpc.py /u2net_rpc.py
 COPY U-2-Net/data_loader.py /data_loader.py
 COPY StyleTransfer/models /models
 COPY StyleTransfer/style_transfer.py /style_transfer.py
-COPY StyleTransfer/templates /templates
-COPY StyleTransfer/style_transfer_server.py /style_transfer_server.py
+COPY ROI-Mark/models /models
+COPY ROI-Mark/pretrained_models /pretrained_models
+COPY ROI-Mark/roi_marker.py /roi_marker.py
+COPY ROI-Mark/mark_server.py /mark_server.py
+COPY ROI-Mark/templates /templates
 ENV IMAGESERVICE_ROOT /
-CMD python3 style_transfer_server.py
+CMD python3 mark_server.py
+
