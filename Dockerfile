@@ -45,10 +45,11 @@ COPY FaceRank/dlib_landmarks.py /dlib_landmarks.py
 COPY FaceRank/face_rank.py /face_rank.py
 COPY FaceRank/shape_predictor_68_face_landmarks.dat /shape_predictor_68_face_landmarks.dat
 COPY FaceDetect/face_decet_rpc.py /face_decet_rpc.py
-COPY FaceDetect/templates /templates
-COPY FaceDetect/detect_server.py /detect_server.py
+COPY FaceCartoonization/inference.py /inference.py
+COPY FaceCartoonization/weight.pth /weight.pth
+COPY FaceCartoonization/templates /templates
+COPY FaceCartoonization/cartoon_server.py /cartoon_server.py
 
 ENV IMAGESERVICE_ROOT /
-CMD python3 detect_server.py
-
+CMD python3 cartoon_server.py
 
