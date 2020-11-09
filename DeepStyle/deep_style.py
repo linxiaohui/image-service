@@ -11,7 +11,7 @@ import numpy as np
 import cv2
 
 from util import Opt
-from models import loadmodel, runmodel
+from models import loadmodel, runmodel2
 
 
 class DeepMosaic_Style(object):
@@ -33,7 +33,7 @@ class DeepMosaic_Style(object):
         netG = loadmodel.style(opt)
         img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
         print("image loaded")
-        img = runmodel.run_styletransfer(opt, netG, img)
+        img = runmodel2.run_styletransfer(opt, netG, img)
         print("transfered")
         is_success, im_buf_arr = cv2.imencode("."+image_type, img)
         byte_im = im_buf_arr.tobytes()
