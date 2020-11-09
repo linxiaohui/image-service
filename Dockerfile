@@ -31,8 +31,17 @@ COPY NSFW-Mask/bbox_blur.py /bbox_blur.py
 COPY NSFW-Mask/mosaic_nsfw.py /mosaic_nsfw.py
 COPY NSFW-Mask/model /model
 COPY Mosaic/mosaic_utils.py /mosaic_utils.py
-COPY Mosaic/templates /templates
-COPY Mosaic/mosaic_service.py /mosaic_service.py
+COPY BeautyPredict/beauty_predict.py /beauty_predict.py
+COPY BeautyPredict/models /models
+COPY BeautyPredict/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5 /root/.keras/models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5
+COPY Cartoonization/model /model
+COPY Cartoonization/network.py /network.py
+COPY Cartoonization/guided_filter.py /guided_filter.py
+COPY Cartoonization/cartoonize.py /cartoonize.py
+COPY Cartoonization/templates /templates
+COPY Cartoonization/cartoon_server.py /cartoon_server.py
+
 ENV IMAGESERVICE_ROOT /
-CMD python3 mosaic_service.py
+CMD python3 cartoon_server.py
+
 
