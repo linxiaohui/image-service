@@ -40,11 +40,14 @@ COPY Cartoonization/guided_filter.py /guided_filter.py
 COPY Cartoonization/cartoonize.py /cartoonize.py
 COPY CertPhoto/chg_bg.py /chg_bg.py
 COPY FaceSketch/sketch.pth /sketch.pth
-COPY FaceSketch/face_sketch.py face_sketch.py
-COPY FaceSketch/templates /templates
-COPY FaceSketch/sketch_server.py /sketch_server.py
+COPY FaceSketch/face_sketch.py /face_sketch.py
+COPY FaceRank/dlib_landmarks.py /dlib_landmarks.py
+COPY FaceRank/face_rank.py /face_rank.py
+COPY FaceRank/shape_predictor_68_face_landmarks.dat /shape_predictor_68_face_landmarks.dat
+COPY FaceRank/templates /templates
+COPY FaceRank/rank_server.py /rank_server.py
 
 ENV IMAGESERVICE_ROOT /
-CMD python3 sketch_server.py
+CMD python3 rank_server.py
 
 
