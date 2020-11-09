@@ -30,8 +30,9 @@ COPY ROI-Mark/roi_marker.py /roi_marker.py
 COPY NSFW-Mask/bbox_blur.py /bbox_blur.py
 COPY NSFW-Mask/mosaic_nsfw.py /mosaic_nsfw.py
 COPY NSFW-Mask/model /model
-COPY NSFW-Mask/templates /templates
-COPY NSFW-Mask/mosaic_server.py /mosaic_server.py
+COPY Mosaic/mosaic_utils.py /mosaic_utils.py
+COPY Mosaic/templates /templates
+COPY Mosaic/mosaic_service.py /mosaic_service.py
 ENV IMAGESERVICE_ROOT /
-CMD python3 mosaic_server.py
+CMD python3 mosaic_service.py
 
