@@ -53,6 +53,8 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
         image = _cursor.fetchone()
         _conn.close()
         if image:
+            content_type = imghdr.what(None, image[0])
+            self.set_header("Content-Type", "image/"+content_type)
             self.write(image[0])
         else:
             self.set_status(404)
