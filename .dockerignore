@@ -11,5 +11,6 @@
 !FaceRank
 !FaceDetect
 !FaceCartoonization
+!DeepMosaic
 !templates
 !*.py

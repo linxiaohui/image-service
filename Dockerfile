@@ -47,9 +47,10 @@ COPY FaceRank/shape_predictor_68_face_landmarks.dat /shape_predictor_68_face_lan
 COPY FaceDetect/face_decet_rpc.py /face_decet_rpc.py
 COPY FaceCartoonization/inference.py /inference.py
 COPY FaceCartoonization/weight.pth /weight.pth
-COPY FaceCartoonization/templates /templates
-COPY FaceCartoonization/cartoon_server.py /cartoon_server.py
-
+COPY DeepMosaic/deep_mosaic.py /deep_mosaic.py
+COPY DeepMosaic/util /util
+COPY DeepMosaic/dm_server.py /dm_server.py
+COPY DeepMosaic/templates /templates
 ENV IMAGESERVICE_ROOT /
-CMD python3 cartoon_server.py
+CMD python3 dm_server.py
 
