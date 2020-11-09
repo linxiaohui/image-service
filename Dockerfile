@@ -22,8 +22,8 @@ RUN pip3 install --no-cache-dir requests scikit-image==0.14.0
 COPY U-2-Net/model /model
 COPY U-2-Net/u2net_rpc.py /u2net_rpc.py
 COPY U-2-Net/data_loader.py /data_loader.py
-
-COPY templates /templates
-COPY image_service.py /image_service.py
-CMD python3 image_service.py
-
+COPY StyleTransfer/models /models
+COPY StyleTransfer/style_transfer.py /style_transfer.py
+COPY StyleTransfer/templates /templates
+COPY StyleTransfer/style_transfer_server.py /style_transfer_server.py
+CMD python3 style_transfer_server.py
