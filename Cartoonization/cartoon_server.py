@@ -8,6 +8,7 @@ from functools import wraps
 import json
 import sqlite3
 import socket
+import imghdr
 import platform
 if platform.system() == "Windows":
     import asyncio
@@ -64,6 +65,8 @@ class ImageCartoonizedHandler(tornado.web.RequestHandler, ABC):
         image = _cursor.fetchone()
         _conn.close()
         if image:
+            content_type = imghdr.what(None, image[0])
+            self.set_header("Content-Type", "image/"+content_type)
             self.write(image[0])
         else:
             self.set_status(404)
