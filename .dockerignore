@@ -2,5 +2,6 @@
 !U-2-Net
 !StyleTransfer
 !ROI-Mark
+!NSFW-Mask
 !templates
 !*.py

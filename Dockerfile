@@ -27,8 +27,11 @@ COPY StyleTransfer/style_transfer.py /style_transfer.py
 COPY ROI-Mark/models /models
 COPY ROI-Mark/pretrained_models /pretrained_models
 COPY ROI-Mark/roi_marker.py /roi_marker.py
-COPY ROI-Mark/mark_server.py /mark_server.py
-COPY ROI-Mark/templates /templates
+COPY NSFW-Mask/bbox_blur.py /bbox_blur.py
+COPY NSFW-Mask/mosaic_nsfw.py /mosaic_nsfw.py
+COPY NSFW-Mask/model /model
+COPY NSFW-Mask/templates /templates
+COPY NSFW-Mask/mosaic_server.py /mosaic_server.py
 ENV IMAGESERVICE_ROOT /
-CMD python3 mark_server.py
+CMD python3 mosaic_server.py
 
