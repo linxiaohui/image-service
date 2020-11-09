@@ -39,10 +39,12 @@ COPY Cartoonization/network.py /network.py
 COPY Cartoonization/guided_filter.py /guided_filter.py
 COPY Cartoonization/cartoonize.py /cartoonize.py
 COPY CertPhoto/chg_bg.py /chg_bg.py
-COPY CertPhoto/templates /templates
-COPY CertPhoto/chg_bg_server.py /chg_bg_server.py
+COPY FaceSketch/sketch.pth /sketch.pth
+COPY FaceSketch/face_sketch.py face_sketch.py
+COPY FaceSketch/templates /templates
+COPY FaceSketch/sketch_server.py /sketch_server.py
 
 ENV IMAGESERVICE_ROOT /
-CMD python3 chg_bg_server.py
+CMD python3 sketch_server.py
 
 
