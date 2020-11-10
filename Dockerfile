@@ -49,8 +49,12 @@ COPY FaceCartoonization/inference.py /inference.py
 COPY FaceCartoonization/weight.pth /weight.pth
 COPY DeepMosaic/deep_mosaic.py /deep_mosaic.py
 COPY DeepMosaic/util /util
-COPY DeepMosaic/dm_server.py /dm_server.py
-COPY DeepMosaic/templates /templates
+COPY DeepStyle/util/__init__.py /util/__init__.py
+COPY DeepStyle/pretrained_models /pretrained_models
+COPY DeepStyle/models /models
+COPY DeepStyle/deep_style.py /deep_style.py
+COPY DeepStyle/dm_server.py /dm_server.py
+COPY DeepStyle/templates /templates
 ENV IMAGESERVICE_ROOT /
 CMD python3 dm_server.py
 
