@@ -50,8 +50,10 @@ COPY DeepStyle/util/__init__.py /util/__init__.py
 COPY DeepStyle/pretrained_models /pretrained_models
 COPY DeepStyle/models /models
 COPY DeepStyle/deep_style.py /deep_style.py
-COPY DeepStyle/dm_server.py /dm_server.py
-COPY DeepStyle/templates /templates
+COPY NSFW/nsfw_predict.py /nsfw_predict.py
+COPY NSFW/nsfw.299x299.h5 /nsfw.299x299.h5
+COPY NSFW/nsfw_server.py /nsfw_server.py
+COPY NSFW/templates /templates
 ENV IMAGESERVICE_ROOT /
-CMD python3 dm_server.py
-
+CMD python3 nsfw_server.py
+ 
