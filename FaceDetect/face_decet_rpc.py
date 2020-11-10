@@ -5,6 +5,7 @@ import time
 
 import numpy as np
 import cv2
+import zerorpc
 
 class FaceDetector(object):
     def __init__(self):
@@ -23,16 +24,15 @@ class FaceDetector(object):
         faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
         for (x,y,w,h) in faces:
             img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-        b = io.BytesIO()
-        imo.save(b, ext)
-        data = b.getvalue()
-        return data
+        is_success, im_buf_arr = cv2.imencode("."+ext, img)
+        byte_im = im_buf_arr.tobytes()
+        return byte_im
 
     
 
     
-
-s = zerorpc.Server(FaceDetector())
-s.bind("tcp://0.0.0.0:54324")
-s.run()
+if __name__ == "__main__":
+    s = zerorpc.Server(FaceDetector())
+    s.bind("tcp://0.0.0.0:54324")
+    s.run()
 
