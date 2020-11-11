@@ -20,39 +20,18 @@ import tornado.options
 import tornado.web
 import requests
 
-from u2net_rpc import U2NetCutOut
-PREDICTOR = U2NetCutOut()
+def get_db_conn():
+    _conn = sqlite3.connect("/db/image.db")
+    return _conn
 
 class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self):
         self.render("index.html")
-    def post(self):
-        _conn = sqlite3.connect("image.db")
-        url = self.get_argument("image_url", None)
-        if not url:
-            self.render("index.html")
-        else:
-            resp = requests.get(url)
-            data = resp.content
-            _data = PREDICTOR.cutout(data)[0]
-            image_uuid = str(uuid.uuid4())
-            _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data, image_fg) VALUES (?,?,?,?)",
-                          (image_uuid, url, data, _data))
-            _conn.commit()
-        _conn.close()
-        self.render("image.html", image_uuid=image_uuid)
 
-class ImageHandler(tornado.web.RequestHandler, ABC):
+class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid):
-        _conn = sqlite3.connect("image.db")
-        _cursor = _conn.cursor()
-        _cursor.execute("SELECT image_data FROM upload_images WHERE uuid=?", (image_uuid,))
-        image = _cursor.fetchone()
-        _conn.close()
-        if image:
-            self.write(image[0])
-        else:
-            self.set_status(404)
+        self.render("beauty_score.html")
+    
 
 class ImageForegroundHandler(tornado.web.RequestHandler, ABC):
     def get(self, gen_uuid):
@@ -70,15 +49,26 @@ class ImageForegroundHandler(tornado.web.RequestHandler, ABC):
 class Application(tornado.web.Application):
     def __init__(self):
         settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), "templates"),
-            static_path=os.path.join(os.path.dirname(__file__), "."),
+            template_path=os.path.join(os.path.dirname(__file__), "imgsvr_templates"),
+            static_path=os.path.join(os.path.dirname(__file__), "imgsvr_static"),
             xsrf_cookies=False,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
             autoescape=None,
         )
         handlers = [
             (r"/", IndexHandler),
-            (r"/image/(.+)", ImageHandler),
+            (r"/beauty_score/?(.+)", AIBeautyScoreHandler),
+            (r"/cartoon/?(.+)", AIBeautyScoreHandler),
+            (r"/face_cartoon/?(.+)", AIBeautyScoreHandler),
+            (r"/face_sketch/?(.+)", AIBeautyScoreHandler),
+            (r"/style_transfer/?(.+)", AIBeautyScoreHandler),
+            (r"/fore_ground/?(.+)", AIBeautyScoreHandler),
+            (r"/cert_photo/?(.+)", AIBeautyScoreHandler),
+            (r"/mosaic_app/?(.+)", AIBeautyScoreHandler),
+            (r"/nsfw_mosaic/?(.+)", AIBeautyScoreHandler),
+            (r"/roi_mosaic/?(.+)", AIBeautyScoreHandler),
+            (r"/nsfw/?(.+)", AIBeautyScoreHandler),
+            (r"/roi_mark/?(.+)", AIBeautyScoreHandler),
             (r"/image_fg/(.+)", ImageForegroundHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
         ]
@@ -96,11 +86,24 @@ def main():
 
 if __name__ == "__main__":
     try:
-        conn = sqlite3.connect("image.db")
-        conn.execute("""CREATE TABLE upload_images(image_id INTEGER PRIMARY KEY AUTOINCREMENT, uuid TEXT, 
-                                                   file_name TEXT, image_data BLOB, image_fg BLOB,
-                                                   insert_time datetime default current_timestamp)
+        conn = get_db_conn()
+        conn.execute("""CREATE TABLE input_image (image_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                                                  image_uuid TEXT, 
+                                                  file_name TEXT,
+                                                  image_data BLOB,
+                                                  params TEXT,
+                                                  insert_time datetime default current_timestamp)
         """)
+        conn.create("""CREATE TABLE beauty_score(image_id INT,
+                                                 image_landmark BLOB, 
+                                                 image_rect BLOB,
+                                                 face_rank float,
+                                                 beauty_predict float,
+                                                 baidu_score float,
+                                                 facepp_score float)
+        """)
+
+
     except Exception as ex:
         print(ex)
     try:

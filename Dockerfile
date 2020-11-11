@@ -52,8 +52,9 @@ COPY DeepStyle/models /models
 COPY DeepStyle/deep_style.py /deep_style.py
 COPY NSFW/nsfw_predict.py /nsfw_predict.py
 COPY NSFW/nsfw.299x299.h5 /nsfw.299x299.h5
-COPY NSFW/nsfw_server.py /nsfw_server.py
-COPY NSFW/templates /templates
+COPY imgsvr_templates /imgsvr_templates
+COPY imgsvr_static /imgsvr_static
+COPY image_service.py image_service.py
 ENV IMAGESERVICE_ROOT /
-CMD python3 nsfw_server.py
+CMD python3 image_service.py
  
