@@ -14,5 +14,6 @@
 !DeepMosaic
 !DeepStyle
 !NSFW
-!templates
+!imgsvr_templates
+!imgsvr_static
 !*.py

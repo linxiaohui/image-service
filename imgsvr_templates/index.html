@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>Clearmin template</title>
+        <title>image-services</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -21,7 +21,7 @@
                     <div id="cm-menu-scroller">
                         <ul class="cm-menu-items">
                             <li class="active"><a href="index.html" class="sf-house">主页</a></li>
-                            <li><a href="cartoon.html" class="sf-snow-fake">卡通化</a></li>
+                            <li><a href="cartoon.html" class="sf-snow-flake">卡通化</a></li>
                             <li class="cm-submenu">
                                 <a class="sf-profile"> 人物 <span class="caret"></span></a>
                                 <ul>
@@ -47,7 +47,7 @@
                                     <li><a href="roi_mosaic.html">ROI马赛克</a></li>
                                 </ul>
                             </li>
-                            <li><a href="roi_mark.html" class="sf-mark">区域标记</a></li>
+                            <li><a href="roi_mark.html" class="sf-map-marker">区域标记</a></li>
                         </ul>
                     </div>
                 </div>
@@ -93,152 +93,70 @@
             </div>
             <div class="container-fluid">
                 <div class="row cm-fix-height">
-                    <div class="col-sm-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <img src="assets/img/sass-less.png" alt="Less support" class="img-responsive">
-                                <br>
-                                <p>Clearmin ships with vanilla CSS, but its source code utilizes Less CSS preprocessor. Quickly get started with precompiled CSS or build on the source. Colors and sizes are easily customizable with less variables.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <img src="assets/img/devices.png" alt="Responsive across devices" class="img-responsive">
-                                <br>
-                                <p>Clearmin easily and efficiently scales your websites and applications with a single code base, from phones to tablets to desktops with CSS media queries. Swipe from left on phones to toggle main menu.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <img src="assets/img/components.png" alt="Components" class="img-responsive">
-                                <br>
-                                <p>With Bootstrap, you get extensive and beautiful documentation for common HTML elements, dozens of custom HTML and CSS components, and awesome jQuery plugins.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row cm-fix-height">
                     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="dashboard-sales.html" class="panel panel-default thumbnail cm-thumbnail">
+                        <a href="cartoon.html" class="panel panel-default thumbnail cm-thumbnail">
                             <div class="panel-body text-center">
                                 <span class="svg-48">
-                                    <img src="assets/img/sf/dashboard.svg" alt="dashboard">
+                                    <img src="assets/img/sf/snow-flake.svg" alt="now-flake">
                                 </span>
-                                <h4>Dashboard</h4> <small>C3.js charts to display some fancy pies.</small>
+                                <h4>卡通</h4> <small> 生成输入图片的卡通化版本 </small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="beauty_score.html" class="panel panel-default thumbnail cm-thumbnail">
+                            <div class="panel-body text-center">
+                                <span class="svg-48">
+                                    <img src="assets/img/sf/device-camera.svg" alt="device-camera">
+                                </span>
+                                <h4>AI颜值评分</h4> <small>使用深度学习模型对人脸图片进行“颜值”的评分</small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="cert_photo.html" class="panel panel-default thumbnail cm-thumbnail">
+                            <div class="panel-body text-center">
+                                <span class="svg-48">
+                                    <img src="assets/img/sf/user-id.svg" alt="user-id">
+                                </span>
+                                <h4>证件照</h4> <small> 更换证件照的背景颜色 </small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="style_transfer.html" class="panel panel-default thumbnail cm-thumbnail">
+                            <div class="panel-body text-center">
+                                <span class="svg-48">
+                                    <img src="assets/img/sf/file-picture.svg" alt="file-picture">
+                                </span>
+                                <h4>风格迁移</h4> <small>Put all you need on the top of your screen.</small>
 
                             </div>
                         </a>
                     </div>
                     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="notepad.html" class="panel panel-default thumbnail cm-thumbnail">
+                        <a href="mosaic_app.html" class="panel panel-default thumbnail cm-thumbnail">
                             <div class="panel-body text-center">
                                 <span class="svg-48">
-                                    <img src="assets/img/sf/notepad.svg" alt="notepad">
+                                    <img src="assets/img/sf/magnify-less.svg" alt="magnify-less">
                                 </span>
-                                <h4>Text editor</h4> <small>Summernote WYSIWYG Editor implementation.</small>
-
+                                <h4>马赛克</h4> <small>输入图片，选择区域，对选定的区域进行马赛克处理</small>
                             </div>
                         </a>
                     </div>
                     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="components-text.html" class="panel panel-default thumbnail cm-thumbnail">
+                        <a href="roi_mark.html" class="panel panel-default thumbnail cm-thumbnail">
                             <div class="panel-body text-center">
                                 <span class="svg-48">
-                                    <img src="assets/img/sf/brick.svg" alt="brick">
+                                    <img src="assets/img/sf/map-marker.svg" alt="map-marker">
                                 </span>
-                                <h4>Components</h4> <small>Bootstrap main classes.</small>
-
+                                <h4>区域检测</h4> <small>根据深度虚席预训练模型画出ROI区域</small>
                             </div>
                         </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="layouts-breadcrumb1.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/window-layout.svg" alt="window-layout">
-                                </span>
-                                <h4>Navbar layouts</h4> <small>Put all you need on the top of your screen.</small>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="ico-sf.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/cat.svg" alt="cat">
-                                </span>
-                                <h4>Icons</h4> <small>Semantic little pics.</small>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="login.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/lock-open.svg" alt="lock-open">
-                                </span>
-                                <h4>Login page</h4> <small>Have a look to the login page.</small>
-
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">Check our fancy colors</div>
-                    <div class="panel-body" id="demo-buttons">
-                        <p>Click buttons below to change navbar main color :</p>
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-primary" data-switch-color="primary">primary</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-success" data-switch-color="success">success</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-info" data-switch-color="info">info</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-warning" data-switch-color="warning">warning</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-danger" data-switch-color="danger">danger</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-gray" data-switch-color="gray">gray</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-yellow" data-switch-color="yellow">yellow</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-purple" data-switch-color="purple">purple</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-turquoise" data-switch-color="turquoise">turquoise</button>
-                                <br>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                                <button class="btn btn-block btn-midnight" data-switch-color="midnight">midnight</button>
-                                <br>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <footer class="cm-footer"><span class="pull-left">Connected as John Smith</span><span class="pull-right">&copy; PAOMEDIA SARL</span></footer>
+            <footer class="cm-footer"><span class="pull-left">image-service</span><span class="pull-right">&copy; 5190m.top</span></footer>
         </div>
         <script src="assets/js/lib/jquery.min.js"></script>
         <script src="assets/js/jquery.mousewheel.min.js"></script>
