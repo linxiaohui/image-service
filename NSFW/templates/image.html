@@ -14,8 +14,8 @@
 <div align="center">
 	<table border="0">
         <tr><td>图片</td><td><image src="/image/{{image_uuid}}"></image></td></tr>
-        {%  for k, v in scores[image_uuid] %}
-		<tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+        {%  for k in score %}
+		<tr><td>{{ k }}</td><td>{{ score[k] }}</td></tr>
         {% end %}
     </table>
 </div>

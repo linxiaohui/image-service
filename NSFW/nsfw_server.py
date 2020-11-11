@@ -20,7 +20,7 @@ import tornado.options
 import tornado.web
 import requests
 
-from nsfw_predict import nsfw_batch_predict
+from nsfw_predict import nsfw_predict
 
 class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self):
@@ -35,12 +35,14 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
             resp = requests.get(url)
             data = resp.content
             image_uuid = str(uuid.uuid4())
-            scores = nsfw_batch_predict([(image_uuid, data)], 'png')
+            scores = nsfw_predict(data, 'png')
             _conn.execute("INSERT INTO upload_images (uuid, file_name, image_data) VALUES (?,?,?)",
                           (image_uuid, url, data))
             _conn.commit()
-        # _conn.close()
-        self.render("image.html", image_uuid=image_uuid, scores=scores[0])
+        _conn.close()
+        for k in scores:
+            score=scores[k]
+        self.render("image.html", image_uuid=image_uuid, score=score)
 
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid):
