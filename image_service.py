@@ -185,6 +185,34 @@ class CertPhotoHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("cert_photo.html", image_uuid=image_uuid, cert_uuid=cert_uuid)
 
+from inference import face_cartoonization
+class FaceCartoonHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("face_cartoon.html", image_uuid=image_uuid)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("face_cartoon.html", image_uuid=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        _data = face_cartoonization(data)
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "FACE-CARTOON"))
+        _cursor.execute("INSERT INTO cartoon (image_uuid, image_cartoon) VALUES (?,?)",
+                         (image_uuid, _data))
+        _conn.commit()
+        self.render("face_cartoon.html", image_uuid=image_uuid)
+
 
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
@@ -222,7 +250,7 @@ class Application(tornado.web.Application):
             (r"/index.html/?(.*)", IndexHandler),
             (r"/beauty_score.html/?(.*)", AIBeautyScoreHandler),
             (r"/cartoon.html/?(.*)", CartoonHandler),
-            (r"/face_cartoon.html/?(.*)", AIBeautyScoreHandler),
+            (r"/face_cartoon.html/?(.*)", FaceCartoonHandler),
             (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
             (r"/fore_ground.html/?(.*)", AIBeautyScoreHandler),
