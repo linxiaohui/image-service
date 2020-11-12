@@ -102,7 +102,7 @@ class StyleTransferHandler(tornado.web.RequestHandler, ABC):
                 self.set_status(404)
             image_data = image_data[0]
             if style in ['monet','cezanne','vangogh','ukiyoe']:
-                _data = TRANSFER.style_transfer(data, style)
+                _data = TRANSFER.style_transfer(image_data, style)
             else:
                 _data = transfer_style(image_data, style)
             style_uuid = str(uuid.uuid4())
@@ -121,6 +121,8 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_data FROM  input_image WHERE image_uuid=?", (image_uuid,))
         elif image_type=='cartoon':
             _cursor.execute("SELECT image_cartoon FROM cartoon WHERE image_uuid=?", (image_uuid,))
+        elif image_type=='style':
+            _cursor.execute("SELECT image_style FROM style_transfer WHERE style_uuid=?",(image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:
@@ -145,14 +147,14 @@ class Application(tornado.web.Application):
             (r"/cartoon.html/?(.*)", CartoonHandler),
             (r"/face_cartoon.html/?(.*)", AIBeautyScoreHandler),
             (r"/face_sketch.html/?(.*)", AIBeautyScoreHandler),
-            (r"/style_transfer.html/?(.+)", StyleTransferHandler),
-            (r"/fore_ground.html/?(.+)", AIBeautyScoreHandler),
-            (r"/cert_photo.html/?(.+)", AIBeautyScoreHandler),
-            (r"/mosaic_app.html/?(.+)", AIBeautyScoreHandler),
-            (r"/nsfw_mosaic.html/?(.+)", AIBeautyScoreHandler),
-            (r"/roi_mosaic.html/?(.+)", AIBeautyScoreHandler),
-            (r"/nsfw.html/?(.+)", AIBeautyScoreHandler),
-            (r"/roi_mark.html/?(.+)", AIBeautyScoreHandler),
+            (r"/style_transfer.html/?(.*)", StyleTransferHandler),
+            (r"/fore_ground.html/?(.*)", AIBeautyScoreHandler),
+            (r"/cert_photo.html/?(.*)", AIBeautyScoreHandler),
+            (r"/mosaic_app.html/?(.*)", AIBeautyScoreHandler),
+            (r"/nsfw_mosaic.html/?(.*)", AIBeautyScoreHandler),
+            (r"/roi_mosaic.html/?(.*)", AIBeautyScoreHandler),
+            (r"/nsfw.html/?(.*)", AIBeautyScoreHandler),
+            (r"/roi_mark.html/?(.*)", AIBeautyScoreHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
         ]
