@@ -113,6 +113,35 @@ class StyleTransferHandler(tornado.web.RequestHandler, ABC):
             self.render("style_transfer.html", image_uuid=image_uuid, style=style, style_uuid=style_uuid)
 
 
+from face_sketch import Sketcher
+SKETCHER = Sketcher()
+class FaceSketchHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("face_sketch.html", image_uuid=image_uuid)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("face_sketch.html", image_uuid=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        _data = SKETCHER.face_sketch(data)[0]
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "SKETCH"))
+        _cursor.execute("INSERT INTO sketch (image_uuid, image_sketch) VALUES (?,?)",
+                         (image_uuid, _data))
+        _conn.commit()
+        self.render("face_sketch.html", image_uuid=image_uuid)
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
@@ -123,6 +152,8 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_cartoon FROM cartoon WHERE image_uuid=?", (image_uuid,))
         elif image_type=='style':
             _cursor.execute("SELECT image_style FROM style_transfer WHERE style_uuid=?",(image_uuid,))
+        elif image_type=='sketch':
+            _cursor.execute("SELECT image_sketch FROM sketch WHERE image_uuid=?",(image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:
@@ -146,7 +177,7 @@ class Application(tornado.web.Application):
             (r"/beauty_score.html/?(.*)", AIBeautyScoreHandler),
             (r"/cartoon.html/?(.*)", CartoonHandler),
             (r"/face_cartoon.html/?(.*)", AIBeautyScoreHandler),
-            (r"/face_sketch.html/?(.*)", AIBeautyScoreHandler),
+            (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
             (r"/fore_ground.html/?(.*)", AIBeautyScoreHandler),
             (r"/cert_photo.html/?(.*)", AIBeautyScoreHandler),
@@ -194,6 +225,9 @@ if __name__ == "__main__":
         """)
         conn.execute("""CREATE TABLE cartoon (image_uuid char(36), 
                                               image_cartoon BLOB)
+        """)
+        conn.execute("""CREATE TABLE sketch (image_uuid char(36), 
+                                             image_sketch BLOB)
         """)
         conn.execute("""CREATE TABLE style_transfer (image_uuid char(36),
                                                      style_uuid char(36),

@@ -15,7 +15,7 @@ RUN pip3 install --no-cache-dir scipy==1.5.4 opencv-python==4.4.0.46
 RUN pip3 install torch==1.6.0+cpu torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir keras==2.2.4 tensorflow==1.14
-RUN pip3 install --no-cache-dir --no-deps scikit-image==0.14.0
+RUN pip3 install --no-cache-dir scikit-image==0.14.0
 COPY U-2-Net/model /model
 COPY U-2-Net/u2net_rpc.py /u2net_rpc.py
 COPY U-2-Net/data_loader.py /data_loader.py
