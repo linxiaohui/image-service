@@ -64,7 +64,6 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
 from deep_style import DeepMosaic_Style
 TRANSFER = DeepMosaic_Style()
 from style_transfer import transfer_style
-
 class StyleTransferHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("style_transfer.html", image_uuid=None, style=None, style_uuid=None)
@@ -142,6 +141,51 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("face_sketch.html", image_uuid=image_uuid)
 
+from chg_bg import change_background
+class CertPhotoHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("cert_photo.html", image_uuid=None, cert_uuid=None)
+    def post(self, image_uuid=None):
+        bg_color = self.get_argument("bg_color", None)
+        if not bg_color:
+            file_metas = self.request.files.get('image_file', None)
+            file_url = self.get_argument("image_url", None)
+            if not file_metas and not file_url:
+                self.render("cert_photo.html", image_uuid=None, style_uuid=None)
+            if file_url:
+                resp = requests.get(file_url)
+                data = resp.content
+                filename = file_url
+            else:
+                for meta in file_metas:
+                    filename = meta['filename']
+                    data = meta['body']
+            image_uuid = str(uuid.uuid4())
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                            (image_uuid, filename, data, "CHANGE-BGCOLOR"))
+            _conn.commit()
+            _conn.close()
+            self.render("cert_photo.html", image_uuid=image_uuid, cert_uuid=None)
+        else:
+            image_uuid = self.get_argument("image_uuid", None)
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
+            image_data = _cursor.fetchone()
+            if image_data is None:
+                self.set_status(404)
+            image_data = image_data[0]
+            _data = change_background(image_data, bg_color)[0]
+            cert_uuid = str(uuid.uuid4())
+            _cursor.execute("INSERT INTO cert_photo (image_uuid, cert_uuid, bg_color, image_cert) VALUES (?,?,?,?)",
+                             (image_uuid, cert_uuid, bg_color, _data))
+            _conn.commit()
+            _conn.close()
+            self.render("cert_photo.html", image_uuid=image_uuid, cert_uuid=cert_uuid)
+
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
@@ -154,6 +198,8 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_style FROM style_transfer WHERE style_uuid=?",(image_uuid,))
         elif image_type=='sketch':
             _cursor.execute("SELECT image_sketch FROM sketch WHERE image_uuid=?",(image_uuid,))
+        elif image_type=='cert':
+            _cursor.execute("SELECT image_cert FROM cert_photo WHERE cert_uuid=?", (image_uuid, ))
         image = _cursor.fetchone()
         _conn.close()
         if image:
@@ -180,7 +226,7 @@ class Application(tornado.web.Application):
             (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
             (r"/fore_ground.html/?(.*)", AIBeautyScoreHandler),
-            (r"/cert_photo.html/?(.*)", AIBeautyScoreHandler),
+            (r"/cert_photo.html/?(.*)", CertPhotoHandler),
             (r"/mosaic_app.html/?(.*)", AIBeautyScoreHandler),
             (r"/nsfw_mosaic.html/?(.*)", AIBeautyScoreHandler),
             (r"/roi_mosaic.html/?(.*)", AIBeautyScoreHandler),
@@ -233,6 +279,11 @@ if __name__ == "__main__":
                                                      style_uuid char(36),
                                                      style TEXT,
                                                      image_style BLOB)
+        """)
+        conn.execute("""CREATE TABLE cert_photo (image_uuid char(36),
+                                                 cert_uuid char(36),
+                                                 bg_color TEXT,
+                                                 image_cert BLOB)
         """)
     except Exception as ex:
         print(ex)
