@@ -20,6 +20,13 @@ import tornado.options
 import tornado.web
 import requests
 
+
+def get_baidu_score(data):
+    return 0
+
+def get_face_plus_score(data):
+    return 0
+
 def get_db_conn():
     _conn = sqlite3.connect("/db/image.db")
     return _conn
@@ -28,9 +35,49 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self, params=None):
         self.render("index.html")
 
+from beauty_predict import beauty_predict
+from face_decet_rpc import FaceDetector
+FACE_DETECTOR = FaceDetector()
+from face_rank import FaceScorer
+FACE_SCORER = FaceScorer()
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
-        self.render("beauty_score.html")
+        self.render("beauty_score.html", image_uuid=None, params=None)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("beauty_score.html", image_uuid=None, params=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        image_landmark, face_rank = FACE_SCORER.face_score(data)
+        scores = beauty_predict(data)
+        if len(scores)>0:
+            bp_score = scores[0]
+        else:
+            bp_score = None
+        image_rect = FACE_DETECTOR.face_mark(data)
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        baidu_score = get_baidu_score(data)
+        facepp_score = get_face_plus_score(data)
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "BEAUTY-SCORE"))
+        _cursor.execute("""INSERT INTO beauty_score 
+                           (image_uuid, image_landmark, image_rect, face_rank, beauty_predict, baidu_score, facepp_score)
+                           VALUES (?,?,?,?,?,?,?)""",
+                           (image_uuid, image_landmark, image_rect, face_rank, bp_score, baidu_score, facepp_score))
+        _conn.commit()
+        _conn.close()
+        self.render("beauty_score.html", image_uuid=image_uuid, 
+                    params=(face_rank, bp_score, baidu_score, facepp_score))
 
 from cartoonize import Cartoonize
 CARTOONER = Cartoonize()
@@ -257,6 +304,10 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_cert FROM cert_photo WHERE cert_uuid=?", (image_uuid, ))
         elif image_type=='nsfw_mosaic':
             _cursor.execute("SELECT image_mosaic FROM nsfw_mosaic WHERE image_uuid=?", (image_uuid,))
+        elif image_type=='land_mark':
+            _cursor.execute("SELECT image_landmark FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+        elif image_type=='face_box':
+            _cursor.execute("SELECT image_rect FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:
@@ -319,12 +370,12 @@ if __name__ == "__main__":
                                                   insert_time datetime default current_timestamp)
         """)
         conn.execute("""CREATE TABLE beauty_score (image_uuid char(36), 
-                                                  image_landmark BLOB, 
-                                                  image_rect BLOB,
-                                                  face_rank float,
-                                                  beauty_predict float,
-                                                  baidu_score float,
-                                                  facepp_score float)
+                                                   image_landmark BLOB, 
+                                                   image_rect BLOB,
+                                                   face_rank float,
+                                                   beauty_predict float,
+                                                   baidu_score float,
+                                                   facepp_score float)
         """)
         conn.execute("""CREATE TABLE cartoon (image_uuid char(36), 
                                               image_cartoon BLOB)
