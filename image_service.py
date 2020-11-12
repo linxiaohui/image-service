@@ -25,19 +25,49 @@ def get_db_conn():
     return _conn
 
 class IndexHandler(tornado.web.RequestHandler, ABC):
-    def get(self):
+    def get(self, params=None):
         self.render("index.html")
 
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
-    def get(self, image_uuid):
+    def get(self, image_uuid=None):
         self.render("beauty_score.html")
-    
 
-class ImageForegroundHandler(tornado.web.RequestHandler, ABC):
-    def get(self, gen_uuid):
-        _conn = sqlite3.connect("image.db")
+from cartoonize import Cartoonize
+CARTOONER = Cartoonize()
+class CartoonHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("cartoon.html", image_uuid=image_uuid)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("url", None)
+        if not file_metas and not file_url:
+            self.render("cartoon.html")
+        if file_url:
+            resp = requests.get(url)
+            data = resp.content
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        _data = CARTOONER.cartoonization(data)
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
         _cursor = _conn.cursor()
-        _cursor.execute("SELECT image_fg FROM  upload_images WHERE uuid=?", (gen_uuid,))
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "CARTOON"))
+        _cursor.execute("INSERT INTO cartoon (image_uuid, image_cartoon) VALUES (?,?)",
+                         (image_uuid, _data))
+        _conn.commit()
+        self.render("cartoon.html", image_uuid=image_uuid)
+
+class ImageHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_type, image_uuid):
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        if image_type=='input':
+            _cursor.execute("SELECT image_data FROM  input_image WHERE image_uuid=?", (image_uuid,))
+        elif image_type=='cartoon':
+            _cursor.execute("SELECT image_cartoon FROM cartoon WHERE image_uuid=?", (image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:
@@ -57,19 +87,20 @@ class Application(tornado.web.Application):
         )
         handlers = [
             (r"/", IndexHandler),
-            (r"/beauty_score/?(.+)", AIBeautyScoreHandler),
-            (r"/cartoon/?(.+)", AIBeautyScoreHandler),
-            (r"/face_cartoon/?(.+)", AIBeautyScoreHandler),
-            (r"/face_sketch/?(.+)", AIBeautyScoreHandler),
-            (r"/style_transfer/?(.+)", AIBeautyScoreHandler),
-            (r"/fore_ground/?(.+)", AIBeautyScoreHandler),
-            (r"/cert_photo/?(.+)", AIBeautyScoreHandler),
-            (r"/mosaic_app/?(.+)", AIBeautyScoreHandler),
-            (r"/nsfw_mosaic/?(.+)", AIBeautyScoreHandler),
-            (r"/roi_mosaic/?(.+)", AIBeautyScoreHandler),
-            (r"/nsfw/?(.+)", AIBeautyScoreHandler),
-            (r"/roi_mark/?(.+)", AIBeautyScoreHandler),
-            (r"/image_fg/(.+)", ImageForegroundHandler),
+            (r"/index.html/?(.*)", IndexHandler),
+            (r"/beauty_score.html/?(.*)", AIBeautyScoreHandler),
+            (r"/cartoon.html/?(.*)", CartoonHandler),
+            (r"/face_cartoon.html/?(.*)", AIBeautyScoreHandler),
+            (r"/face_sketch.html/?(.*)", AIBeautyScoreHandler),
+            (r"/style_transfer.html/?(.+)", AIBeautyScoreHandler),
+            (r"/fore_ground.html/?(.+)", AIBeautyScoreHandler),
+            (r"/cert_photo.html/?(.+)", AIBeautyScoreHandler),
+            (r"/mosaic_app.html/?(.+)", AIBeautyScoreHandler),
+            (r"/nsfw_mosaic.html/?(.+)", AIBeautyScoreHandler),
+            (r"/roi_mosaic.html/?(.+)", AIBeautyScoreHandler),
+            (r"/nsfw.html/?(.+)", AIBeautyScoreHandler),
+            (r"/roi_mark.html/?(.+)", AIBeautyScoreHandler),
+            (r"/image/(.+)/(.+)", ImageHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
         ]
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -86,24 +117,29 @@ def main():
 
 if __name__ == "__main__":
     try:
+        os.mkdir("/db")
+    except:
+        pass
+    try:
         conn = get_db_conn()
         conn.execute("""CREATE TABLE input_image (image_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                                                  image_uuid TEXT, 
+                                                  image_uuid char(36), 
                                                   file_name TEXT,
                                                   image_data BLOB,
                                                   params TEXT,
                                                   insert_time datetime default current_timestamp)
         """)
-        conn.create("""CREATE TABLE beauty_score(image_id INT,
-                                                 image_landmark BLOB, 
-                                                 image_rect BLOB,
-                                                 face_rank float,
-                                                 beauty_predict float,
-                                                 baidu_score float,
-                                                 facepp_score float)
+        conn.execute("""CREATE TABLE beauty_score (image_uuid char(36), 
+                                                  image_landmark BLOB, 
+                                                  image_rect BLOB,
+                                                  face_rank float,
+                                                  beauty_predict float,
+                                                  baidu_score float,
+                                                  facepp_score float)
         """)
-
-
+        conn.execute("""CREATE TABLE cartoon (image_uuid char(36), 
+                                              image_cartoon BLOB)
+        """)
     except Exception as ex:
         print(ex)
     try:

@@ -56,5 +56,5 @@ COPY imgsvr_templates /imgsvr_templates
 COPY imgsvr_static /imgsvr_static
 COPY image_service.py image_service.py
 ENV IMAGESERVICE_ROOT /
-CMD python3 image_service.py
+CMD python3 -u image_service.py
  
