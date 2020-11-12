@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>卡通化</title>
+        <title>风格迁移</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -57,7 +57,7 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>Cartoon</h1> 
+                    <h1>Style Transfer</h1> 
                     <form id="cm-search" action="index.html" method="get">
                         <input type="search" name="q" autocomplete="off" placeholder="Search...">
                     </form>
@@ -80,9 +80,8 @@
         </header>
         <div id="global">
             <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">图片卡通化</h2> 
-                <p> 基于 <a href="https://github.com/SystemErrorWang/White-box-Cartoonization">White-box-Cartoonization</a>
-                    实现根据输入图片生成卡通化的图片</p>
+                <h2 style="margin-top:0;">风格迁移</h2> 
+                <p> 基于深度学习模型的风格迁移 </p>
             </div>
             <div class="container-fluid">
                 {% if image_uuid %}
@@ -91,11 +90,49 @@
                         <img src="/image/input/{{image_uuid}}">
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <img src="/image/cartoon/{{image_uuid}}">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                            <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
+                            <div class="form-group" style="margin-bottom:0">
+                                <div class="col-sm-offset-2 col-sm-10 text-right">
+                                    <select name="style">
+                                        <option value="candy">candy</option>
+                                        <option value="feathers">feathers</option>
+                                        <option value="la_muse">la_muse</option>
+                                        <option value="mosaic">mosaic</option>
+                                        <option value="the_scream">the_scream</option>
+                                        <option value="udnie">udnie</option>
+                                        <option value="composition_vii">composition_vii</option>
+                                        <option value="la_muse2">la_muse</option>
+                                        <option value="starry_night">starry_night</option>
+                                        <option value="the_wave">the_wave</option>
+                                        <option value="monet" selected="selected">monet</option>
+                                        <option value="cezanne">cezanne</option>
+                                        <option value="vangogh">vangogh</option>
+                                        <option value="ukiyoe">ukiyoe</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom:0">
+                                <div class="col-sm-offset-2 col-sm-10 text-right">
+                                    <button type="submit" class="btn btn-primary">提交</button>
+                                </div>
+                            </div>                    
+                        </form>
                     </div>
                 </div>
+
+                {% if style %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <img src="/image/style/{{style_uuid}}">
+                    </div>
+                </div>
+                {% end %}
+
+
                 {% else %}
                 <div class="panel panel-default">
                     <div class="panel-body">
