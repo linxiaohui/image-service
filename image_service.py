@@ -61,6 +61,58 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("cartoon.html", image_uuid=image_uuid)
 
+from deep_style import DeepMosaic_Style
+TRANSFER = DeepMosaic_Style()
+from style_transfer import transfer_style
+
+class StyleTransferHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("style_transfer.html", image_uuid=None, style=None, style_uuid=None)
+    def post(self, image_uuid=None):
+        style = self.get_argument("style", None)
+        if not style:
+            # 上传图片，没有选择风格
+            file_metas = self.request.files.get('image_file', None)
+            file_url = self.get_argument("image_url", None)
+            if not file_metas and not file_url:
+                self.render("style_transfer.html", image_uuid=None, style_uuid=None)
+            if file_url:
+                resp = requests.get(file_url)
+                data = resp.content
+                filename = file_url
+            else:
+                for meta in file_metas:
+                    filename = meta['filename']
+                    data = meta['body']
+            image_uuid = str(uuid.uuid4())
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                            (image_uuid, filename, data, "STYLE-TRANSFER"))
+            _conn.commit()
+            _conn.close()
+            self.render("style_transfer.html", image_uuid=image_uuid, style=None, style_uuid=None)
+        else:
+            image_uuid = self.get_argument("image_uuid", None)
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
+            image_data = _cursor.fetchone()
+            if image_data is None:
+                self.set_status(404)
+            image_data = image_data[0]
+            if style in ['monet','cezanne','vangogh','ukiyoe']:
+                _data = TRANSFER.style_transfer(data, style)
+            else:
+                _data = transfer_style(image_data, style)
+            style_uuid = str(uuid.uuid4())
+            _cursor.execute("INSERT INTO style_transfer (image_uuid, style_uuid, style, image_style) VALUES (?,?,?,?)",
+                             (image_uuid, style_uuid, style, _data))
+            _conn.commit()
+            _conn.close()
+            self.render("style_transfer.html", image_uuid=image_uuid, style=style, style_uuid=style_uuid)
+
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
@@ -93,7 +145,7 @@ class Application(tornado.web.Application):
             (r"/cartoon.html/?(.*)", CartoonHandler),
             (r"/face_cartoon.html/?(.*)", AIBeautyScoreHandler),
             (r"/face_sketch.html/?(.*)", AIBeautyScoreHandler),
-            (r"/style_transfer.html/?(.+)", AIBeautyScoreHandler),
+            (r"/style_transfer.html/?(.+)", StyleTransferHandler),
             (r"/fore_ground.html/?(.+)", AIBeautyScoreHandler),
             (r"/cert_photo.html/?(.+)", AIBeautyScoreHandler),
             (r"/mosaic_app.html/?(.+)", AIBeautyScoreHandler),
@@ -140,6 +192,11 @@ if __name__ == "__main__":
         """)
         conn.execute("""CREATE TABLE cartoon (image_uuid char(36), 
                                               image_cartoon BLOB)
+        """)
+        conn.execute("""CREATE TABLE style_transfer (image_uuid char(36),
+                                                     style_uuid char(36),
+                                                     style TEXT,
+                                                     image_style BLOB)
         """)
     except Exception as ex:
         print(ex)
