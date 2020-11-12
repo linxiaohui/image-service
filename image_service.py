@@ -39,12 +39,13 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
         self.render("cartoon.html", image_uuid=image_uuid)
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("url", None)
+        file_url = self.get_argument("image_url", None)
         if not file_metas and not file_url:
-            self.render("cartoon.html")
+            self.render("cartoon.html", image_uuid=None)
         if file_url:
-            resp = requests.get(url)
+            resp = requests.get(file_url)
             data = resp.content
+            filename = file_url
         else:
             for meta in file_metas:
                 filename = meta['filename']
