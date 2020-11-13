@@ -366,7 +366,7 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_landmark FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'face_box':
             _cursor.execute("SELECT image_rect FROM beauty_score WHERE image_uuid=?", (image_uuid,))
-        elif image_uuid == 'fore_ground':
+        elif image_type == 'fore_ground':
             _cursor.execute("SELECT image_fg FROM fore_ground WHERE image_uuid=?", (image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
