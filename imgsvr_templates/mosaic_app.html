@@ -9,6 +9,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
         <title>手工选择Mosaic区域</title>
+        {% if image_uuid %}
         <script language = "javascript">
             document.onmousedown = function(e) {
                 alert(e.clientX);
@@ -22,7 +23,7 @@
 
             }
         </script>
-
+        {% end %}
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
