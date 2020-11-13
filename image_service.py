@@ -394,6 +394,54 @@ class ROIMarkHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("roi_mark.html", image_uuid=image_uuid, roi_uuid=roi_uuid)
 
+from deep_mosaic import DeepMosaics_Mosaic
+ROI_MOSAICOR = DeepMosaics_Mosaic()
+class ROIMosaicHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("roi_mosaic.html", image_uuid=None, roi_uuid=None)
+    def post(self, image_uuid=None):
+        roi_type = self.get_argument("roi_type", None)
+        if not roi_type:
+            file_metas = self.request.files.get('image_file', None)
+            file_url = self.get_argument("image_url", None)
+            if not file_metas and not file_url:
+                self.render("roi_mosaic.html", image_uuid=None, roi_uuid=None)
+            if file_url:
+                resp = requests.get(file_url)
+                data = resp.content
+                filename = file_url
+            else:
+                for meta in file_metas:
+                    filename = meta['filename']
+                    data = meta['body']
+            image_uuid = str(uuid.uuid4())
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                            (image_uuid, filename, data, "ROI-MARK"))
+            _conn.commit()
+            _conn.close()
+            self.render("roi_mosaic.html", image_uuid=image_uuid, roi_uuid=None)
+        else:
+            image_uuid = self.get_argument("image_uuid", None)
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
+            image_data = _cursor.fetchone()
+            if image_data is None:
+                self.set_status(404)
+            image_data = image_data[0]
+            if roi_type == 'F':
+                roi_type = 'face'
+            _data = ROI_MOSAICOR.deep_mosaic(image_data, roi_type)
+            roi_uuid = str(uuid.uuid4())
+            _cursor.execute("INSERT INTO roi_mark (image_uuid, roi_uuid, roi_type, image_roi) VALUES (?,?,?,?)",
+                            (image_uuid, roi_uuid, roi_type, _data))
+            _conn.commit()
+            _conn.close()
+            self.render("roi_mosaic.html", image_uuid=image_uuid, roi_uuid=roi_uuid)
+
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
@@ -447,7 +495,7 @@ class Application(tornado.web.Application):
             (r"/cert_photo.html/?(.*)", CertPhotoHandler),
             (r"/mosaic_app.html/?(.*)", AIBeautyScoreHandler),
             (r"/nsfw_mosaic.html/?(.*)", NSFWMosiacHandler),
-            (r"/roi_mosaic.html/?(.*)", AIBeautyScoreHandler),
+            (r"/roi_mosaic.html/?(.*)", ROIMosaicHandler),
             (r"/nsfw.html/?(.*)", NSFWScoreHandler),
             (r"/roi_mark.html/?(.*)", ROIMarkHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
@@ -525,5 +573,3 @@ if __name__ == "__main__":
     except socket.error:
         print(socket.gethostbyname_ex(socket.gethostname()))
     main()
-
-

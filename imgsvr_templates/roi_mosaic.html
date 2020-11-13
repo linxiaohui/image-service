@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>风格迁移</title>
+        <title>ROI打码</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -57,7 +57,7 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>Style Transfer</h1> 
+                    <h1>ROI Mosaic</h1> 
                     <form id="cm-search" action="index.html" method="get">
                         <input type="search" name="q" autocomplete="off" placeholder="Search...">
                     </form>
@@ -80,8 +80,8 @@
         </header>
         <div id="global">
             <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">风格迁移</h2> 
-                <p> 基于深度学习模型的风格迁移 </p>
+                <h2 style="margin-top:0;"> ROI </h2>
+                <p> 根据选择的ROI(Region of Interested)类型，对相应的区域进行马赛华化 </p>
             </div>
             <div class="container-fluid">
                 {% if image_uuid %}
@@ -97,20 +97,8 @@
                             <div class="form-group" style="margin-bottom:0">
                                 <div class="col-sm-offset-2 col-sm-10 text-right">
                                     <select name="style">
-                                        <option value="candy">candy</option>
-                                        <option value="feathers">feathers</option>
-                                        <option value="la_muse">la_muse</option>
-                                        <option value="mosaic">mosaic</option>
-                                        <option value="the_scream">the_scream</option>
-                                        <option value="udnie">udnie</option>
-                                        <option value="composition_vii">composition_vii</option>
-                                        <option value="la_muse2">la_muse</option>
-                                        <option value="starry_night">starry_night</option>
-                                        <option value="the_wave">the_wave</option>
-                                        <option value="monet" selected="selected">monet</option>
-                                        <option value="cezanne">cezanne</option>
-                                        <option value="vangogh">vangogh</option>
-                                        <option value="ukiyoe">ukiyoe</option>
+                                        <option value="X">X</option>
+                                        <option value="F">F</option>
                                     </select>
                                 </div>
                             </div>
@@ -123,11 +111,10 @@
                         </form>
                     </div>
                 </div>
-
-                {% if style %}
+                {% if roi_uuid %}
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <img src="/image/style/{{style_uuid}}">
+                        <img src="/image/roi_mark/{{roi_uuid}}">
                     </div>
                 </div>
                 {% end %}
