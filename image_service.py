@@ -317,6 +317,35 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("fore_ground.html", image_uuid=image_uuid)
 
+from nsfw_predict import nsfw_predict
+class NSFWScoreHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("nsfw_score.html", image_uuid=None, score=None)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("nsfw_score.html", image_uuid=None, score=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        scores = nsfw_predict(data)
+        for k in scores:
+            score = scores[k]
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "NSFW-SCORE"))
+        _conn.commit()
+        score = sorted(score.items(), key=lambda x:x[1], reverse=True)
+        self.render("nsfw_score.html", image_uuid=image_uuid, score=score)
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
@@ -369,7 +398,7 @@ class Application(tornado.web.Application):
             (r"/mosaic_app.html/?(.*)", AIBeautyScoreHandler),
             (r"/nsfw_mosaic.html/?(.*)", NSFWMosiacHandler),
             (r"/roi_mosaic.html/?(.*)", AIBeautyScoreHandler),
-            (r"/nsfw.html/?(.*)", AIBeautyScoreHandler),
+            (r"/nsfw.html/?(.*)", NSFWScoreHandler),
             (r"/roi_mark.html/?(.*)", AIBeautyScoreHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
