@@ -441,6 +441,31 @@ class ROIMosaicHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("roi_mosaic.html", image_uuid=image_uuid, roi_uuid=roi_uuid)
 
+from mosaic_utils import domosaic
+class MosaicAppHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("mosaic_app.html", image_uuid=None)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("mosaic_app.html", image_uuid=None, roi_uuid=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "MOSAIC-APP"))
+        _conn.commit()
+        _conn.close()
+        self.render("mosaic_app.html", image_uuid=image_uuid)
 
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
@@ -473,6 +498,22 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
         else:
             self.set_status(404)
 
+class ImageMosaicHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid, region):
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("SELECT image_mosaic FROM mosaic_app WHERE mosaic_uuid=?", (image_uuid,))
+        image = _cursor.fetchone()
+        if image:
+            image_data = image[0]
+            left, top, height, width = [int(_) for _ in region.split("px")[0:4]]
+            _data = domosaic(image_data, (left, top, width, height))
+            _cursor.execute("UPDATE mosaic_app SET image_mosaic=? WHERE mosaic_uuid=?", (_data, image_uuid))
+            _conn.close()
+            self.write(_data)
+        else:
+            _conn.close()
+            self.set_status(404)
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -493,12 +534,13 @@ class Application(tornado.web.Application):
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
             (r"/fore_ground.html/?(.*)", ForeGroundHandler),
             (r"/cert_photo.html/?(.*)", CertPhotoHandler),
-            (r"/mosaic_app.html/?(.*)", AIBeautyScoreHandler),
+            (r"/mosaic_app.html/?(.*)", MosaicAppHandler),
             (r"/nsfw_mosaic.html/?(.*)", NSFWMosiacHandler),
             (r"/roi_mosaic.html/?(.*)", ROIMosaicHandler),
             (r"/nsfw.html/?(.*)", NSFWScoreHandler),
             (r"/roi_mark.html/?(.*)", ROIMarkHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
+            (r"/mosaic/(.+)/(.+)", ImageMosaicHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
         ]
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -561,6 +603,10 @@ if __name__ == "__main__":
                                                roi_uuid char(36),
                                                roi_type TEXT,
                                                image_roi BLOB)
+        """)
+        conn.execute("""CREATE TABLE mosaic_app (image_uuid char(36),
+                                                 mosaic_uuid char(36),
+                                                 image_mosaic BLOB)
         """)
     except Exception as ex:
         print(ex)
