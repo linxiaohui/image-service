@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>卡通化</title>
+        <title>AI抠图</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -57,7 +57,7 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>Cartoon</h1> 
+                    <h1>AI抠图</h1>
                     <form id="cm-search" action="index.html" method="get">
                         <input type="search" name="q" autocomplete="off" placeholder="Search...">
                     </form>
@@ -80,9 +80,9 @@
         </header>
         <div id="global">
             <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">图片卡通化</h2> 
-                <p> 基于 <a href="https://github.com/SystemErrorWang/White-box-Cartoonization">White-box-Cartoonization</a>
-                    实现根据输入图片生成卡通化的图片</p>
+                <h2 style="margin-top:0;">AI抠图</h2>
+                <p> 基于 <a href="https://github.com/NathanUA/U-2-Net">U-2-Net</a>
+                    实现的AI智能抠图</p>
             </div>
             <div class="container-fluid">
                 {% if image_uuid %}
@@ -93,7 +93,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <img src="/image/cartoon/{{image_uuid}}">
+                        <img src="/image/fore_ground/{{image_uuid}}">
                     </div>
                 </div>
                 {% else %}

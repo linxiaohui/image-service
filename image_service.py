@@ -288,26 +288,57 @@ class NSFWMosiacHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("nsfw_mosaic.html", image_uuid=image_uuid)
 
+from u2net_rpc import U2NetCutOut
+FOREGROUND_CUTTER = U2NetCutOut()
+class ForeGroundHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("fore_ground.html", image_uuid=image_uuid)
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("fore_ground.html", image_uuid=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        _data = FOREGROUND_CUTTER.cutout(data)[0]
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "FORE-GROUND"))
+        _cursor.execute("INSERT INTO fore_ground (image_uuid, image_fg) VALUES (?,?)",
+                        (image_uuid, _data))
+        _conn.commit()
+        self.render("fore_ground.html", image_uuid=image_uuid)
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
         _cursor = _conn.cursor()
-        if image_type=='input':
+        if image_type == 'input':
             _cursor.execute("SELECT image_data FROM  input_image WHERE image_uuid=?", (image_uuid,))
-        elif image_type=='cartoon':
+        elif image_type == 'cartoon':
             _cursor.execute("SELECT image_cartoon FROM cartoon WHERE image_uuid=?", (image_uuid,))
-        elif image_type=='style':
+        elif image_type == 'style':
             _cursor.execute("SELECT image_style FROM style_transfer WHERE style_uuid=?",(image_uuid,))
-        elif image_type=='sketch':
+        elif image_type == 'sketch':
             _cursor.execute("SELECT image_sketch FROM sketch WHERE image_uuid=?",(image_uuid,))
-        elif image_type=='cert':
+        elif image_type == 'cert':
             _cursor.execute("SELECT image_cert FROM cert_photo WHERE cert_uuid=?", (image_uuid, ))
-        elif image_type=='nsfw_mosaic':
+        elif image_type == 'nsfw_mosaic':
             _cursor.execute("SELECT image_mosaic FROM nsfw_mosaic WHERE image_uuid=?", (image_uuid,))
-        elif image_type=='land_mark':
+        elif image_type == 'land_mark':
             _cursor.execute("SELECT image_landmark FROM beauty_score WHERE image_uuid=?", (image_uuid,))
-        elif image_type=='face_box':
+        elif image_type == 'face_box':
             _cursor.execute("SELECT image_rect FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+        elif image_uuid == 'fore_ground':
+            _cursor.execute("SELECT image_fg FROM fore_ground WHERE image_uuid=?", (image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:
@@ -333,7 +364,7 @@ class Application(tornado.web.Application):
             (r"/face_cartoon.html/?(.*)", FaceCartoonHandler),
             (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
-            (r"/fore_ground.html/?(.*)", AIBeautyScoreHandler),
+            (r"/fore_ground.html/?(.*)", ForeGroundHandler),
             (r"/cert_photo.html/?(.*)", CertPhotoHandler),
             (r"/mosaic_app.html/?(.*)", AIBeautyScoreHandler),
             (r"/nsfw_mosaic.html/?(.*)", NSFWMosiacHandler),
@@ -395,6 +426,9 @@ if __name__ == "__main__":
         """)
         conn.execute("""CREATE TABLE nsfw_mosaic (image_uuid char(36),
                                                   image_mosaic BLOB)
+        """)
+        conn.execute("""CREATE TABLE fore_ground (image_uuid char(36), 
+                                                  image_fg BLOB)
         """)
     except Exception as ex:
         print(ex)
