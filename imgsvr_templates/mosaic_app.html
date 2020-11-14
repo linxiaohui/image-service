@@ -10,17 +10,77 @@
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
         <title>手工选择Mosaic区域</title>
         {% if image_uuid %}
+        <style type="text/css">
+            body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,fieldset,legend,button,input,textarea,th,td{margin:0;padding:0}
+            html{color:#000;overflow-y:scoll;overflow:-moz-scrollbars-vertical}
+            .div_css{position:absolute; border:1px dashed blue; width:0px; height:0px;left:0px; top:0px; overflow:hidden;}
+            .retc_css{position:absolute; border:1px solid #CCCCCC; overflow:hidden; background:#EFEFEF}
+        </style>
         <script language = "javascript">
+            var select_roi_id = "mosaic_app";
+            var select_index = 0;
+            var startX = 0, startY = 0;
+            var flag = false;
+            var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
             document.onmousedown = function(e) {
-                alert(e.clientX);
-                alert(e.clientY);
+                flag = true;
+                try{
+                    var evt = window.event || e;
+                    var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                    var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                    startX = evt.clientX + scrollLeft;
+                    startY = evt.clientY + scrollTop;
+                    select_index++;
+                    var div = document.createElement("div");
+                    div.id = select_roi_id + select_index;
+                    div.className = "div_css";
+                    div.style.marginLeft = startX + "px";
+                    div.style.marginTop = startY + "px";
+                    document.body.appendChild(div);
+                }catch(e){
+                    alert(e);
+                }
+                console.log(e.offsetX);
+                console.log(e.offsetY);
             }
             document.onmouseup = function(e) {
-                alert(e.clientX);
-                alert(e.clientY);
+                console.log(e.offsetX);
+                console.log(e.offsetY);
+                flag = false;
+                try{
+                    document.body.removeChild($(select_roi_id + select_index));
+                    var div = document.createElement("div");
+                    div.className = "retc_css";
+                    div.style.marginLeft = retcLeft;
+                    div.style.marginTop = retcTop;
+                    div.style.width = retcWidth;
+                    div.style.height = retcHeight;
+                    document.body.appendChild(div);
+                }catch(e){
+                    throw(e);
+                }
             }
             document.onmousemove = function(e) {
-
+                if(flag){
+                    try{
+                        var evt = window.event || e;
+                        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                        retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+                        retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+                        retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+                        retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+                        $(select_roi_id + select_index).style.marginLeft = retcLeft;
+                        $(select_roi_id + select_index).style.marginTop = retcTop;
+                        $(select_roi_id + select_index).style.width = retcWidth;
+                        $(select_roi_id + select_index).style.height = retcHeight;
+                    }catch(e){
+                        console.warn(e);
+                    }
+                }
+            }
+            var $ = function(id){
+                return document.getElementById(id);
             }
         </script>
         {% end %}
@@ -107,7 +167,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <img id="{{ image_uuid }}" src="/image/mosaic/{{image_uuid}}">
+                        <img id="{{ image_uuid }}" src="/mosaic/{{image_uuid}}">
                     </div>
                 </div>
                 {% else %}
