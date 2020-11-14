@@ -48,7 +48,7 @@
                 console.log(e.offsetY);
                 flag = false;
                 try{
-                    document.body.removeChild($(select_roi_id + select_index));
+                    document.body.removeChild(document.getElementById(select_roi_id + select_index));
                     var div = document.createElement("div");
                     div.className = "retc_css";
                     div.style.marginLeft = retcLeft;
@@ -70,17 +70,14 @@
                         retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
                         retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
                         retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
-                        $(select_roi_id + select_index).style.marginLeft = retcLeft;
-                        $(select_roi_id + select_index).style.marginTop = retcTop;
-                        $(select_roi_id + select_index).style.width = retcWidth;
-                        $(select_roi_id + select_index).style.height = retcHeight;
+                        document.getElementById(select_roi_id + select_index).style.marginLeft = retcLeft;
+                        document.getElementById(select_roi_id + select_index).style.marginTop = retcTop;
+                        document.getElementById(select_roi_id + select_index).style.width = retcWidth;
+                        document.getElementById(select_roi_id + select_index).style.height = retcHeight;
                     }catch(e){
                         console.warn(e);
                     }
                 }
-            }
-            var $ = function(id){
-                return document.getElementById(id);
             }
         </script>
         {% end %}
