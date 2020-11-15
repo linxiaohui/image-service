@@ -19,6 +19,11 @@ def domosaic(image_data, region, pixsize=5):
     image_type = infer_image_type(image_data[:20])
     (left, upper, width, hight) = region
     im = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+    im_height, im_width = im.shape[:2]
+    if upper+hight > im_height:
+        hight = im_height-upper
+    if left+width > im_width:
+        width = im_width - left
     roi = im[upper:upper+hight, left:left+width]
     xstep = width//pixsize
     ystep = hight//pixsize

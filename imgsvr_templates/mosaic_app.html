@@ -24,6 +24,14 @@
             var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
             var select_left = 0, select_top = 0, select_right =0, select_down = 0;
             document.onmousedown = function(e) {
+                if (flag) {
+                    try {
+                        document.body.removeChild(document.getElementById(select_roi_id + select_index));
+                    }
+                    catch(e){
+                        console.warn(e);
+                    }
+                }
                 flag = true;
                 try{
                     var evt = window.event || e;
@@ -41,19 +49,22 @@
                 }catch(e){
                     alert(e);
                 }
+                console.log("onmousedown")
                 console.log(e.offsetX);
                 console.log(e.offsetY);
-                select_left = e.offsetX+"px";
-                select_top = e.offsetY+"px";
+                select_left = e.offsetX;
+                select_top = e.offsetY;
             }
             document.onmouseup = function(e) {
+                console.log("onmouseup");
+                select_right = e.offsetX;
+                select_down = e.offsetY;
                 console.log(e.offsetX);
                 console.log(e.offsetY);
                 flag = false;
-                select_right = e.offsetX+"px";
-                select_down = e.offsetY+"px";
-                try{
+                try {
                     document.body.removeChild(document.getElementById(select_roi_id + select_index));
+                    /*
                     var div = document.createElement("div");
                     div.className = "retc_css";
                     div.style.marginLeft = retcLeft;
@@ -61,10 +72,18 @@
                     div.style.width = retcWidth;
                     div.style.height = retcHeight;
                     document.body.appendChild(div);
-                }catch(e){
+                    */
+                }
+                catch(e) {
                     throw(e);
                 }
-                document.getElementById("{{image_uuid}}").src="/mosaic/{{image_uuid}}/"+select_left+select_top+select_right+select_down;
+                if(select_right > select_left &&  select_down> select_top) {
+                    select_right = select_right+"px";
+                    select_down = select_down+"px";
+                    select_left = select_left+"px";
+                    select_top = select_top+"px";               
+                    document.getElementById("{{image_uuid}}").src="/mosaic/{{image_uuid}}/"+select_left+select_top+select_right+select_down;
+                }
             }
             document.onmousemove = function(e) {
                 if(flag){
