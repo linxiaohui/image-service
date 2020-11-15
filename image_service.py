@@ -463,6 +463,8 @@ class MosaicAppHandler(tornado.web.RequestHandler, ABC):
         _cursor = _conn.cursor()
         _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
                         (image_uuid, filename, data, "MOSAIC-APP"))
+        _cursor.execute("INSERT INTO mosaic_app (image_uuid, mosaic_uuid, image_mosaic) VALUES (?,?,?)",
+                        (image_uuid, image_uuid, data))
         _conn.commit()
         _conn.close()
         self.render("mosaic_app.html", image_uuid=image_uuid)
@@ -506,9 +508,16 @@ class ImageMosaicHandler(tornado.web.RequestHandler, ABC):
         image = _cursor.fetchone()
         if image:
             image_data = image[0]
-            left, top, height, width = [int(_) for _ in region.split("px")[0:4]]
+            left, top, right, down = [int(_) for _ in region.split("px")[0:4]]
+            width = abs(left-right)
+            height = abs(top-down)
+            if left > right:
+                left = right
+            if top > down:
+                top = down
             _data = domosaic(image_data, (left, top, width, height))
             _cursor.execute("UPDATE mosaic_app SET image_mosaic=? WHERE mosaic_uuid=?", (_data, image_uuid))
+            _conn.commit()
             _conn.close()
             self.write(_data)
         else:

@@ -22,6 +22,7 @@
             var startX = 0, startY = 0;
             var flag = false;
             var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
+            var select_left = 0, select_top = 0, select_right =0, select_down = 0;
             document.onmousedown = function(e) {
                 flag = true;
                 try{
@@ -42,11 +43,15 @@
                 }
                 console.log(e.offsetX);
                 console.log(e.offsetY);
+                select_left = e.offsetX+"px";
+                select_top = e.offsetY+"px";
             }
             document.onmouseup = function(e) {
                 console.log(e.offsetX);
                 console.log(e.offsetY);
                 flag = false;
+                select_right = e.offsetX+"px";
+                select_down = e.offsetY+"px";
                 try{
                     document.body.removeChild(document.getElementById(select_roi_id + select_index));
                     var div = document.createElement("div");
@@ -59,6 +64,7 @@
                 }catch(e){
                     throw(e);
                 }
+                document.getElementById("{{image_uuid}}").src="/mosaic/{{image_uuid}}/"+select_left+select_top+select_right+select_down;
             }
             document.onmousemove = function(e) {
                 if(flag){
@@ -159,14 +165,14 @@
                 {% if image_uuid %}
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <img src="/image/input/{{image_uuid}}">
+                        <img id="{{ image_uuid }}" src="/image/input/{{image_uuid}}">
                     </div>
                 </div>
-                <div class="panel panel-default">
+                <!-- div class="panel panel-default">
                     <div class="panel-body">
                         <img id="{{ image_uuid }}" src="/mosaic/{{image_uuid}}">
                     </div>
-                </div>
+                </div -->
                 {% else %}
                 <div class="panel panel-default">
                     <div class="panel-body">
