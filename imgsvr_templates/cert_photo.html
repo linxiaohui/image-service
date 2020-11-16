@@ -92,20 +92,22 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="panel panel-default">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <input type="color" name="bg_color" >
+                        <div class="panel-heading">选择图片的背景颜色</div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                                <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
+                                <div class="form-group" style="margin-bottom:0">
+                                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                                        <input class="form-control" class="form-control" type="color" name="bg_color" >
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>                    
-                        </form>
+                                <div class="form-group" style="margin-bottom:0">
+                                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                    </div>
+                                </div>                    
+                            </form>
+                        </div>
                     </div>
                 </div>
 

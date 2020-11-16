@@ -92,35 +92,37 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="panel panel-default">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <select name="style">
-                                        <option value="candy">candy</option>
-                                        <option value="feathers">feathers</option>
-                                        <option value="la_muse">la_muse</option>
-                                        <option value="mosaic">mosaic</option>
-                                        <option value="the_scream">the_scream</option>
-                                        <option value="udnie">udnie</option>
-                                        <option value="composition_vii">composition_vii</option>
-                                        <option value="la_muse2">la_muse</option>
-                                        <option value="starry_night">starry_night</option>
-                                        <option value="the_wave">the_wave</option>
-                                        <option value="monet" selected="selected">monet</option>
-                                        <option value="cezanne">cezanne</option>
-                                        <option value="vangogh">vangogh</option>
-                                        <option value="ukiyoe">ukiyoe</option>
-                                    </select>
+                        <div class="panel-heading">选择图片风格</div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                                <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
+                                <div class="form-group" style="margin-bottom:0">
+                                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                                        <select class="form-control" name="style">
+                                            <option value="candy">candy</option>
+                                            <option value="feathers">feathers</option>
+                                            <option value="la_muse">la_muse</option>
+                                            <option value="mosaic">mosaic</option>
+                                            <option value="the_scream">the_scream</option>
+                                            <option value="udnie">udnie</option>
+                                            <option value="composition_vii">composition_vii</option>
+                                            <option value="la_muse2">la_muse</option>
+                                            <option value="starry_night">starry_night</option>
+                                            <option value="the_wave">the_wave</option>
+                                            <option value="monet" selected="selected">monet</option>
+                                            <option value="cezanne">cezanne</option>
+                                            <option value="vangogh">vangogh</option>
+                                            <option value="ukiyoe">ukiyoe</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>                    
-                        </form>
+                                <div class="form-group" style="margin-bottom:0">
+                                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                    </div>
+                                </div>                    
+                            </form>
+                        </div>
                     </div>
                 </div>
 

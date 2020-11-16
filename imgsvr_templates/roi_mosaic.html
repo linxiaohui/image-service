@@ -92,23 +92,25 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="panel panel-default">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <select name="roi_type">
-                                        <option value="X">X</option>
-                                        <option value="F">F</option>
-                                    </select>
+                        <div class="panel-heading">选择需要打码的区域的类型</div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                                <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
+                                <div class="form-group" style="margin-bottom:0">
+                                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                                        <select class="form-control" name="roi_type">
+                                            <option value="X">X</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>                    
-                        </form>
+                                <div class="form-group" style="margin-bottom:0">
+                                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                    </div>
+                                </div>                    
+                            </form>
+                        </div>
                     </div>
                 </div>
                 {% if roi_uuid %}
