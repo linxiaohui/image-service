@@ -11,7 +11,7 @@ import numpy as np
 import cv2
 
 from util import Opt
-from models import loadmodel, runmodel2
+from dm_models import loadmodel, runmodel2
 
 
 class DeepMosaic_Style(object):

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+import os
 import time
 from math import sqrt, pow, fabs
 import zerorpc
@@ -9,7 +10,7 @@ import dlib
 from dlib_landmarks import *
 
 DETECTOR = dlib.get_frontal_face_detector()
-LANDMARKER = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+LANDMARKER = dlib.shape_predictor(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'shape_predictor_68_face_landmarks.dat'))
 
 def infer_image_type(image_data):
     """根据图片的内容推断图片的格式"""

@@ -83,7 +83,7 @@ class KerasPredictor(object):
         return images_preds
 
 
-model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'nsfw.299x299.h5')
+model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'nsfw.299x299.h5')
 nsfw_predictor = KerasPredictor(model_path)
 
 def nsfw_predict(image_data, ext):

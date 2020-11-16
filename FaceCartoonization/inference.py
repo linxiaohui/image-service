@@ -96,7 +96,7 @@ class SimpleGenerator(nn.Module):
         up4 = self.up4(up3+down1)
         return up4
 
-weight = torch.load('weight.pth', map_location='cpu')
+weight = torch.load(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models','weight.pth'), map_location='cpu')
 MODEL = SimpleGenerator()
 MODEL.load_state_dict(weight)
 #torch.save(model.state_dict(), 'weight.pth')

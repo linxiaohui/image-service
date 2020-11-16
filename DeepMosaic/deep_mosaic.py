@@ -11,13 +11,13 @@ import numpy as np
 import zerorpc
 
 from util import mosaic
-from models import runmodel
-from models.BiSeNet_model import BiSeNet
+from dm_models import runmodel
+from dm_models.BiSeNet_model import BiSeNet
 
 netF = BiSeNet(num_classes=1, context_path='resnet18',train_flag=False)
 netX = BiSeNet(num_classes=1, context_path='resnet18',train_flag=False)
-netF.load_state_dict(torch.load("pretrained_models/add_face.pth"))
-netX.load_state_dict(torch.load("pretrained_models/add_youknow.pth"))
+netF.load_state_dict(torch.load("models/pretrained_models/add_face.pth"))
+netX.load_state_dict(torch.load("models/pretrained_models/add_youknow.pth"))
 netF.eval()
 netX.eval()
 # 不使用GPU

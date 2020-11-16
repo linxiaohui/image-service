@@ -288,8 +288,7 @@ class NSFWMosiacHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("nsfw_mosaic.html", image_uuid=image_uuid)
 
-from u2net_rpc import U2NetCutOut
-FOREGROUND_CUTTER = U2NetCutOut()
+from u2net_rpc import image_cutout
 class ForeGroundHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("fore_ground.html", image_uuid=image_uuid)
@@ -306,7 +305,7 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        _data = FOREGROUND_CUTTER.cutout(data)[0]
+        _data = image_cutout(data)[0]
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()

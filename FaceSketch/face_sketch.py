@@ -45,15 +45,9 @@ def gen_output(image_name,pred):
     data = b.getvalue()
     return data
 
-MODEL_NAME = 'sketch' 
-MODEL_DIR = os.path.join(os.getcwd(), MODEL_NAME + '.pth')
-
-if(MODEL_NAME == 'sketch'):
-    print("...load sketch---173.6 MB")
-    NET = U2NET(3,1)
-elif(MODEL_NAME == 'sketchp'):
-    print("...load sketchp---4.7 MB")
-    NET = U2NETP(3,1)
+MODEL_DIR = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'sketch.pth')
+print("...load sketch---173.6 MB")
+NET = U2NET(3,1)
 #NET.load_state_dict(torch.load(MODEL_DIR,  map_location=lambda storage, loc: storage))
 NET.load_state_dict(torch.load(MODEL_DIR,  map_location='cpu'))
 if torch.cuda.is_available():

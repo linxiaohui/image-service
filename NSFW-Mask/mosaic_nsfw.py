@@ -32,7 +32,7 @@ def load_imgpil(imgpil, image_size):
 
 class NSFWMasker(object):
     def __init__(self, mobile=False, USE_GPU=False):
-        pb_file_path = 'model/inception_sp_0.9924_0.09_partialmodel.pb'
+        pb_file_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models','inception_sp_0.9924_0.09_partialmodel.pb')
         if USE_GPU == True:
             os.environ["CUDA_VISIBLE_DEVICES"] = "0"
             config = tf.ConfigProto(allow_soft_placement=True)

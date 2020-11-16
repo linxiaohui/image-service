@@ -81,15 +81,9 @@ def gen_output(image_name, pred, bg_color):
     return data
 
 
-MODEL_NAME = 'u2net' #或者选择 u2netp
-MODEL_DIR = os.path.join(os.getcwd(), 'model', MODEL_NAME + '.pth')
-
-if(MODEL_NAME == 'u2net'):
-    print("...load U2NET---173.6 MB")
-    NET = U2NET(3,1)
-elif(MODEL_NAME == 'u2netp'):
-    print("...load U2NEP---4.7 MB")
-    NET = U2NETP(3,1)
+MODEL_DIR = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'u2net.pth')
+print("...load U2NET---173.6 MB")
+NET = U2NET(3,1)
 #NET.load_state_dict(torch.load(MODEL_DIR,  map_location=lambda storage, loc: storage))
 NET.load_state_dict(torch.load(MODEL_DIR,  map_location='cpu'))
 if torch.cuda.is_available():

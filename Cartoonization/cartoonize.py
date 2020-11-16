@@ -39,7 +39,7 @@ class Cartoonize(object):
     sess = tf.Session(config=config)
 
     sess.run(tf.global_variables_initializer())
-    saver.restore(sess, tf.train.latest_checkpoint("./model"))
+    saver.restore(sess, tf.train.latest_checkpoint(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'cartoon_model')))
 
     def cartoonization(self, image_data):
         ext = imghdr.what(None, image_data)
