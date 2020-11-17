@@ -469,7 +469,7 @@ class MosaicAppHandler(tornado.web.RequestHandler, ABC):
         self.render("mosaic_app.html", image_uuid=image_uuid)
 
 import image_utils
-class ImgCovertHandler(tornado.web.RequestHandler, ABC):
+class ImgConvertHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("image_convert.html", image_uuid=None, convert_uuid=None)
     def post(self, image_uuid=None):
@@ -624,7 +624,7 @@ class Application(tornado.web.Application):
             (r"/roi_mosaic.html/?(.*)", ROIMosaicHandler),
             (r"/nsfw.html/?(.*)", NSFWScoreHandler),
             (r"/roi_mark.html/?(.*)", ROIMarkHandler),
-            (r"/convert.html/?(.*)", ImgCovertHandler),
+            (r"/convert.html/?(.*)", ImgConvertHandler),
             (r"/ascii.html/?(.*)", AsciiHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
             (r"/mosaic/(.+)/(.+)", ImageMosaicHandler),
