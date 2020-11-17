@@ -13,7 +13,7 @@
 
 # 构建与运行
 ## 构建
-   1. 下载模型文件，名为`inception_sp_0.9924_0.09_partialmodel.pb`，放在`model`目录
+   1. 下载模型文件，名为`inception_sp_0.9924_0.09_partialmodel.pb`，放在`models`目录
    2. `docker build -t nsfw-mask:1.0 .`
 
 ## 从DockerHub下载镜像并运行

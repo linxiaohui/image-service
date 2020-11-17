@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import hashlib
 import base64
 import uuid
@@ -38,8 +39,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
 from beauty_predict import beauty_predict
 from face_decet_rpc import FaceDetector
 FACE_DETECTOR = FaceDetector()
-from face_rank import FaceScorer
-FACE_SCORER = FaceScorer()
+from face_rank import face_detector
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
@@ -56,7 +56,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        image_landmark, face_rank = FACE_SCORER.face_score(data)
+        image_landmark, face_rank = face_detector(data)
         scores = beauty_predict(data)
         if len(scores)>0:
             bp_score = scores[0]

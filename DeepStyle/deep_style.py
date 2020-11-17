@@ -29,7 +29,7 @@ class DeepMosaic_Style(object):
         """
         image_type = imghdr.what(None, image_data)
         opt = Opt()
-        opt.model_path = os.path.join("pretrained_models", f"style_{style}.pth")
+        opt.model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], "models","pretrained_models", f"style_{style}.pth")
         netG = loadmodel.style(opt)
         img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
         print("image loaded")

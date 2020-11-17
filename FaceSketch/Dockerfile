@@ -21,6 +21,6 @@ RUN pip3 install --no-cache-dir requests
 COPY ./model /model
 COPY ./templates /templates
 COPY *.py /
-COPY sketch.pth /
+COPY sketch.pth /models/sketch.pth
 ENV IMAGESERVICE_ROOT /
 CMD (nohup python3 /face_sketch.py &) && python3 sketch_server.py

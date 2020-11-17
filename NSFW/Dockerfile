@@ -14,7 +14,7 @@ RUN pip3 install --no-cache-dir zerorpc
 RUN pip3 install --no-cache-dir tensorflow==1.14 
 RUN pip3 install --no-cache-dir keras==2.2.4
 RUN pip3 install --no-cache-dir pillow
-COPY nsfw.299x299.h5 /nsfw.299x299.h5
+COPY nsfw.299x299.h5 /models/nsfw.299x299.h5
 COPY nsfw_predict.py /nsfw_predict.py
 COPY nsfw_rpc.py /nsfw_rpc.py
 ENV IMAGESERVICE_ROOT /

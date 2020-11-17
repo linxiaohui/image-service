@@ -17,7 +17,7 @@
 # 构建与运行
 
 ## 本地构建镜像
-   1. 下载模型文件，名为`u2net.pth`，放在`model`目录
+   1. 下载模型文件，名为`u2net.pth`，放在`models`目录
    2. `docker build -t change-bgcolor:1.0 .`
 
 ## 从DockerHub下载镜像并运行
