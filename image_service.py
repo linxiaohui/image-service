@@ -22,15 +22,74 @@ import tornado.web
 import requests
 
 
-def get_baidu_score(data):
-    return 0
-
-def get_face_plus_score(data):
-    return 0
-
 def get_db_conn():
     _conn = sqlite3.connect("/db/image.db")
     return _conn
+
+def get_baidu_score(image_uuid, data):
+    _conn = get_db_conn()
+    _cursor = _conn.cursor()
+    _score = -1
+    try:
+        ak = os.environ['BAIDU_AIP_AK']
+        sk = os.environ['BAIDU_AIP_SK']
+    except:
+        return -1
+    host = f'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={ak}&client_secret={sk}'
+    try:
+        response = requests.get(host)
+        if response:
+            access_k = response.json()
+            request_url = "https://aip.baidubce.com/rest/2.0/face/v3/detect"
+            options = {
+                'image_type': 'BASE64',
+                'image': base64.b64encode(data).decode('UTF-8')
+                'face_field': 'age,beauty,expression,face_shape,gender,glasses,landmark,landmark72,landmark150,race,quality,eye_status,emotion,face_type'
+            }
+            request_url = request_url + "?access_token=" + access_k
+            headers = {'content-type': 'application/json'}
+            resp = requests.post(request_url, data=params, headers=headers)
+            if resp:
+                aip_return = resp.content
+                _cursor.execute("INSERT INTO baidu_aip_result (image_uuid, aip_return) VALUES (?,?)", (image_uuid, aip_return))
+                ret_json = json.loads(aip_return)
+                _score = ret_json['face_list'][0]['beauty']
+    except Exception as ex:
+        print(ex)
+        _score = -1
+    _conn.commit()
+    _conn.close()
+    return _score
+
+def get_face_plus_score(image_uuid, data):
+    _conn = get_db_conn()
+    _cursor = _conn.cursor()
+    _score = -1
+    try:
+        ak = os.environ['FACEPP_AK']
+        sk = os.environ['FACEPP_SK']
+    except:
+        return -1
+    host = "https://api-cn.faceplusplus.com/facepp/v3/detect"
+    req_data = {'api_key': ak,
+                'api_secret': sk,
+                'image_base64': base64.b64encode(data).decode('UTF-8'),
+                'return_attributes': 'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus',
+                'return_landmark': '2'
+               }
+    try:
+        resp = requests.post(host, data=req_data)
+        if resp:
+            facepp_return = resp.content
+            _cursor.execute("INSERT INTO facepp_result (image_uuid, facepp_return) VALUES (?,?)", (image_uuid, facepp_return))
+            ret_json = json.loads(facepp_return)
+            _score = ret_json['faces'][0]['attributes']['beauty']['male_score']
+    except Exception as ex:
+        print(ex)
+        _score = -1
+    _conn.commit()
+    _conn.close()
+    return _score
 
 class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self, params=None):
@@ -66,8 +125,8 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
-        baidu_score = get_baidu_score(data)
-        facepp_score = get_face_plus_score(data)
+        baidu_score = get_baidu_score(image_uuid, data)
+        facepp_score = get_face_plus_score(image_uuid, data)
         _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
                         (image_uuid, filename, data, "BEAUTY-SCORE"))
         _cursor.execute("""INSERT INTO beauty_score 
@@ -663,6 +722,12 @@ if __name__ == "__main__":
                                                    beauty_predict float,
                                                    baidu_score float,
                                                    facepp_score float)
+        """)
+        conn.execute("""CREATE TABLE baidu_aip_result(image_uuid char(36),
+                                                      aip_return TEXT)
+        """)
+        conn.execute("""CREATE TABLE facepp_result(image_uuid char(36),
+                                                   facepp_return TEXT)
         """)
         conn.execute("""CREATE TABLE cartoon (image_uuid char(36), 
                                               image_cartoon BLOB)
