@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>image-services</title>
+        <title>卡通化</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -48,8 +48,6 @@
                                 </ul>
                             </li>
                             <li><a href="roi_mark.html" class="sf-map-marker">区域标记</a></li>
-                            <li><a href="convert.html" class="sf-wrench-screwdriver">图片类型转换</a></li>
-                            <li><a href="ascii.html" class="sf-file-code">字符画</a></li>
                         </ul>
                     </div>
                 </div>
@@ -59,7 +57,7 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>Home</h1> 
+                    <h1>Cartoon</h1> 
                     <form id="cm-search" action="index.html" method="get">
                         <input type="search" name="q" autocomplete="off" placeholder="Search...">
                     </form>
@@ -82,73 +80,50 @@
         </header>
         <div id="global">
             <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">Image Service</h2> 
-                <p>基于Python+OpenCV+深度学习的图片处理应用</p>
+                <h2 style="margin-top:0;">图片卡通化</h2> 
+                <p> 基于 <a href="https://github.com/SystemErrorWang/White-box-Cartoonization">White-box-Cartoonization</a>
+                    实现根据输入图片生成卡通化的图片</p>
             </div>
             <div class="container-fluid">
-                <div class="row cm-fix-height">
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="cartoon.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/snow-flake.svg" alt="now-flake">
-                                </span>
-                                <h4>卡通</h4> <small> 生成输入图片的卡通化版本 </small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="beauty_score.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/device-camera.svg" alt="device-camera">
-                                </span>
-                                <h4>AI颜值评分</h4> <small>使用深度学习模型对人脸图片进行“颜值”的评分</small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="cert_photo.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/user-id.svg" alt="user-id">
-                                </span>
-                                <h4>证件照</h4> <small> 更换证件照的背景颜色 </small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="style_transfer.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/file-picture.svg" alt="file-picture">
-                                </span>
-                                <h4>风格迁移</h4> <small>基于深度学习模型的图片风格迁移</small>
-
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="mosaic_app.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/magnify-less.svg" alt="magnify-less">
-                                </span>
-                                <h4>马赛克</h4> <small>输入图片，选择区域，对选定的区域进行马赛克处理</small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="roi_mark.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/map-marker.svg" alt="map-marker">
-                                </span>
-                                <h4>区域检测</h4> <small>根据深度学习预训练模型画出ROI区域</small>
-                            </div>
-                        </a>
+                {% if image_uuid %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <img src="/image/input/{{image_uuid}}">
                     </div>
                 </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <img src="/image/cartoon/{{image_uuid}}">
+                    </div>
+                </div>
+                {% else %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                            <div class="form-group">
+                                <label for="image_url" class="col-sm-2 control-label">图片地址</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="image_url" name="image_url" placeholder="输入图片URL">
+                                </div>
+                            </div>
+                            或
+                            <div class="form-group">
+                                <label for="image_file" class="col-sm-2 control-label">上传文件</label>
+                                <div class="col-sm-10">
+                                    <input type="file" class="form-control" id="image_file" name="image_file" placeholder="image_file">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <div class="col-sm-offset-2 col-sm-10 text-right">
+                                    <button type="reset" class="btn btn-default">取消</button>
+                                    <button type="submit" class="btn btn-primary">提交</button>
+                                </div>
+                            </div>
+                            {% module xsrf_form_html() %}
+                        </form>
+                    </div>
+                </div>
+                {% end %}
             </div>
             <footer class="cm-footer"><span class="pull-left">image-service</span><span class="pull-right">&copy; 5190m.top</span></footer>
         </div>
