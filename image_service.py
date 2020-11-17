@@ -39,21 +39,21 @@ def get_baidu_score(image_uuid, data):
     try:
         response = requests.get(host)
         if response:
-            access_k = response.json()
+            access_k = response.json()['access_token']
             request_url = "https://aip.baidubce.com/rest/2.0/face/v3/detect"
             options = {
                 'image_type': 'BASE64',
-                'image': base64.b64encode(data).decode('UTF-8')
+                'image': base64.b64encode(data).decode('UTF-8'),
                 'face_field': 'age,beauty,expression,face_shape,gender,glasses,landmark,landmark72,landmark150,race,quality,eye_status,emotion,face_type'
             }
             request_url = request_url + "?access_token=" + access_k
             headers = {'content-type': 'application/json'}
-            resp = requests.post(request_url, data=params, headers=headers)
+            resp = requests.post(request_url, data=options, headers=headers)
             if resp:
                 aip_return = resp.content
                 _cursor.execute("INSERT INTO baidu_aip_result (image_uuid, aip_return) VALUES (?,?)", (image_uuid, aip_return))
                 ret_json = json.loads(aip_return)
-                _score = ret_json['face_list'][0]['beauty']
+                _score = ret_json['result']['face_list'][0]['beauty']
     except Exception as ex:
         print(ex)
         _score = -1
