@@ -515,7 +515,30 @@ class ImgCovertHandler(tornado.web.RequestHandler, ABC):
 
 class AsciiHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
-        self.render("ascii.html", image_uuid=None)
+        self.render("ascii.html", image_uuid=None, ascii_code=None)
+
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("ascii.html", image_uuid=None, ascii_code=None)
+        if file_url:
+            resp = requests.get(file_url)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "ASCII"))
+        _conn.commit()
+        _conn.close()
+        ascii_code = image_utils.convert_image_to_ascii(data)
+        self.render("ascii.html", image_uuid=image_uuid, ascii_code=ascii_code)
 
 
 class ImageHandler(tornado.web.RequestHandler, ABC):
