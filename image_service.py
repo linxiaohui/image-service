@@ -468,6 +468,56 @@ class MosaicAppHandler(tornado.web.RequestHandler, ABC):
         _conn.close()
         self.render("mosaic_app.html", image_uuid=image_uuid)
 
+import image_utils
+class ImgCovertHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("image_convert.html", image_uuid=None, convert_uuid=None)
+    def post(self, image_uuid=None):
+        convert_type = self.get_argument("convert_type", None)
+        if not convert_type:
+            file_metas = self.request.files.get('image_file', None)
+            file_url = self.get_argument("image_url", None)
+            if not file_metas and not file_url:
+                self.render("image_convert.html", image_uuid=None, convert_uuid=None)
+            if file_url:
+                resp = requests.get(file_url)
+                data = resp.content
+                filename = file_url
+            else:
+                for meta in file_metas:
+                    filename = meta['filename']
+                    data = meta['body']
+            image_uuid = str(uuid.uuid4())
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                            (image_uuid, filename, data, "CONVERT"))
+            _conn.commit()
+            _conn.close()
+            self.render("image_convert.html", image_uuid=image_uuid, convert_uuid=None)
+        else:
+            image_uuid = self.get_argument("image_uuid", None)
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
+            image_data = _cursor.fetchone()
+            if image_data is None:
+                self.set_status(404)
+            image_data = image_data[0]
+            _data = image_utils.image_convert(image_data, convert_type)
+            convert_uuid = str(uuid.uuid4())
+            _cursor.execute("INSERT INTO image_convert (image_uuid, convert_uuid, conv_type, image_converted) VALUES (?,?,?,?)",
+                            (image_uuid, convert_uuid, convert_type, _data))
+            _conn.commit()
+            _conn.close()
+            self.render("image_convert.html", image_uuid=image_uuid, convert_uuid=convert_uuid)
+
+
+class AsciiHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("ascii.html", image_uuid=None)
+
+
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
         _conn = get_db_conn()
@@ -492,9 +542,13 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_fg FROM fore_ground WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'roi_mark':
             _cursor.execute("SELECT image_roi FROM roi_mark WHERE roi_uuid=?", (image_uuid,))
+        elif image_type == 'convert':
+            _cursor.execute("SELECT image_converted FROM image_convert WHERE image_uuid=?", (image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:
+            content_type = imghdr.what(None, image[0])
+            self.set_header("Content-Type", "image/"+content_type)
             self.write(image[0])
         else:
             self.set_status(404)
@@ -547,6 +601,8 @@ class Application(tornado.web.Application):
             (r"/roi_mosaic.html/?(.*)", ROIMosaicHandler),
             (r"/nsfw.html/?(.*)", NSFWScoreHandler),
             (r"/roi_mark.html/?(.*)", ROIMarkHandler),
+            (r"/convert.html/?(.*)", ImgCovertHandler),
+            (r"/ascii.html/?(.*)", AsciiHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
             (r"/mosaic/(.+)/(.+)", ImageMosaicHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
@@ -615,6 +671,11 @@ if __name__ == "__main__":
         conn.execute("""CREATE TABLE mosaic_app (image_uuid char(36),
                                                  mosaic_uuid char(36),
                                                  image_mosaic BLOB)
+        """)
+        conn.execute("""CREATE TABLE image_convert (image_uuid char(36),
+                                                    convert_uuid char(36),
+                                                    conv_type TEXT,
+                                                    image_converted BLOB)
         """)
     except Exception as ex:
         print(ex)
