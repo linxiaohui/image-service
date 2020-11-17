@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>卡通化</title>
+        <title>字符画</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -48,6 +48,8 @@
                                 </ul>
                             </li>
                             <li><a href="roi_mark.html" class="sf-map-marker">区域标记</a></li>
+                            <li><a href="convert.html" class="sf-wrench-screwdriver">图片类型转换</a></li>
+                            <li><a href="ascii.html" class="sf-file-code">字符画</a></li>
                         </ul>
                     </div>
                 </div>
@@ -57,7 +59,7 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>Cartoon</h1> 
+                    <h1>ASCII</h1> 
                     <form id="cm-search" action="index.html" method="get">
                         <input type="search" name="q" autocomplete="off" placeholder="Search...">
                     </form>
@@ -80,9 +82,8 @@
         </header>
         <div id="global">
             <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">图片卡通化</h2> 
-                <p> 基于 <a href="https://github.com/SystemErrorWang/White-box-Cartoonization">White-box-Cartoonization</a>
-                    实现根据输入图片生成卡通化的图片</p>
+                <h2 style="margin-top:0;">字符画</h2> 
+                <p> </p>
             </div>
             <div class="container-fluid">
                 {% if image_uuid %}
@@ -93,7 +94,9 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <img src="/image/cartoon/{{image_uuid}}">
+                        <pre>
+                            {{ ascii_code }}
+                        </pre>
                     </div>
                 </div>
                 {% else %}
