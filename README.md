@@ -64,21 +64,23 @@ AI抠图
 
 
 # 使用方式
-项目中每个子目录一个功能；子目录中包含`Dockerfile`文件，可以`build`镜像后，按照每个子目录的`README`进行测试。
+   * 项目中每个子目录一个功能；
+   * 子目录中包含`Dockerfile`文件，按照每个子目录的`README`进行构建和测试。
 
-# ALL-IN-ONE Web
+# ALL-IN-ONE Web App
+   * Web应用使用了 [clearmin模版](https://github.com/paomedia/clearmin)
 
 ## Docker构建与运行
-在项目的根目录 `docker build -t linxiaohui/image-service:1.0` 构建包含所有功能的Web（不包含模型）
-或者 `docker pull linxiaohui/image-service:1.0`
-运行时 `docker run -d -p 65535:80 -v models_path:/models linxiaohui/image-service:1.0`
+   * 在项目的根目录 `docker build -t linxiaohui/image-service:1.0` 构建包含所有功能的Web（不包含模型）
+   * 或者 `docker pull linxiaohui/image-service:1.0`
+   * 运行时 `docker run -d -p 65535:80 -v models_path:/models linxiaohui/image-service:1.0`
 
 ## 直接运行
    * 按Dockerfile安装合适的python包
    * bash start_standalone.bash
 
 ## Demo
-`demo.5190m.top:65535`
+`http://demo.5190m.top:65535`
 
 # 声明
 本项目仅对一些功能进行整理，并可能根据需要进行一定的适应性改动，目的是方便研究与可获取性；
