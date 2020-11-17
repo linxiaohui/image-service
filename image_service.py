@@ -543,7 +543,7 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
         elif image_type == 'roi_mark':
             _cursor.execute("SELECT image_roi FROM roi_mark WHERE roi_uuid=?", (image_uuid,))
         elif image_type == 'convert':
-            _cursor.execute("SELECT image_converted FROM image_convert WHERE image_uuid=?", (image_uuid,))
+            _cursor.execute("SELECT image_converted FROM image_convert WHERE convert_uuid=?", (image_uuid,))
         image = _cursor.fetchone()
         _conn.close()
         if image:

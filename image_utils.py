@@ -4,8 +4,8 @@ import imghdr
 
 from PIL import Image
 
-def image_covert(image_data, convert_type):
-    assert convert_type in ['jpg', 'jpeg', 'webp', 'png', 'gif']
+def image_convert(image_data, convert_type):
+    assert convert_type.lower() in ['jpg', 'jpeg', 'webp', 'png', 'gif']
     input_type = imghdr.what(None, image_data)
     im = Image.open(io.BytesIO(image_data))
     if im.mode=="RGBA":
