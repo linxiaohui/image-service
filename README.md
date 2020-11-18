@@ -74,6 +74,7 @@ AI抠图
    * 在项目的根目录 `docker build -t linxiaohui/image-service:1.0` 构建包含所有功能的Web（不包含模型）
    * 或者 `docker pull linxiaohui/image-service:1.0`
    * 运行时 `docker run -d -p 65535:80 -v models_path:/models linxiaohui/image-service:1.0`
+   * 如果使用Baidu AIP或旷视的人脸检测API，需要申请Key并在启动容器时通过环境变量传递给容器 `docker run -d -e "BAIDU_AIP_AK=aip_ak" -e "BAIDU_AIP_SK=aip_sk" -e "FACEPP_AK=facepp_ak" -e "FACEPP_SK=facepp_sk" -p 65535:80 -v models_path:/models linxiaohui/image-service:1.0`
 
 ## 直接运行
    * 按Dockerfile安装合适的python包

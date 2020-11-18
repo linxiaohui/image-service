@@ -83,7 +83,11 @@
         <div id="global">
             <div class="container-fluid cm-container-white">
                 <h2 style="margin-top:0;">颜值AI评分</h2> 
-                <p> 颜值</p>
+                <p> 显示输入图片的<a href="https://github.com/ustcqidi/BeautyPredict">BeautyPredict</a>、
+                    <a href="https://github.com/pwfee/FaceRank">FaceRank</a>、
+                    <a href="https://cloud.baidu.com/doc/FACE/s/ek37c1qiz">Baidu AIP</a>、
+                    <a href="https://console.faceplusplus.com.cn/documents/4888373">旷视</a>的评分； 并显示dlib landmark、OpenCV人脸检测的效果
+                </p>
             </div>
             <div class="container-fluid">
                 {% if image_uuid %}
@@ -93,11 +97,13 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
+                    <div class="panel-heading">dlib landmark图</div>
                     <div class="panel-body">
                         <img src="/image/land_mark/{{image_uuid}}">
                     </div>
                 </div>
                 <div class="panel panel-default">
+                    <div class="panel-heading">OpenCV人脸检测结果图</div>
                     <div class="panel-body">
                         <img src="/image/face_box/{{image_uuid}}">
                     </div>

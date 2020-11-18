@@ -59,7 +59,7 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>人脸素描</h1> 
+                    <h1>Sketch</h1> 
                     <form id="cm-search" action="index.html" method="get">
                         <input type="search" name="q" autocomplete="off" placeholder="Search...">
                     </form>
@@ -83,16 +83,21 @@
         <div id="global">
             <div class="container-fluid cm-container-white">
                 <h2 style="margin-top:0;">人脸素描</h2> 
-                <p> 人脸素描 </p>
+                <p> 基于<a href="https://github.com/NathanUA/U-2-Net">U-2-Net</a>模型和
+                     <a href="https://cg.cs.tsinghua.edu.cn/people/~Yongjin/APDrawingDB.zip">APDrawing dataset</a>训练的人脸素描模型.
+                    不过效果不如<a href="https://www.cvpy.net/studio/cv/func/DeepLearning/sketch/sketch/page/"></a>展示的好
+                </p>
             </div>
             <div class="container-fluid">
                 {% if image_uuid %}
                 <div class="panel panel-default">
+                    <div class="panel-heading">输入图片</div>
                     <div class="panel-body">
                         <img src="/image/input/{{image_uuid}}">
                     </div>
                 </div>
                 <div class="panel panel-default">
+                    <div class="panel-heading">素描结果</div>
                     <div class="panel-body">
                         <img src="/image/sketch/{{image_uuid}}">
                     </div>
