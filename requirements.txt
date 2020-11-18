@@ -1,0 +1,16 @@
+dlib-binary==19.21.99
+h5py==2.10.0
+Keras==2.2.4
+numpy==1.15.2
+opencv-python==4.4.0.46
+Pillow==8.0.1
+requests==2.24.0
+scikit-image==0.14.0
+scipy==1.5.4
+tensorboard==1.14.0
+tensorflow==1.14.0
+tensorflow-estimator==1.14.0
+torch==1.6.0+cpu
+torchvision==0.7.0+cpu
+tornado==6.1
+zerorpc==0.6.3
