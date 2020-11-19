@@ -20,7 +20,7 @@ SHA256(style_winter2summer.pth)= 05824a39301a10c1501cf8dcaf43dda8ff23f0fe568a19c
 # 构建与运行
 ## 构建
    1. 下载模型文件`style_cezanne.pth`, `style_vangogh.pth`, `style_ukiyoe.pth`, `style_monet.pth` 等，放在`pretrained_models`目录
-   2. `docker build -t deep-style:1.0 .`
+   2. `docker build -t linxiaohui/deep-style:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54332:54332 -p 65535:80 linxiaohui/deep-style:1.0`
@@ -56,5 +56,7 @@ with open("r.jpg", "wb") as fp:
 
 
 # 相关项目
-[StyleTransfer](../StyleTransfer) OpenCV读取预训练模型进行图片的风格迁移
+   * [DeepMosaic](../DeepMosaic) 基于同一项目对图片进行目标区域检测、打码
+   * [StyleTransfer](../StyleTransfer) OpenCV读取预训练模型进行图片的风格迁移
+
 
