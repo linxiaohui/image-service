@@ -23,7 +23,7 @@ f.attrs['keras_version']
 
 # 构建与运行
 ## 构建
-   1. 下载模型文件，名为`resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5`，放在当前目录
+   1. 下载模型文件，名为`resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5`，放在`models`目录下
    2. 下载模型文件，名为`model-ldl-resnet.h5`，放在`models`目录下
    3. `docker build -t linxiaohui/beauty-predit:1.0 .`
 
@@ -52,7 +52,7 @@ print(beauty_score[0])
    * 说明： beauty_score返回时一个数组，为其中每一张脸的评分
 
 # 技术要点
-使用dlib的人脸检测功能，确定人脸的区域，使用OpenCV调整人脸区域的大小后调用模型，得到评分;
+使用dlib的人脸检测功能，确定人脸的区域，使用OpenCV调整人脸区域的大小后调用Keras模型，得到评分;
 在图片上标注人脸的区域以及其评分
 
 # 相关功能

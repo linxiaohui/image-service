@@ -15,9 +15,10 @@ from keras.layers import Dense
 
 dlib_model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'mmod_human_face_detector.dat')
 resnet_model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'model-ldl-resnet.h5')
+resnet50_model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5')
 cnn_face_detector = dlib.cnn_face_detection_model_v1(dlib_model_path)
 
-resnet = ResNet50(include_top=False, pooling='avg')
+resnet = ResNet50(include_top=False, pooling='avg', weights=resnet50_model_path)
 model = Sequential()
 model.add(resnet)
 model.add(Dense(5, activation='softmax'))
