@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import imghdr
 
 import cv2
@@ -10,7 +11,6 @@ import zerorpc
 import network
 import guided_filter
 
-
 def resize_crop(image):
     h, w, c = np.shape(image)
     if min(h, w) > 720:
@@ -18,12 +18,10 @@ def resize_crop(image):
             h, w = int(720*h/w), 720
         else:
             h, w = 720, int(720*w/h)
-    image = cv2.resize(image, (w, h),
-                       interpolation=cv2.INTER_AREA)
+    image = cv2.resize(image, (w, h), interpolation=cv2.INTER_AREA)
     h, w = (h//8)*8, (w//8)*8
     image = image[:h, :w, :]
     return image
-
 
 class Cartoonize(object):
     input_photo = tf.placeholder(tf.float32, [1, None, None, 3])
