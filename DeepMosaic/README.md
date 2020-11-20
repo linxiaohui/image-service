@@ -6,6 +6,7 @@
    * [Google Drive](https://drive.google.com/open?id=1LTERcN33McoiztYEwBxMuRjjgxh4DEPs)
    * [百度云](https://pan.baidu.com/s/10rN3U3zd5TmfGpO_PEShqQ) `1x0a`
 
+其中，本应用中用到的是：
 ```
 SHA256(add_face.pth)= 65586df107c2e0db5d07b1cb8d0948c5111f2766e5fb8b82c5b37a4eafb54847
 SHA256(add_youknow.pth)= bd6431edaf2157a0d30c00e1b8692c28b2b606a5d05ded23d1de093d36156a69
@@ -14,7 +15,7 @@ SHA256(add_youknow.pth)= bd6431edaf2157a0d30c00e1b8692c28b2b606a5d05ded23d1de093
 # 构建与运行
 ## 构建
    1. 下载模型文件`add_face.pth`和`add_youknow.pth`，放在`pretrained_models`目录
-   2. `docker build -t deep-mosaic:1.0 .`
+   2. `docker build -t linxiaohui/deep-mosaic:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54333:54333 -p 65535:80 linxiaohui/deep-mosaic:1.0`
@@ -45,8 +46,9 @@ with open("r.jpg", "wb") as fp:
 
 # 声明
 源项目采用[GPL-3.0 License](https://github.com/HypoX64/DeepMosaics/blob/master/LICENSE)；
+
 本项目中使用的源项目中的资源所有权利归原作者所有。
 
 
 # 相关项目
-[ROI-Mark](../ROI-Mark) 利用同样的模型通过OpenCV画出ROI区域的轮廓
+   * [ROI-Mark](../ROI-Mark) 利用同样的模型通过OpenCV画出ROI区域的轮廓

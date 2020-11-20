@@ -42,7 +42,7 @@ class DeepMosaics_Mosaic(object):
         else:
             netS = netX
         mask = runmodel.get_ROI_position(img, netS, opt)[0]
-        img = mosaic.addmosaic(img,mask,opt)
+        img = mosaic.addmosaic(img, mask, opt)
         is_success, im_buf_arr = cv2.imencode("."+image_type, img)
         byte_im = im_buf_arr.tobytes()
         return byte_im
