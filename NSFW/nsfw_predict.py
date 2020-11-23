@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import warnings
 warnings.filterwarnings("ignore")
 import time
+import imghdr
 
 import keras
 import numpy as np
@@ -83,10 +85,11 @@ class KerasPredictor(object):
         return images_preds
 
 
-model_path = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'nsfw.299x299.h5')
-nsfw_predictor = KerasPredictor(model_path)
+MODEL_PATH = os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'nsfw.299x299.h5')
+nsfw_predictor = KerasPredictor(MODEL_PATH)
 
-def nsfw_predict(image_data, ext):
+def nsfw_predict(image_data):
+    ext = imghdr.what(None, image_data)
     fn = "{}.{}".format(time.time(), ext)
     with open(fn, "wb") as fp:
         fp.write(image_data)
@@ -94,10 +97,11 @@ def nsfw_predict(image_data, ext):
     os.remove(fn)
     return result
 
-def nsfw_batch_predict(images, ext='jpg'):
+def nsfw_batch_predict(images):
     """images: [(image_id, image_data),....]"""
     image_list = []
     for _id, _data in images:
+        ext = imghdr.what(None, _data)
         fn = f"{_id}.{ext}"
         with open(fn, "wb") as fp:
             fp.write(_data)
