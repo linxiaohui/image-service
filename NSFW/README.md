@@ -85,3 +85,9 @@ print(s.nsfw_batch_predict(images))
        'neutral': 0.9813323020935059}
 }
 ```
+
+
+# 技术要点
+   * keras 读取图片文件
+   * keras 模型加载
+   
