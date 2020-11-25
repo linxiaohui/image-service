@@ -8,6 +8,7 @@ import copy
 import tensorflow as tf
 import numpy as np
 from scipy import misc
+import zerorpc
 
 import facenet
 import align.detect_face
@@ -105,4 +106,10 @@ if __name__ == "__main__":
             a2 = np.frombuffer(v2, dtype=np.float32)
             print(a1.dtype, a1.shape, a2.shape)
             print(i, j, np.sqrt(np.sum(np.square(np.subtract(a1,a2)))))
+
+
+if __name__ == "__main__":
+    s = zerorpc.Server(FaceNet("/20180408-102900/"))
+    s.bind("tcp://0.0.0.0:54335")
+    s.run()
 
