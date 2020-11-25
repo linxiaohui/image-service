@@ -43,7 +43,7 @@ SHA256(models/instance_norm/udnie.t7)= 3a3a2cf3472085f26d8e4bc26a1e6b2eb48e6dfc4
 # 构建与运行
 ## 构建
    1. 在当前目录执行下载预训练模型的脚本，下载模型文件；至`models`文件中
-   2. `docker build -t style-transfer:1.0 .`
+   2. `docker build -t linxiaohui/style-transfer:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54330:54330 -p 65535:80 linxiaohui/style-transfer:1.0`
@@ -72,6 +72,16 @@ dat = img
 with open("r.jpg", "wb") as fp:
     fp.write(dat)
 ```
+   * 说明：style_transfer 函数输入图片的二进制流和转换风格，风格为模型的名字（如 `candy`, `la_muse`等）；
+   返回为输出图片的二进制流
+ 
+
+# 技术要点
+   * OpenCV 读取深度学习预训练模型
+   * OpenCV 深度学习推理
+
+# 参考资料
+微信读书中《OpenCV深度学习应用于性能优化实践》9.4节“视觉风格变换”
 
 # 相关项目
 [DeepStyle](../DeepStyle) Another深度学习实现图片风格迁移
