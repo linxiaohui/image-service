@@ -3,6 +3,7 @@ import os
 import io
 import glob
 import time
+import imghdr
 
 import skimage
 import torch
@@ -81,14 +82,6 @@ if torch.cuda.is_available():
     NET.cuda()
 NET.eval()
 
-def infer_image_type(image_data):
-    """根据图片的内容推断图片的格式"""
-    if image_data[:8] == b'\x89PNG\r\n\x1a\n':
-        return ".png"
-    if image_data[:2] == b'\xff\xd8':
-        return ".jpg"
-    return ".jpg"
-
 def image_cutout(image_data):
     if isinstance(image_data, list):
         image_data_list = image_data
@@ -97,7 +90,7 @@ def image_cutout(image_data):
     
     img_name_list = []
     for image_data in image_data_list:
-        ext  = infer_image_type(image_data)
+        ext  = imghdr.what(None, image_data)
         fn = "{}.{}".format(time.time(), ext)
         with open(fn, "wb") as fp:
             fp.write(image_data)
@@ -106,8 +99,7 @@ def image_cutout(image_data):
     result_list = []
     test_salobj_dataset = SalObjDataset(img_name_list = img_name_list,
                                         lbl_name_list = [],
-                                        transform=transforms.Compose([RescaleT(320),
-                                                                        ToTensorLab(flag=0)])
+                                        transform=transforms.Compose([RescaleT(320), ToTensorLab(flag=0)])
                                         )
     test_salobj_dataloader = DataLoader(test_salobj_dataset,
                                         batch_size=1,
@@ -122,14 +114,14 @@ def image_cutout(image_data):
         else:
             inputs_test = Variable(inputs_test)
 
-        d1,d2,d3,d4,d5,d6,d7 = NET(inputs_test)
+        d1, d2, d3, d4, d5, d6, d7 = NET(inputs_test)
         # normalization
         pred = d1[:,0,:,:]
         pred = normPRED(pred)
 
         dat = gen_output(img_name_list[i_test],pred)
         result_list.append(dat)
-        del d1,d2,d3,d4,d5,d6,d7
+        del d1, d2, d3, d4, d5, d6, d7
 
     for fn in img_name_list:
         os.remove(fn)
@@ -144,4 +136,3 @@ if __name__ == "__main__":
     s = zerorpc.Server(U2NetCutOut())
     s.bind("tcp://0.0.0.0:54323")
     s.run()
-
