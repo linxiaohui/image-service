@@ -2,6 +2,7 @@
 """参考 facenet项目中的 https://github.com/davidsandberg/facenet/blob/master/src/compare.py """
 import io
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import copy
 
 import tensorflow as tf
@@ -72,7 +73,7 @@ class FaceNet(object):
         gpu_memory_fraction: Upper bound on the amount of GPU memory that will be used by the process.
         """
         model_path = "/20180408-102900/"
-        img_list = self.load_and_align_data(image_files, image_size, margin, gpu_memory_fraction)
+        img_list = self.load_and_align_data(image_files, image_size, margin)
         img_id, img_data = zip(*img_list)
         images = np.stack(img_data)
         images_placeholder = self.g.get_tensor_by_name("input:0")
@@ -82,24 +83,26 @@ class FaceNet(object):
         feed_dict = {images_placeholder: images,
                      phase_train_placeholder: False}
         emb = self.sess.run(embeddings, feed_dict=feed_dict)
+        print(emb.shape, emb.dtype)
+        print(emb[0,:].shape)
         ret = []
         for i, image_id in enumerate(img_id):
-            ret.append(image_id, emb[i, :].tobyes())
+            ret.append((image_id, emb[i, :].tobytes()))
         return ret
 
 if __name__ == "__main__":
-    net = FaceNet()
+    net = FaceNet("/20180408-102900/")
     image_fn = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"]
     image_data_with_id = []
     for i in image_fn:
         with open(i, "rb") as fp:
             image_data_with_id.append((i, fp.read()))
     r = net.face_feature(image_data_with_id)
-    print(r)
 
     for i, v1 in r:
         for j, v2 in r:
-            a1 = np.frombuffer(v1, dtype=np.float)
-            a2 = np.frombuffer(v2, dtype=np.float)
-            print(i, j, np.sqrt(np.sum(np.square(np.subtract(a1-a2)))))
+            a1 = np.frombuffer(v1, dtype=np.float32)
+            a2 = np.frombuffer(v2, dtype=np.float32)
+            print(a1.dtype, a1.shape, a2.shape)
+            print(i, j, np.sqrt(np.sum(np.square(np.subtract(a1,a2)))))
 
