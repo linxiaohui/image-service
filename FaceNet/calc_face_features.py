@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """参考 facenet项目中的 https://github.com/davidsandberg/facenet/blob/master/src/compare.py """
-
+import io
 import os
 import copy
 
@@ -11,64 +11,95 @@ from scipy import misc
 import facenet
 import align.detect_face
 
-def face_feature(image_files, image_size=160, margin=44, gpu_memory_fraction=1.0):
-    """
-    image_size: Image size (height, width) in pixels.
-    margin: Margin for the crop around the bounding box (height, width) in pixels.
-    gpu_memory_fraction: Upper bound on the amount of GPU memory that will be used by the process.
-    """
-    model_path = ""
-    images = load_and_align_data(image_files, image_size, margin, gpu_memory_fraction)
-    with tf.Graph().as_default():
-        with tf.Session() as sess:
-            # Load the model
-            facenet.load_model(model_path)
-            # Get input and output tensors
-            images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
-            embeddings = tf.get_default_graph().get_tensor_by_name("embeddings:0")
-            phase_train_placeholder = tf.get_default_graph().get_tensor_by_name("phase_train:0")
-            # Run forward pass to calculate embeddings
-            feed_dict = {images_placeholder: images,
-                         phase_train_placeholder: False}
-            emb = sess.run(embeddings, feed_dict=feed_dict)
-            nrof_images = len(image_files)
-            for i in range(nrof_images):
-                print('%1d  ' % i, end='')
-                for j in range(nrof_images):
-                    dist = np.sqrt(np.sum(np.square(np.subtract(emb[i,:], emb[j,:]))))
-                    print('  %1.4f  ' % dist, end='')
-                print('')
+class FaceNet(object):
+    """"""
+    def __init__(self, model_path, image_size=160, margin=44, gpu_memory_fraction=1.0):
+        """
+        gpu_memory_fraction: Upper bound on the amount of GPU memory that will be used by the process.
+        """
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        config = tf.ConfigProto(allow_soft_placement=True)
+        self.g = tf.Graph()
+        self.sess = tf.Session(graph=self.g, config=config)
+        with self.sess.as_default():
+            with self.sess.graph.as_default():
+                # Load the model
+                facenet.load_model(model_path)
+                print("FaceNet pretrained model LOADED!")
 
-def load_and_align_data(image_paths, image_size, margin, gpu_memory_fraction):
-    minsize = 20  # minimum size of face
-    threshold = [0.6, 0.7, 0.7]  # three steps's threshold
-    factor = 0.709  # scale factor
-    print('Creating networks and loading parameters')
-    with tf.Graph().as_default():
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
-        with sess.as_default():
-            pnet, rnet, onet = align.detect_face.create_mtcnn(sess, None)
-  
-    tmp_image_paths = copy.copy(image_paths)
-    img_list = []
-    for image in tmp_image_paths:
-        img = misc.imread(os.path.expanduser(image), mode='RGB')
-        img_size = np.asarray(img.shape)[0:2]
-        bounding_boxes, _ = align.detect_face.detect_face(img, minsize, pnet, rnet, onet, threshold, factor)
-        if len(bounding_boxes) < 1:
-          image_paths.remove(image)
-          print("can't detect face, remove ", image)
-          continue
-        det = np.squeeze(bounding_boxes[0,0:4])
-        bb = np.zeros(4, dtype=np.int32)
-        bb[0] = np.maximum(det[0]-margin/2, 0)
-        bb[1] = np.maximum(det[1]-margin/2, 0)
-        bb[2] = np.minimum(det[2]+margin/2, img_size[1])
-        bb[3] = np.minimum(det[3]+margin/2, img_size[0])
-        cropped = img[bb[1]:bb[3], bb[0]:bb[2], :]
-        aligned = misc.imresize(cropped, (image_size, image_size), interp='bilinear')
-        prewhitened = facenet.prewhiten(aligned)
-        img_list.append(prewhitened)
-    images = np.stack(img_list)
-    return images
+        align_graph = tf.Graph()
+        self.align_sess = tf.Session(graph=align_graph,
+                                     config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
+        with self.align_sess.as_default():
+            with self.align_sess.graph.as_default():
+                self.pnet, self.rnet, self.onet = align.detect_face.create_mtcnn(self.align_sess, None)
+                print("align model LOADED!")
+
+    def load_and_align_data(self, image_data_with_id, image_size=160, margin=44):
+        """
+        image_size: Image size (height, width) in pixels.
+        margin: Margin for the crop around the bounding box (height, width) in pixels.
+        """
+        minsize = 20  # minimum size of face
+        threshold = [0.6, 0.7, 0.7]  # three steps's threshold
+        factor = 0.709  # scale factor
+        img_list = []
+        for image_id, image_data in image_data_with_id:
+            img = misc.imread(io.BytesIO(image_data), mode='RGB')
+            img_size = np.asarray(img.shape)[0:2]
+            bounding_boxes, _ = align.detect_face.detect_face(img, minsize, self.pnet, self.rnet, self.onet,
+                                                              threshold, factor)
+            if len(bounding_boxes) < 1:
+                print("can't detect face, remove ", image_id)
+                continue
+            det = np.squeeze(bounding_boxes[0, 0:4])
+            bb = np.zeros(4, dtype=np.int32)
+            bb[0] = np.maximum(det[0] - margin / 2, 0)
+            bb[1] = np.maximum(det[1] - margin / 2, 0)
+            bb[2] = np.minimum(det[2] + margin / 2, img_size[1])
+            bb[3] = np.minimum(det[3] + margin / 2, img_size[0])
+            cropped = img[bb[1]:bb[3], bb[0]:bb[2], :]
+            aligned = misc.imresize(cropped, (image_size, image_size), interp='bilinear')
+            prewhitened = facenet.prewhiten(aligned)
+            img_list.append((image_id, prewhitened))
+        return img_list
+
+    def face_feature(self, image_files, image_size=160, margin=44, gpu_memory_fraction=1.0):
+        """
+        image_size: Image size (height, width) in pixels.
+        margin: Margin for the crop around the bounding box (height, width) in pixels.
+        gpu_memory_fraction: Upper bound on the amount of GPU memory that will be used by the process.
+        """
+        model_path = "/20180408-102900/"
+        img_list = self.load_and_align_data(image_files, image_size, margin, gpu_memory_fraction)
+        img_id, img_data = zip(*img_list)
+        images = np.stack(img_data)
+        images_placeholder = self.g.get_tensor_by_name("input:0")
+        embeddings = self.g.get_tensor_by_name("embeddings:0")
+        phase_train_placeholder = self.g.get_tensor_by_name("phase_train:0")
+        # Run forward pass to calculate embeddings
+        feed_dict = {images_placeholder: images,
+                     phase_train_placeholder: False}
+        emb = self.sess.run(embeddings, feed_dict=feed_dict)
+        ret = []
+        for i, image_id in enumerate(img_id):
+            ret.append(image_id, emb[i, :].tobyes())
+        return ret
+
+if __name__ == "__main__":
+    net = FaceNet()
+    image_fn = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"]
+    image_data_with_id = []
+    for i in image_fn:
+        with open(i, "rb") as fp:
+            image_data_with_id.append((i, fp.read()))
+    r = net.face_feature(image_data_with_id)
+    print(r)
+
+    for i, v1 in r:
+        for j, v2 in r:
+            a1 = np.frombuffer(v1, dtype=np.float)
+            a2 = np.frombuffer(v2, dtype=np.float)
+            print(i, j, np.sqrt(np.sum(np.square(np.subtract(a1-a2)))))
+
