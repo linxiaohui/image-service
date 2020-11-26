@@ -11,7 +11,7 @@ RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple pip -U
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
 RUN pip3 install --no-cache-dir setuptools wheel
 RUN pip3 install --no-cache-dir numpy==1.15.2 h5py==2.10.0 zerorpc==0.6.3 tornado==6.1 requests==2.24.0 
-RUN pip3 install --no-cache-dir scipy==1.5.4 opencv-python-headless==4.2.0.32
+RUN pip3 install --no-cache-dir scipy==1.1.0 opencv-python-headless==4.2.0.32
 RUN pip3 install --no-cache-dir torch==1.2.0+cpu torchvision==0.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir keras==2.2.4 tensorflow==1.6
@@ -26,7 +26,6 @@ COPY NSFW-Mask/bbox_blur.py /bbox_blur.py
 COPY NSFW-Mask/mosaic_nsfw.py /mosaic_nsfw.py
 COPY Mosaic/mosaic_utils.py /mosaic_utils.py
 COPY BeautyPredict/beauty_predict.py /beauty_predict.py
-# COPY BeautyPredict/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5 /root/.keras/models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5
 COPY Cartoonization/network.py /network.py
 COPY Cartoonization/guided_filter.py /guided_filter.py
 COPY Cartoonization/cartoonize.py /cartoonize.py
@@ -42,10 +41,13 @@ COPY DeepStyle/util/__init__.py /util/__init__.py
 COPY DeepStyle/dm_models /dm_models
 COPY DeepStyle/deep_style.py /deep_style.py
 COPY NSFW/nsfw_predict.py /nsfw_predict.py
+COPY FaceNet/align /align
+COPY FaceNet/generative /generative
+COPY FaceNet/facenet.py /facenet.py
+COPY FaceNet/calc_face_features.py /calc_face_features.py
 COPY imgsvr_templates /imgsvr_templates
 COPY imgsvr_static /imgsvr_static
 COPY image_utils.py image_utils.py
 COPY image_service.py image_service.py
 ENV IMAGESERVICE_ROOT /
 CMD python3 -u image_service.py
- 

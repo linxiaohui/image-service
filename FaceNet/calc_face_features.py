@@ -4,17 +4,20 @@ import io
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import imghdr
+
 import tensorflow as tf
 import numpy as np
 from scipy import misc
 import zerorpc
+import cv2
 
 import facenet
 import align.detect_face
 
 class FaceNet(object):
     """"""
-    def __init__(self, model_path, image_size=160, margin=44, gpu_memory_fraction=1.0):
+    def __init__(self, model_path="/models/20180408-102900/", image_size=160, margin=44, gpu_memory_fraction=1.0):
         """
         gpu_memory_fraction: Upper bound on the amount of GPU memory that will be used by the process.
         """
@@ -64,6 +67,23 @@ class FaceNet(object):
             prewhitened = facenet.prewhiten(aligned)
             img_list.append((image_id, prewhitened))
         return img_list
+
+    def mark_faces(self, image_data, image_size=160, margin=44):
+        """在图片数据上标记人脸, 返回标记后的图片数据"""
+        ext = imghdr.what(None, image_data)
+        minsize = 20  # minimum size of face
+        threshold = [0.6, 0.7, 0.7]  # three steps's threshold
+        factor = 0.709  # scale factor
+        img = misc.imread(io.BytesIO(image_data), mode='RGB')
+        img_size = np.asarray(img.shape)[0:2]
+        bounding_boxes, _ = align.detect_face.detect_face(img, minsize, self.pnet, self.rnet, self.onet,
+                                                          threshold, factor)
+        for face_box in bounding_boxes:
+            subfaceRec = face_box.astype(int)
+            cv2.rectangle(img, (subfaceRec[0], subfaceRec[1]), (subfaceRec[2], subfaceRec[3]), (0, 255, 0), 2)
+        is_success, im_buf_arr = cv2.imencode("." + ext, img)
+        byte_im = im_buf_arr.tobytes()
+        return byte_im
 
     def face_feature(self, image_files, image_size=160, margin=44, gpu_memory_fraction=1.0):
         """

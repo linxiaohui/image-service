@@ -99,6 +99,8 @@ from beauty_predict import beauty_predict
 from face_decet_rpc import FaceDetector
 FACE_DETECTOR = FaceDetector()
 from face_rank import face_detector
+from calc_face_featires import  FaceNet
+FACE_NET = FaceNet()
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
@@ -122,6 +124,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         else:
             bp_score = None
         image_rect = FACE_DETECTOR.face_mark(data)
+        image_facenet = FACE_NET.mark_faces(data)
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -130,9 +133,9 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
                         (image_uuid, filename, data, "BEAUTY-SCORE"))
         _cursor.execute("""INSERT INTO beauty_score 
-                           (image_uuid, image_landmark, image_rect, face_rank, beauty_predict, baidu_score, facepp_score)
-                           VALUES (?,?,?,?,?,?,?)""",
-                           (image_uuid, image_landmark, image_rect, face_rank, bp_score, baidu_score, facepp_score))
+                           (image_uuid, image_landmark, image_rect, image_facenet, face_rank, beauty_predict, baidu_score, facepp_score)
+                           VALUES (?,?,?,?,?,?,?,?)""",
+                           (image_uuid, image_landmark, image_rect, image_facenet, face_rank, bp_score, baidu_score, facepp_score))
         _conn.commit()
         _conn.close()
         self.render("beauty_score.html", image_uuid=image_uuid, 
@@ -620,6 +623,8 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_landmark FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'face_box':
             _cursor.execute("SELECT image_rect FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+        elif image_type == 'face_net':
+            _cursor.execute("SELECT image_facenet FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'fore_ground':
             _cursor.execute("SELECT image_fg FROM fore_ground WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'roi_mark':
@@ -718,6 +723,7 @@ if __name__ == "__main__":
         conn.execute("""CREATE TABLE beauty_score (image_uuid char(36), 
                                                    image_landmark BLOB, 
                                                    image_rect BLOB,
+                                                   image_facenet BLOB,
                                                    face_rank float,
                                                    beauty_predict float,
                                                    baidu_score float,
