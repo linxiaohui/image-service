@@ -46,3 +46,8 @@ dat = img[0]
 with open("test.png", "wb") as fp:
     fp.write(dat)
 ```
+
+# 技术要点
+   * 使用PyTorch加载模型
+   * scikit-image 图片数据加载
+   

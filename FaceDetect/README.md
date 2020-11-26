@@ -3,7 +3,7 @@
 
 # 构建与运行
 ## 构建
-   * `docker build -t face-detect:1.0 .`
+   * `docker build -t linxiaohui/face-detect:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54324:54324 -p 65535:80 linxiaohui/face-detect:1.0`
@@ -28,4 +28,11 @@ img = s.face_mark(data)
 with open("r.jpg", "wb") as fp:
     fp.write(img)
 ```
+
+# 技术要点
+   * OpenCV 读取、写入图片文件
+   * OpenCV 调整文件大小
+   * OpenCV 转化为灰度图片
+   * OpenCV 进行人脸检测
+   * OpenCV 在图片上进行标记（画矩形框）
 
