@@ -75,6 +75,8 @@ class FaceNet(object):
         """
         model_path = "/20180408-102900/"
         img_list = self.load_and_align_data(image_files, image_size, margin)
+        if len(img_list)==0:
+            return []
         img_id, img_data = zip(*img_list)
         images = np.stack(img_data)
         images_placeholder = self.g.get_tensor_by_name("input:0")
