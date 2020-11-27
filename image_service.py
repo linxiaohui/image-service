@@ -99,7 +99,7 @@ from beauty_predict import beauty_predict
 from face_decet_rpc import FaceDetector
 FACE_DETECTOR = FaceDetector()
 from face_rank import face_detector
-from calc_face_featires import  FaceNet
+from calc_face_features import  FaceNet
 FACE_NET = FaceNet()
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
