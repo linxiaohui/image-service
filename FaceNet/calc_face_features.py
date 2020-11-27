@@ -81,6 +81,9 @@ class FaceNet(object):
         for face_box in bounding_boxes:
             subfaceRec = face_box.astype(int)
             cv2.rectangle(img, (subfaceRec[0], subfaceRec[1]), (subfaceRec[2], subfaceRec[3]), (0, 255, 0), 2)
+        # OpenCV BGR
+        img = img[:,:, ::-1]
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         is_success, im_buf_arr = cv2.imencode("." + ext, img)
         byte_im = im_buf_arr.tobytes()
         return byte_im
