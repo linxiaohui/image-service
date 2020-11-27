@@ -16,6 +16,7 @@ RUN pip3 install --no-cache-dir torch==1.2.0+cpu torchvision==0.4.0+cpu -f https
 RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir keras==2.2.4 tensorflow==1.6
 RUN pip3 install --no-cache-dir scikit-image==0.14.0
+RUN pip3 install --no-cache-dir scikit-learn
 COPY U-2-Net/model /model
 COPY U-2-Net/u2net_rpc.py /u2net_rpc.py
 COPY U-2-Net/data_loader.py /data_loader.py
@@ -42,7 +43,6 @@ COPY DeepStyle/dm_models /dm_models
 COPY DeepStyle/deep_style.py /deep_style.py
 COPY NSFW/nsfw_predict.py /nsfw_predict.py
 COPY FaceNet/align /align
-COPY FaceNet/generative /generative
 COPY FaceNet/facenet.py /facenet.py
 COPY FaceNet/calc_face_features.py /calc_face_features.py
 COPY imgsvr_templates /imgsvr_templates
