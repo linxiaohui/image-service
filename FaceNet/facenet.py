@@ -30,92 +30,11 @@ Functions for building the face recognition network.
 # pylint: disable=missing-docstring
 import os
 import re
-import random
-import math
-from subprocess import Popen, PIPE
 
 import tensorflow as tf
 import numpy as np
 from scipy import misc
-from sklearn.model_selection import KFold
-from scipy import interpolate
-from tensorflow.python.training import training
 from tensorflow.python.platform import gfile
-from six import iteritems
-
-def triplet_loss(anchor, positive, negative, alpha):
-    """Calculate the triplet loss according to the FaceNet paper
-    Args:
-      anchor: the embeddings for the anchor images.
-      positive: the embeddings for the positive images.
-      negative: the embeddings for the negative images.
-  
-    Returns:
-      the triplet loss according to the FaceNet paper as a float tensor.
-    """
-    with tf.variable_scope('triplet_loss'):
-        pos_dist = tf.reduce_sum(tf.square(tf.subtract(anchor, positive)), 1)
-        neg_dist = tf.reduce_sum(tf.square(tf.subtract(anchor, negative)), 1)
-        
-        basic_loss = tf.add(tf.subtract(pos_dist,neg_dist), alpha)
-        loss = tf.reduce_mean(tf.maximum(basic_loss, 0.0), 0)
-      
-    return loss
-  
-def center_loss(features, label, alfa, nrof_classes):
-    """Center loss based on the paper "A Discriminative Feature Learning Approach for Deep Face Recognition"
-       (http://ydwen.github.io/papers/WenECCV16.pdf)
-    """
-    nrof_features = features.get_shape()[1]
-    centers = tf.get_variable('centers', [nrof_classes, nrof_features], dtype=tf.float32,
-        initializer=tf.constant_initializer(0), trainable=False)
-    label = tf.reshape(label, [-1])
-    centers_batch = tf.gather(centers, label)
-    diff = (1 - alfa) * (centers_batch - features)
-    centers = tf.scatter_sub(centers, label, diff)
-    with tf.control_dependencies([centers]):
-        loss = tf.reduce_mean(tf.square(features - centers_batch))
-    return loss, centers
-
-def random_rotate_image(image):
-    angle = np.random.uniform(low=-10.0, high=10.0)
-    return misc.imrotate(image, angle, 'bicubic')
-  
-# 1: Random rotate 2: Random crop  4: Random flip  8:  Fixed image standardization  16: Flip
-RANDOM_ROTATE = 1
-RANDOM_CROP = 2
-RANDOM_FLIP = 4
-FIXED_STANDARDIZATION = 8
-FLIP = 16
-
-def get_control_flag(control, field):
-    return tf.equal(tf.mod(tf.floor_div(control, field), 2), 1)
-  
-def _add_loss_summaries(total_loss):
-    """Add summaries for losses.
-  
-    Generates moving average for all losses and associated summaries for
-    visualizing the performance of the network.
-  
-    Args:
-      total_loss: Total loss from loss().
-    Returns:
-      loss_averages_op: op for generating moving averages of losses.
-    """
-    # Compute the moving average of all individual losses and the total loss.
-    loss_averages = tf.train.ExponentialMovingAverage(0.9, name='avg')
-    losses = tf.get_collection('losses')
-    loss_averages_op = loss_averages.apply(losses + [total_loss])
-  
-    # Attach a scalar summmary to all individual losses and the total loss; do the
-    # same for the averaged version of the losses.
-    for l in losses + [total_loss]:
-        # Name each loss as '(raw)' and name the moving average version of the loss
-        # as the original loss name.
-        tf.summary.scalar(l.op.name +' (raw)', l)
-        tf.summary.scalar(l.op.name, loss_averages.average(l))
-  
-    return loss_averages_op
 
 
 def prewhiten(x):
@@ -125,17 +44,6 @@ def prewhiten(x):
     y = np.multiply(np.subtract(x, mean), 1/std_adj)
     return y  
 
-def crop(image, random_crop, image_size):
-    if image.shape[1]>image_size:
-        sz1 = int(image.shape[1]//2)
-        sz2 = int(image_size//2)
-        if random_crop:
-            diff = sz1-sz2
-            (h, v) = (np.random.randint(-diff, diff+1), np.random.randint(-diff, diff+1))
-        else:
-            (h, v) = (0,0)
-        image = image[(sz1-sz2+v):(sz1+sz2+v),(sz1-sz2+h):(sz1+sz2+h),:]
-    return image
 
 def load_model(model, input_map=None):
     # Check if the model is a model directory (containing a metagraph and a checkpoint file)
