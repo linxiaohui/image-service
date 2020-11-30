@@ -643,28 +643,42 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             self.set_status(404)
 
 class ImageMosaicHandler(tornado.web.RequestHandler, ABC):
-    def get(self, image_uuid, region):
+    def get(self, image_uuid, region=None):
         _conn = get_db_conn()
         _cursor = _conn.cursor()
-        _cursor.execute("SELECT image_mosaic FROM mosaic_app WHERE mosaic_uuid=?", (image_uuid,))
-        image = _cursor.fetchone()
-        if image:
-            image_data = image[0]
-            left, top, right, down = [int(_) for _ in region.split("px")[0:4]]
-            width = abs(left-right)
-            height = abs(top-down)
-            if left > right:
-                left = right
-            if top > down:
-                top = down
-            _data = domosaic(image_data, (left, top, width, height))
-            _cursor.execute("UPDATE mosaic_app SET image_mosaic=? WHERE mosaic_uuid=?", (_data, image_uuid))
-            _conn.commit()
-            _conn.close()
-            self.write(_data)
+        if region is None:
+            # 恢复
+            _cursor.execute("SELECT image_data FROM  input_image WHERE image_uuid=?", (image_uuid,))
+            rec = _cursor.fetchone()
+            if rec is None:
+                _conn.close()
+                self.set_status(404)
+            else:
+                _data = rec[0]
+                _cursor.execute("UPDATE mosaic_app SET image_mosaic=? WHERE mosaic_uuid=?", (_data, image_uuid))
+                _conn.commit()
+                _conn.close()
+                self.write(_data)
         else:
-            _conn.close()
-            self.set_status(404)
+            _cursor.execute("SELECT image_mosaic FROM mosaic_app WHERE mosaic_uuid=?", (image_uuid,))
+            image = _cursor.fetchone()
+            if image:
+                image_data = image[0]
+                left, top, right, down = [int(_) for _ in region.split("px")[0:4]]
+                width = abs(left-right)
+                height = abs(top-down)
+                if left > right:
+                    left = right
+                if top > down:
+                    top = down
+                _data = domosaic(image_data, (left, top, width, height))
+                _cursor.execute("UPDATE mosaic_app SET image_mosaic=? WHERE mosaic_uuid=?", (_data, image_uuid))
+                _conn.commit()
+                _conn.close()
+                self.write(_data)
+            else:
+                _conn.close()
+                self.set_status(404)
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -694,6 +708,7 @@ class Application(tornado.web.Application):
             (r"/ascii.html/?(.*)", AsciiHandler),
             (r"/image/(.+)/(.+)", ImageHandler),
             (r"/mosaic/(.+)/(.+)", ImageMosaicHandler),
+            (r"/mosaic/(.+)", ImageMosaicHandler),
             (r"/(.*)", tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
         ]
         tornado.web.Application.__init__(self, handlers, **settings)
