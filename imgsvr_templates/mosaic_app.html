@@ -8,107 +8,13 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>手工选择Mosaic区域</title>
-        {% if image_uuid %}
         <style type="text/css">
             body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,fieldset,legend,button,input,textarea,th,td{margin:0;padding:0}
             html{color:#000;overflow-y:scoll;overflow:-moz-scrollbars-vertical}
             .div_css{position:absolute; border:1px dashed blue; width:0px; height:0px;left:0px; top:0px; overflow:hidden;}
             .retc_css{position:absolute; border:1px solid #CCCCCC; overflow:hidden; background:#EFEFEF}
         </style>
-        <script language = "javascript">
-            var select_roi_id = "mosaic_app";
-            var select_index = 0;
-            var startX = 0, startY = 0;
-            var flag = false;
-            var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
-            var select_left = 0, select_top = 0, select_right =0, select_down = 0;
-            document.onmousedown = function(e) {
-                if (flag) {
-                    try {
-                        document.body.removeChild(document.getElementById(select_roi_id + select_index));
-                    }
-                    catch(e){
-                        console.warn(e);
-                    }
-                }
-                flag = true;
-                try{
-                    var evt = window.event || e;
-                    var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-                    var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-                    startX = evt.clientX + scrollLeft;
-                    startY = evt.clientY + scrollTop;
-                    select_index++;
-                    var div = document.createElement("div");
-                    div.id = select_roi_id + select_index;
-                    div.className = "div_css";
-                    div.style.marginLeft = startX + "px";
-                    div.style.marginTop = startY + "px";
-                    document.body.appendChild(div);
-                }catch(e){
-                    alert(e);
-                }
-                console.log("onmousedown")
-                console.log(e.offsetX);
-                console.log(e.offsetY);
-                select_left = e.offsetX;
-                select_top = e.offsetY;
-            }
-            document.onmouseup = function(e) {
-                console.log("onmouseup");
-                select_right = e.offsetX;
-                select_down = e.offsetY;
-                console.log(e.offsetX);
-                console.log(e.offsetY);
-                flag = false;
-                try {
-                    document.body.removeChild(document.getElementById(select_roi_id + select_index));
-                    /*
-                    var div = document.createElement("div");
-                    div.className = "retc_css";
-                    div.style.marginLeft = retcLeft;
-                    div.style.marginTop = retcTop;
-                    div.style.width = retcWidth;
-                    div.style.height = retcHeight;
-                    document.body.appendChild(div);
-                    */
-                }
-                catch(e) {
-                    throw(e);
-                }
-                if(select_right > select_left &&  select_down> select_top) {
-                    select_right = select_right+"px";
-                    select_down = select_down+"px";
-                    select_left = select_left+"px";
-                    select_top = select_top+"px";               
-                    document.getElementById("{{image_uuid}}").src="/mosaic/{{image_uuid}}/"+select_left+select_top+select_right+select_down;
-                }
-            }
-            document.onmousemove = function(e) {
-                if(flag){
-                    try{
-                        var evt = window.event || e;
-                        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-                        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
-                        retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
-                        retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
-                        retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
-                        retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
-                        document.getElementById(select_roi_id + select_index).style.marginLeft = retcLeft;
-                        document.getElementById(select_roi_id + select_index).style.marginTop = retcTop;
-                        document.getElementById(select_roi_id + select_index).style.width = retcWidth;
-                        document.getElementById(select_roi_id + select_index).style.height = retcHeight;
-                    }catch(e){
-                        console.warn(e);
-                    }
-                }
-            }
-            function  revert_image() {
-                document.getElementById("{{image_uuid}}").src="/image/input/{{image_uuid}}";
-            }
-        </script>
-        {% end %}
+        <title>手工选择Mosaic区域</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
         <div id="cm-menu">
@@ -189,7 +95,9 @@
                 {% if image_uuid %}
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <img id="{{ image_uuid }}" src="/image/input/{{image_uuid}}">
+                        <div id="div_{{ image_uuid }}">
+                            <img id="{{ image_uuid }}" src="/image/input/{{image_uuid}}" style="max-width:100%">
+                        </div>
                     </div>
                     <a href="/image/mosaic/{{image_uuid}}" download="{{image_uuid}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
                     <button type="button" class="btn btn-primary btn-sm" onclick="javascript:revert_image();">恢复</button>
@@ -237,5 +145,99 @@
         <script src="assets/js/bootstrap.min.js"></script>
         <script src="assets/js/clearmin.min.js"></script>
         <script src="assets/js/demo/home.js"></script>
+        {% if image_uuid %}
+        <script language = "javascript">
+            var select_roi_id = "mosaic_app";
+            var select_index = 0;
+            var startX = 0, startY = 0;
+            var flag = false;
+            var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
+            var select_left = 0, select_top = 0, select_right =0, select_down = 0;
+            document.getElementById("div_{{image_uuid}}").onmousedown = function(e) {
+                if (flag) {
+                    try {
+                        document.body.removeChild(document.getElementById(select_roi_id + select_index));
+                    }
+                    catch(e){
+                        console.warn(e);
+                    }
+                }
+                flag = true;
+                try{
+                    var evt = window.event || e;
+                    var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                    var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                    startX = evt.clientX + scrollLeft;
+                    startY = evt.clientY + scrollTop;
+                    select_index++;
+                    var div = document.createElement("div");
+                    div.id = select_roi_id + select_index;
+                    div.className = "div_css";
+                    div.style.marginLeft = startX + "px";
+                    div.style.marginTop = startY + "px";
+                    document.body.appendChild(div);
+                }catch(e){
+                    alert(e);
+                }
+                console.log("onmousedown")
+                console.log(e.offsetX);
+                console.log(e.offsetY);
+                select_left = e.offsetX;
+                select_top = e.offsetY;
+            }
+            document.getElementById("div_{{image_uuid}}").onmouseup = function(e) {
+                console.log("onmouseup");
+                select_right = e.offsetX;
+                select_down = e.offsetY;
+                console.log(e.offsetX);
+                console.log(e.offsetY);
+                flag = false;
+                try {
+                    document.body.removeChild(document.getElementById(select_roi_id + select_index));
+                    /*
+                    var div = document.createElement("div");
+                    div.className = "retc_css";
+                    div.style.marginLeft = retcLeft;
+                    div.style.marginTop = retcTop;
+                    div.style.width = retcWidth;
+                    div.style.height = retcHeight;
+                    document.body.appendChild(div);
+                    */
+                }
+                catch(e) {
+                    throw(e);
+                }
+                if(select_right > select_left &&  select_down> select_top) {
+                    select_right = select_right+"px";
+                    select_down = select_down+"px";
+                    select_left = select_left+"px";
+                    select_top = select_top+"px";
+                    document.getElementById("{{image_uuid}}").src="/mosaic/{{image_uuid}}/"+select_left+select_top+select_right+select_down;
+                }
+            }
+            document.getElementById("div_{{image_uuid}}").onmousemove = function(e) {
+                if(flag){
+                    try{
+                        var evt = window.event || e;
+                        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                        retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+                        retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+                        retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+                        retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+                        document.getElementById(select_roi_id + select_index).style.marginLeft = retcLeft;
+                        document.getElementById(select_roi_id + select_index).style.marginTop = retcTop;
+                        document.getElementById(select_roi_id + select_index).style.width = retcWidth;
+                        document.getElementById(select_roi_id + select_index).style.height = retcHeight;
+                    }catch(e){
+                        console.warn(e);
+                    }
+                }
+            }
+            function  revert_image() {
+                document.getElementById("{{image_uuid}}").src="/image/input/{{image_uuid}}";
+            }
+        </script>
+        {% end %}
     </body>
 </html>
