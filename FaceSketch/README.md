@@ -46,7 +46,7 @@ for f in os.listdir("."):
 # 构建与运行
 ## 构建
    1. 下载模型文件，名为`sketch.pth`，放在当前目录
-   2. `docker build -t face-sketch:1.0 .`
+   2. `docker build -t linxiaohui/face-sketch:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54325:54325 -p 65535:80 linxiaohui/face-sketch:1.0`
@@ -72,3 +72,13 @@ with open(data_path, "rb") as fp:
     with open("r3.png", "wb") as fp2:
         fp2.write(result[0])
 ```
+   * 说明：face_sketch输入参数为一张图片的数据，或者一个图片数组的列表; 返回为一个列表，为对应输入图片的卡通化图片数据（如果输入是一张图片，返回也是有一个元素的列表。
+
+# 技术要点
+   * 实现图片黑白互换
+   * Image 与 np.array的转换
+
+
+# 相关功能
+   * [../U-2-Net](基础模型，进行前景扣图)
+   * [../CertPhoto](基于U-2-Net的修改证件照背景图片)
