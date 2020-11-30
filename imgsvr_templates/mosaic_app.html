@@ -104,6 +104,9 @@
                     }
                 }
             }
+            function  revert_image() {
+                document.getElementById("{{image_uuid}}").src="/image/input/{{image_uuid}}";
+            }
         </script>
         {% end %}
     </head>
@@ -188,6 +191,8 @@
                     <div class="panel-body">
                         <img id="{{ image_uuid }}" src="/image/input/{{image_uuid}}">
                     </div>
+                    <a href="/image/mosaic/{{image_uuid}}" download="{{image_uuid}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="javascript:revert_image();">恢复</button>
                 </div>
                 <!-- div class="panel panel-default">
                     <div class="panel-body">
