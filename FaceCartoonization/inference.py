@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
-import time
+import imghdr
 
 import zerorpc
 import cv2
 import torch
 import numpy as np
 import torch.nn as nn
-from torch.nn import functional as F
-
 
 class ResBlock(nn.Module):
     def __init__(self, num_channel):
@@ -38,7 +36,6 @@ class DownBlock(nn.Module):
             nn.BatchNorm2d(out_channel),
             nn.ReLU(inplace=True))
 
-
     def forward(self, inputs):
         output = self.conv_layer(inputs)
         return output
@@ -59,7 +56,6 @@ class UpBlock(nn.Module):
             nn.ReLU(inplace=True))
         self.last_act = nn.Tanh()
 
-
     def forward(self, inputs):
         output = self.conv_layer(inputs)
         if self.is_last:
@@ -67,8 +63,6 @@ class UpBlock(nn.Module):
         else:
             output = self.act(output)
         return output
-
-
 
 class SimpleGenerator(nn.Module):
     def __init__(self, num_channel=32, num_blocks=4):
@@ -96,28 +90,15 @@ class SimpleGenerator(nn.Module):
         up4 = self.up4(up3+down1)
         return up4
 
-weight = torch.load(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models','weight.pth'), map_location='cpu')
+weight = torch.load(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'weight.pth'), map_location='cpu')
 MODEL = SimpleGenerator()
 MODEL.load_state_dict(weight)
-#torch.save(model.state_dict(), 'weight.pth')
+# torch.save(model.state_dict(), 'weight.pth')
 MODEL.eval()
 
-
-def infer_image_type(image_data):
-    """根据图片的内容推断图片的格式"""
-    if image_data[:8] == b'\x89PNG\r\n\x1a\n':
-        return ".png"
-    if image_data[:2] == b'\xff\xd8':
-        return ".jpg"
-    return ".jpg"
-
-
 def face_cartoonization(image_data):
-    ext = infer_image_type(image_data)
-    fn = "{}{}".format(time.time(), ext)
-    with open(fn, "wb") as fp:
-        fp.write(image_data)
-    raw_image = cv2.imread(fn)
+    ext = imghdr.what(None, image_data)
+    raw_image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
     h = raw_image.shape[0]
     w = raw_image.shape[1]    
     image = cv2.resize(raw_image, (256,256), interpolation=cv2.INTER_CUBIC)
@@ -131,8 +112,8 @@ def face_cartoonization(image_data):
     output = np.clip(output, 0, 255).astype(np.uint8)
     # print(output.shape, image.shape)
     # output = np.concatenate([image, output], axis=1)
-    output = cv2.resize(output, (w,h), interpolation=cv2.INTER_CUBIC)
-    is_success, im_buf_arr = cv2.imencode(ext, output)
+    output = cv2.resize(output, (w, h), interpolation=cv2.INTER_CUBIC)
+    is_success, im_buf_arr = cv2.imencode("."+ext, output)
     byte_im = im_buf_arr.tobytes()
     return byte_im
 

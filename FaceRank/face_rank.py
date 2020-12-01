@@ -1,39 +1,31 @@
 # -*- coding: utf-8 -*-
-import io
 import os
-import time
+import imghdr
 from math import sqrt, pow, fabs
+
+import numpy as np
 import zerorpc
 import cv2
 import dlib
 
-from dlib_landmarks import *
+from .dlib_landmarks import *
 
 DETECTOR = dlib.get_frontal_face_detector()
 LANDMARKER = dlib.shape_predictor(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'shape_predictor_68_face_landmarks.dat'))
 
-def infer_image_type(image_data):
-    """根据图片的内容推断图片的格式"""
-    if image_data[:8] == b'\x89PNG\r\n\x1a\n':
-        return ".png"
-    if image_data[:2] == b'\xff\xd8':
-        return ".jpg"
-    return ".jpg"
-
 class Point2D(object):
-  def __init__(self):
-    self.x = 0
-    self.y = 0
+    def __init__(self):
+        self.x = 0
+        self.y = 0
 
 def cacl_distance(p1, p2):
-  return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2))
-
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2))
 
 def cacl_mid_point(p1, p2):
-  res_mid_point = Point2D()
-  res_mid_point.x = (p1.x + p2.x) / 2
-  res_mid_point.y = (p1.y + p2.y) / 2
-  return res_mid_point
+    res_mid_point = Point2D()
+    res_mid_point.x = (p1.x + p2.x) / 2
+    res_mid_point.y = (p1.y + p2.y) / 2
+    return res_mid_point
 
 def facial_rater(shape):
     eyebrow_mid = cacl_mid_point(shape.part(left_eyebrow_right_corner),
@@ -72,7 +64,7 @@ def facial_rater(shape):
 
 def facial_processor(img, shape, image_type='.png'):
     for i in range(68):
-      cv2.circle(img, (shape.part(i).x, shape.part(i).y), 5, (0, 255, 0), -1, 8)
+        cv2.circle(img, (shape.part(i).x, shape.part(i).y), 5, (0, 255, 0), -1, 8)
     is_success, im_buf_arr = cv2.imencode(image_type, img)
     byte_im = im_buf_arr.tobytes()
     return byte_im
@@ -81,20 +73,16 @@ def facial_processor(img, shape, image_type='.png'):
 def face_detector(image_data):
     """检测图片数据中的人脸，返回一个元组；
     如果找到则标记其中第一张脸的位置及评分，否则返回(None, None)"""
-    ext = infer_image_type(image_data)
-    fn = "{}.{}".format(time.time(), ext)
-    with open(fn, "wb") as fp:
-        fp.write(image_data)
-    img = cv2.imread(fn)
+    ext = imghdr.what(None, image_data)
+    img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
     faces = DETECTOR(img, 1)
-    if len(faces)<=0:
+    if len(faces) <= 0:
         return None, None
     else:
         shape = LANDMARKER(img, faces[0])
         score = facial_rater(shape)
-        marked_img = facial_processor(img, shape, ext)
+        marked_img = facial_processor(img, shape, "."+ext)
         return marked_img, score
-    
 
 class FaceScorer(object):
     def face_score(self, image_data):
@@ -104,4 +92,3 @@ if __name__ == "__main__":
     s = zerorpc.Server(FaceScorer())
     s.bind("tcp://0.0.0.0:54327")
     s.run()
-
