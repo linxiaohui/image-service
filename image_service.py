@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-import hashlib
 import base64
 import uuid
 import json
 import sqlite3
 import socket
 from abc import ABC
-from functools import wraps
 import imghdr
 import platform
 if platform.system() == "Windows":
@@ -33,8 +31,9 @@ def get_baidu_score(image_uuid, data):
     try:
         ak = os.environ['BAIDU_AIP_AK']
         sk = os.environ['BAIDU_AIP_SK']
-    except:
-        return -1
+    except Exception as e1:
+        print("没有配置Baidu AI平台的Key", e1)
+        return 0
     host = f'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={ak}&client_secret={sk}'
     try:
         response = requests.get(host)
@@ -54,8 +53,8 @@ def get_baidu_score(image_uuid, data):
                 _cursor.execute("INSERT INTO baidu_aip_result (image_uuid, aip_return) VALUES (?,?)", (image_uuid, aip_return))
                 ret_json = json.loads(aip_return)
                 _score = ret_json['result']['face_list'][0]['beauty']
-    except Exception as ex:
-        print(ex)
+    except Exception as e2:
+        print("调用Baidu AI平台API错", ex)
         _score = -1
     _conn.commit()
     _conn.close()
@@ -68,15 +67,16 @@ def get_face_plus_score(image_uuid, data):
     try:
         ak = os.environ['FACEPP_AK']
         sk = os.environ['FACEPP_SK']
-    except:
-        return -1
+    except Exception as e3:
+        print("没有配置旷视AI平台的Key")
+        return 0
     host = "https://api-cn.faceplusplus.com/facepp/v3/detect"
     req_data = {'api_key': ak,
                 'api_secret': sk,
                 'image_base64': base64.b64encode(data).decode('UTF-8'),
                 'return_attributes': 'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus',
                 'return_landmark': '2'
-               }
+                }
     try:
         resp = requests.post(host, data=req_data)
         if resp:
@@ -84,8 +84,8 @@ def get_face_plus_score(image_uuid, data):
             _cursor.execute("INSERT INTO facepp_result (image_uuid, facepp_return) VALUES (?,?)", (image_uuid, facepp_return))
             ret_json = json.loads(facepp_return)
             _score = ret_json['faces'][0]['attributes']['beauty']['male_score']
-    except Exception as ex:
-        print(ex)
+    except Exception as e4:
+        print("调用旷视API错", e4)
         _score = -1
     _conn.commit()
     _conn.close()
@@ -104,6 +104,7 @@ FACE_NET = FaceNet()
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -146,6 +147,7 @@ CARTOONER = Cartoonize()
 class CartoonHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("cartoon.html", image_uuid=image_uuid)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -176,6 +178,7 @@ from style_transfer import transfer_style
 class StyleTransferHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("style_transfer.html", image_uuid=None, style=None, style_uuid=None)
+
     def post(self, image_uuid=None):
         style = self.get_argument("style", None)
         if not style:
@@ -226,6 +229,7 @@ SKETCHER = Sketcher()
 class FaceSketchHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("face_sketch.html", image_uuid=image_uuid)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -254,6 +258,7 @@ from chg_bg import change_background
 class CertPhotoHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("cert_photo.html", image_uuid=None, cert_uuid=None)
+
     def post(self, image_uuid=None):
         bg_color = self.get_argument("bg_color", None)
         if not bg_color:
@@ -298,6 +303,7 @@ from inference import face_cartoonization
 class FaceCartoonHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("face_cartoon.html", image_uuid=image_uuid)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -326,6 +332,7 @@ from mosaic_nsfw import nsfw_mosaic_region
 class NSFWMosiacHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("nsfw_mosaic.html", image_uuid=image_uuid)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -354,6 +361,7 @@ from u2net_rpc import image_cutout
 class ForeGroundHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("fore_ground.html", image_uuid=image_uuid)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -382,6 +390,7 @@ from nsfw_predict import nsfw_predict
 class NSFWScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("nsfw_score.html", image_uuid=None, score=None)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -413,6 +422,7 @@ ROI_MARKER = DeepMosaics_ROIMarker()
 class ROIMarkHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("roi_mark.html", image_uuid=None, roi_uuid=None)
+
     def post(self, image_uuid=None):
         roi_type = self.get_argument("roi_type", None)
         if not roi_type:
@@ -460,6 +470,7 @@ ROI_MOSAICOR = DeepMosaics_Mosaic()
 class ROIMosaicHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("roi_mosaic.html", image_uuid=None, roi_uuid=None)
+
     def post(self, image_uuid=None):
         roi_type = self.get_argument("roi_type", None)
         if not roi_type:
@@ -506,6 +517,7 @@ from mosaic_utils import domosaic
 class MosaicAppHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("mosaic_app.html", image_uuid=None)
+
     def post(self, image_uuid=None):
         file_metas = self.request.files.get('image_file', None)
         file_url = self.get_argument("image_url", None)
@@ -534,6 +546,7 @@ import image_utils
 class ImgConvertHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("image_convert.html", image_uuid=None, convert_uuid=None)
+
     def post(self, image_uuid=None):
         convert_type = self.get_argument("convert_type", None)
         if not convert_type:
@@ -726,7 +739,7 @@ def main():
 if __name__ == "__main__":
     try:
         os.mkdir("/db")
-    except:
+    except Exception as e:
         pass
     try:
         conn = get_db_conn()
