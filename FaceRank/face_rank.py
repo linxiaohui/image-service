@@ -72,12 +72,12 @@ def facial_processor(img, shape, image_type='.png'):
     
 def face_detector(image_data):
     """检测图片数据中的人脸，返回一个元组；
-    如果找到则标记其中第一张脸的位置及评分，否则返回(None, None)"""
+    如果找到则标记其中第一张脸的位置及评分，否则返回(原图片数据, -1)"""
     ext = imghdr.what(None, image_data)
     img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
     faces = DETECTOR(img, 1)
     if len(faces) <= 0:
-        return None, None
+        return image_data, -1
     else:
         shape = LANDMARKER(img, faces[0])
         score = facial_rater(shape)
