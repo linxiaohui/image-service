@@ -81,4 +81,5 @@ with open(data_path, "rb") as fp:
 
 # 相关功能
    * [U-2-Net](../U-2-Net) 基础模型，进行前景扣图
-   * [CertPhoto](../CertPhoto) 基于U-2-Net的修改证件照背景图片
+   * [CertPhoto](../CertPhoto) 基于U-2-Net的修改证件照背景颜色
+   
