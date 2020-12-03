@@ -17,8 +17,8 @@ SHA256(u2netp.pth)= e7567cde013fb64813973ce6e1ecc25a80c05c3ca7adbc5a54f3c3d90991
 
 # 构建与运行
 ## 构建
-   1. 下载模型文件，名为`u2net.pth`，放在`model`目录
-   2. `docker build -t u2net:1.0 .`
+   1. 下载模型文件，名为`u2net.pth`，放在当前目录
+   2. `docker build -t linxiaohui/u2net:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54323:54323 -p 65535:80 linxiaohui/u2net:1.0`
@@ -46,8 +46,13 @@ dat = img[0]
 with open("test.png", "wb") as fp:
     fp.write(dat)
 ```
+   * 说明： cutout接收参数一是一个包含图片数据的列表（每个元素为一张图片的数据），或者是单张图片数据；
+   返回是对应的图片提取的前景部分的列表；
 
 # 技术要点
    * 使用PyTorch加载模型
    * scikit-image 图片数据加载
    
+# 相关应用
+   * [CertPhoto](../CertPhoto)  基于该模型实现的更换证件照背景颜色的应用
+   * [FaceSketch](../FaceSketch) 使用同样的网络训练的人物脸部素描
