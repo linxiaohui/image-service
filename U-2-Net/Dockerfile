@@ -18,7 +18,8 @@ RUN pip3 install --no-cache-dir torchvision==0.2.1
 RUN pip3 install --no-cache-dir pillow 
 RUN pip3 install --no-cache-dir requests
 RUN pip3 install --no-cache-dir tornado
-COPY ./models /models
+COPY ./model /model
+COPY u2net.pth /models/u2net.pth
 COPY *.py /
 ENV IMAGESERVICE_ROOT /
 COPY templates /templates
