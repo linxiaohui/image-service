@@ -1,11 +1,12 @@
+import io
+import os
+import functools
+
 from PIL import Image
 import numpy as np
 import cv2
 import torchvision.transforms as transforms
 import torch
-import io
-import os
-import functools
 
 class DataLoader():
 
