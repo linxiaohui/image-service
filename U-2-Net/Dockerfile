@@ -7,8 +7,8 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo "Asia/Shanghai" > /etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
-RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U
-RUN pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple pip -U
+RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
 RUN pip3 install --no-cache-dir setuptools
 RUN pip3 install --no-cache-dir numpy==1.15.2
 RUN pip3 install --no-cache-dir zerorpc
