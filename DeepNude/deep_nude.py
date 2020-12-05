@@ -4,6 +4,7 @@ import time
 import imghdr
 
 import cv2
+import numpy as np
 import zerorpc
 
 from run import process
