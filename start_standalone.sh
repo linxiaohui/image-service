@@ -1,6 +1,7 @@
 export IMAGESERVICE_ROOT=$(pwd)/run
 rm -rf $IMAGESERVICE_ROOT
 mkdir -p $IMAGESERVICE_ROOT
+ln -s $(pwd)/models $IMAGESERVICE_ROOT/models
 cp -r U-2-Net/model $IMAGESERVICE_ROOT/model
 cp -r U-2-Net/u2net_rpc.py $IMAGESERVICE_ROOT/u2net_rpc.py
 cp -r U-2-Net/data_loader.py $IMAGESERVICE_ROOT/data_loader.py
@@ -11,9 +12,6 @@ cp -r NSFW-Mask/bbox_blur.py $IMAGESERVICE_ROOT/bbox_blur.py
 cp -r NSFW-Mask/mosaic_nsfw.py $IMAGESERVICE_ROOT/mosaic_nsfw.py
 cp -r Mosaic/mosaic_utils.py $IMAGESERVICE_ROOT/mosaic_utils.py
 cp -r BeautyPredict/beauty_predict.py $IMAGESERVICE_ROOT/beauty_predict.py
-mkdir -p $HOME/.keras/models
-ln -s $(pwd)/models $IMAGESERVICE_ROOT/models
-cp -r models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5 $HOME/.keras/models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5
 cp -r Cartoonization/network.py $IMAGESERVICE_ROOT/network.py
 cp -r Cartoonization/guided_filter.py $IMAGESERVICE_ROOT/guided_filter.py
 cp -r Cartoonization/cartoonize.py $IMAGESERVICE_ROOT/cartoonize.py

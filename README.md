@@ -56,6 +56,9 @@ NSFW（Not Suitalbe For Work） 图片的识别
 ## NSFW-Mask
 实现对NSFW图片进行区域打码
 
+## NSFW-Score
+NSFW图片评分分类
+
 ## ROI-Mark
 根据预训练模型画出ROI区域
 

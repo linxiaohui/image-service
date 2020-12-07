@@ -31,7 +31,6 @@ COPY NSFW-Mask/models /models
 COPY Mosaic/mosaic_utils.py /mosaic_utils.py
 COPY BeautyPredict/beauty_predict.py /beauty_predict.py
 COPY BeautyPredict/models /models
-COPY BeautyPredict/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5 /root/.keras/models/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5
 COPY Cartoonization/cartoon_model /cartoon_model
 COPY Cartoonization/network.py /network.py
 COPY Cartoonization/guided_filter.py /guided_filter.py
