@@ -42,6 +42,9 @@ with open("result.jpg", "wb") as fp:
     fp.write(dat)
 ```
 
+# 技术要点
+   * 使用`tensorboard`查看`pb`格式文件保存的模型的结构
+
 # 声明
 所有权利归原作者所有。
 

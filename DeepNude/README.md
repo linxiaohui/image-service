@@ -6,6 +6,9 @@
    * [dn.zip](http://39.105.149.229/dn.zip)
    * [Google Drive](https://drive.google.com/drive/folders/1OKuIp0nxMUucgEScTc2vESvlpKzIWav4?usp=sharing)
 
+# 构建方式
+   * 下载模型文件，将`*.lib`放在`checkpoints`目录下
+   * `docker build -t deep-nude:1.0 .`
 
 # 启动命令
    `docker run -d -p 54328:54328 -p 65535:80 deep-nude:1.0`

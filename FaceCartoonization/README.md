@@ -27,3 +27,6 @@ dat = img
 with open("test.jpg", "wb") as fp:
     fp.write(dat)
 ```
+
+# 相关应用
+   * [Cartoonization](../Cartoonization)  同作者提出的对图片进行卡通化处理的模型;
