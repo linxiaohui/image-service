@@ -44,10 +44,12 @@ with open("result.jpg", "wb") as fp:
 
 # 技术要点
    * 使用`tensorboard`查看`pb`格式文件保存的模型的结构
+   * 马赛克化的方式
 
 # 声明
 所有权利归原作者所有。
 
 # 相关项目
-[Mosaic](../Mosaic) 提供了OpenCV实现对图片指定区域进行马赛克化的方式
+   * [Mosaic](../Mosaic) 提供了OpenCV实现对图片指定区域进行马赛克化的方式
+   * [NSFW-Score](../NSFW-Score) 基于同样模型实现的NSFW图片分类（打分）
 
