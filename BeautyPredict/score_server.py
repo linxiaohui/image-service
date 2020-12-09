@@ -10,6 +10,10 @@ import sqlite3
 import socket
 import imghdr
 import platform
+import urllib3
+
+
+urllib3.disable_warnings()
 if platform.system() == "Windows":
     import asyncio
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -32,7 +36,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
         if not url:
             self.render("index.html")
         else:
-            resp = requests.get(url)
+            resp = requests.get(url, verify=False)
             data = resp.content
             scores = beauty_predict(data) 
             score = scores[0]
