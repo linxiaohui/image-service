@@ -12,7 +12,6 @@ import imghdr
 import platform
 import urllib3
 
-
 urllib3.disable_warnings()
 if platform.system() == "Windows":
     import asyncio
