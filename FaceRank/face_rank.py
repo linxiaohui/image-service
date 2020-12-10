@@ -8,7 +8,7 @@ import zerorpc
 import cv2
 import dlib
 
-from .dlib_landmarks import *
+from dlib_landmarks import *
 
 DETECTOR = dlib.get_frontal_face_detector()
 LANDMARKER = dlib.shape_predictor(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'shape_predictor_68_face_landmarks.dat'))
