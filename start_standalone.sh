@@ -27,6 +27,9 @@ cp -r DeepStyle/util/__init__.py $IMAGESERVICE_ROOT/util/__init__.py
 cp -r DeepStyle/dm_models/* $IMAGESERVICE_ROOT/dm_models
 cp -r DeepStyle/deep_style.py $IMAGESERVICE_ROOT/deep_style.py
 cp -r NSFW/nsfw_predict.py $IMAGESERVICE_ROOT/nsfw_predict.py
+cp -r FaceNet/align $IMAGESERVICE_ROOT/align
+cp -r FaceNet/facenet.py $IMAGESERVICE_ROOT/facenet.py
+cp -r FaceNet/calc_face_features.py $IMAGESERVICE_ROOT/calc_face_features.py
 cp -r imgsvr_templates $IMAGESERVICE_ROOT/imgsvr_templates
 cp -r imgsvr_static $IMAGESERVICE_ROOT/imgsvr_static
 cp -r image_service.py $IMAGESERVICE_ROOT/image_service.py

@@ -17,7 +17,7 @@ import align.detect_face
 
 class FaceNet(object):
     """"""
-    def __init__(self, model_path="/models/20180408-102900/", image_size=160, margin=44, gpu_memory_fraction=1.0):
+    def __init__(self, model_path=os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', '20180408-102900'), image_size=160, margin=44, gpu_memory_fraction=1.0):
         """
         gpu_memory_fraction: Upper bound on the amount of GPU memory that will be used by the process.
         """
@@ -114,6 +114,6 @@ class FaceNet(object):
         return ret
 
 if __name__ == "__main__":
-    s = zerorpc.Server(FaceNet("/models/20180408-102900/"))
+    s = zerorpc.Server(FaceNet())
     s.bind("tcp://0.0.0.0:54335")
     s.run()
