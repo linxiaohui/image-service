@@ -14,7 +14,7 @@ SHA256(shape_predictor_68_face_landmarks.dat)= fbdc2cb80eb9aa7a758672cbfdda32ba6
 # 构建与运行
 ## 构建
    1. 下载模型文件，名为`shape_predictor_68_face_landmarks.dat`，放在当前目录
-   2. `docker build -t face-rank:1.0 .`
+   2. `docker build -t linxiaohui/face-rank:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54327:54327 -p 65535:80 linxiaohui/face-rank:1.0`

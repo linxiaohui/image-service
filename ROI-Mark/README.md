@@ -14,7 +14,7 @@ SHA256(add_youknow.pth)= bd6431edaf2157a0d30c00e1b8692c28b2b606a5d05ded23d1de093
 # 构建与运行
 ## 构建
    1. 下载模型文件`add_face.pth`和`add_youknow.pth`，放在`pretrained_models`目录
-   2. `docker build -t roi-mark:1.0 .`
+   2. `docker build -t linxiaohui/roi-mark:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 54334:54334 -p 65535:80 linxiaohui/roi-mark:1.0`
@@ -43,11 +43,18 @@ with open("result.jpg", "wb") as fp:
     fp.write(dat)
 ```
 
+# 技术要点
+   * OpenCV 定位和描绘轮廓
+
 # 声明
 源项目采用[GPL-3.0 License](https://github.com/HypoX64/DeepMosaics/blob/master/LICENSE)；
 本项目中使用的源项目中的资源所有权利归原作者所有。
 
 
 # 相关项目
-[DeepMosaic](../DeepMosaic) 同样的模型实现对ROI区域进行打码
+   * [DeepMosaic](../DeepMosaic) 同样的模型实现对ROI区域进行打码
+   * [FaceDetect](../FaceDetect) OpenCV人脸检测
+   * [BeautyPredict](../BeautyPredict) dlib人脸检测
+   * [FaceNet](../FaceNet) 人脸检测和人脸识别
+
 

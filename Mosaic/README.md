@@ -5,7 +5,7 @@ Mosaic
 
 # 构建与运行
 ## 构建
-   * `docker build -t image-mosaic-webapp:1.0 .`
+   * `docker build -t linxiaohui/image-mosaic-webapp:1.0 .`
 
 ## 从DockerHub下载镜像并运行
    `docker run -d -p 65535:80 linxiaohui/image-mosaic-webapp:1.0`

@@ -41,7 +41,10 @@ for f in os.listdir("."):
 `export CUDA_VISIBLE_DEVICES=1,2,3,4` 后执行即可
 
 # 预训练模型
-[百度云](https://pan.baidu.com/s/1kFO-lrRPnb57NL-gptFwzA) 提取码: `v42s`
+[百度云](https://pan.baidu.com/s/1SN6PE1pNazJs7pEy3Aqm7w) 提取码: `58j6`
+
+```
+```
 
 # 构建与运行
 ## 构建

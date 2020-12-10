@@ -1,6 +1,5 @@
 # FaceCartoonization
-
-面部图片卡通化， [Githu主页](https://github.com/SystemErrorWang/FacialCartoonization)
+面部图片卡通化， [Githu主页](https://github.com/SystemErrorWang/FacialCartoonization)。
 
 # 构建与运行
 # 本地构建
@@ -13,6 +12,12 @@
 
 
 # 调用方式
+
+## Web界面
+   * 浏览器打开，地址为宿主机地址+Web界面服务映射到的本机端口； 
+   * 上传图片后将原图片和卡通化后的图片会在页面中显示；
+
+## RPC服务
 ```python
 # -*- coding: utf-8 -*-
 import zerorpc

@@ -49,11 +49,11 @@ data = open(data_path, "rb").read()
 beauty_score = s.beauty_score(data)
 print(beauty_score[0])
 ```
-   * 说明： beauty_score返回时一个数组，为其中每一张脸的评分
+   * 说明： beauty_score返回是一个数组，为其中每一张脸的评分
 
 # 技术要点
-使用dlib的人脸检测功能，确定人脸的区域，使用OpenCV调整人脸区域的大小后调用Keras模型，得到评分;
-在图片上标注人脸的区域以及其评分
+   * 使用dlib的人脸检测功能，确定人脸的区域，使用OpenCV调整人脸区域的大小后调用Keras模型，得到评分;
+   * 在图片上标注人脸的区域以及其评分
 
 # 相关功能
    * [FaceRank](../FaceRank) 使用“公式”计算颜值，其中有使用dlib进行人脸关键点检测

@@ -29,8 +29,9 @@ f.attrs['keras_version']
    2. `docker build -t linxiaohui/nsfw-service:1.0 .`
 
 ## 从DockerHub下载镜像并运行
-   `docker run -d -p 54322:54322 linxiaohui/nsfw-service:1.0`
-   * 其中 `54322`端口为容器中`ZeroRPC`服务的监听端口，映射到本机的 `54322`端口
+   `docker run -d -p 54322:54322 -p 65535:80 linxiaohui/nsfw-service:1.0`
+   * 其中 `54322`端口为容器中RPC服务的监听端口，`80`为Web界面的监听端口；
+   * 对应的`54322`和`65535`端口为映射到的本机端口.
 
 # 调用方式
 ## 单张图片
@@ -85,6 +86,11 @@ print(s.nsfw_batch_predict(images))
        'neutral': 0.9813323020935059}
 }
 ```
+
+## Web界面
+   * 浏览器打开，地址为宿主机地址+Web界面服务映射到的本机端口；
+   * 上传图片或输入图片的URL，点击提交
+   * 提交后，图片及评分会显示在页面上，以供评估模型的效果
 
 
 # 技术要点
