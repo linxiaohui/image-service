@@ -13,8 +13,10 @@
 
 ## 其它下载方式
 考虑到代码库的空间，本代码库中没有包含预训练模型。可从官方代码库中下载，或下面的地址
-[百度云](https://pan.baidu.com/s/1g8bTpR3Hk4nZQ-iGUYYywA), 提取码`asyx`
-**SHA256**：SHA256(inception_sp_0.9924_0.09.pb)= 008dc775c920bafc18e7ed68a9a2489c695aff547da3dca74b4034b0b30af0dc
+   * [百度云](https://pan.baidu.com/s/1g8bTpR3Hk4nZQ-iGUYYywA), 提取码`asyx`
+```
+SHA256(inception_sp_0.9924_0.09.pb)= 008dc775c920bafc18e7ed68a9a2489c695aff547da3dca74b4034b0b30af0dc
+```
 
 # 构建与运行
 ## 构建

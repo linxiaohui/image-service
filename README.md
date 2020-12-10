@@ -87,7 +87,7 @@ AI抠图
    * bash start_standalone.bash
 
 ## Demo
-`http://demo.5190m.top:65535`
+`http://demo.5190m.top` 【demo运行环境资源有限，只运行部分功能】
 
 # 声明
    * 本项目仅对一些功能进行整理，并可能根据需要进行一定的适应性改动，目的是方便研究与可获取性；
