@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import tensorflow as tf
+import pprint 
 
 import tensorflow as tf
-import pprint # 使用pprint 提高打印的可读性
-reader=tf.train.NewCheckpointReader("model/model-33999")
 
+reader=tf.train.NewCheckpointReader("cartoon_model/model-33999")
 
 pprint.pprint(reader.debug_string().decode("utf-8"))
-
 
 pb_gfile_path = "cartoon.pb"
 
@@ -18,5 +16,3 @@ with tf.Session() as sess:
 
     with tf.gfile.FastGFile(pb_gfile_path, "wb") as f:
         f.write(sess.graph_def.SerializeToString())
-
-
