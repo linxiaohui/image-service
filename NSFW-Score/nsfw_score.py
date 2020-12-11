@@ -91,14 +91,14 @@ def nsfw_score(image_data):
     print(np.sum(_score))
     return _score[0][0]
 
-class NSFWMaskerServer(object):
-    def mark_nsfw(self, image_data):
+class NSFWScoreServer(object):
+    def score_nsfw(self, image_data):
         return nsfw_score(image_data)
 
+
 if __name__ == "__main__":
-    s = NSFWMaskerServer()
-    for fn in ["1.jpg", "2.jpg", "3.jpg"]:
-        print(fn)
-        with open(fn, "rb") as fp:
-            s.mark_nsfw(fp.read())
+    s = zerorpc.Server(NSFWScoreServer())
+    s.bind("tcp://0.0.0.0:54336")
+    s.run()
+
 

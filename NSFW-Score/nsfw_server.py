@@ -18,7 +18,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 
-from mosaic_score import nsfw_score
+from nsfw_score import nsfw_score
 
 class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self):
