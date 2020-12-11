@@ -1,3 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %} 证件照背景色 {% end %}
+
+{% block description %} 
+    <h2 style="margin-top:0;">证件照背景色</h2> 
+    <p> 证件照背景色 </p>
+{% end %}
+
+{% block content %}
+    {% if image_uuid %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <img src="/image/input/{{image_uuid}}" style="max-width:100%">
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">选择图片的背景颜色</div>
+            <div class="panel-body">
+                <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                    <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
+                    <div class="form-group" style="margin-bottom:0">
+                        <div class="col-sm-offset-2 col-sm-10 text-right">
+                            <input class="form-control" class="form-control" type="color" name="bg_color" >
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <div class="col-sm-offset-2 col-sm-10 text-right">
+                            <button type="submit" class="btn btn-primary">提交</button>
+                        </div>
+                    </div>                    
+                </form>
+            </div>
+        </div>
+
+        {% if cert_uuid %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <img src="/image/cert/{{cert_uuid}}" style="max-width:100%">
+            </div>
+            <a href="/image/cert/{{cert_uuid}}" download="{{cert_uuid}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
+        </div>
+        {% end %}
+    {% else %}
+        <div class="panel panel-default">
+            <div class="panel-body">
+                {% include "upload_form.html" %}
+            </div>
+        </div>
+    {% end %}
+{% end %}
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -82,73 +135,10 @@
         </header>
         <div id="global">
             <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">证件照背景色</h2> 
-                <p> 证件照背景色 </p>
+
             </div>
             <div class="container-fluid">
-                {% if image_uuid %}
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <img src="/image/input/{{image_uuid}}" style="max-width:100%">
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">选择图片的背景颜色</div>
-                    <div class="panel-body">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <input class="form-control" class="form-control" type="color" name="bg_color" >
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>                    
-                        </form>
-                    </div>
-                </div>
-
-                {% if cert_uuid %}
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <img src="/image/cert/{{cert_uuid}}" style="max-width:100%">
-                    </div>
-                    <a href="/image/cert/{{cert_uuid}}" download="{{cert_uuid}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
-                </div>
-                {% end %}
-
-
-                {% else %}
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <div class="form-group">
-                                <label for="image_url" class="col-sm-2 control-label">图片地址</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="image_url" name="image_url" placeholder="输入图片URL">
-                                </div>
-                            </div>
-                            或
-                            <div class="form-group">
-                                <label for="image_file" class="col-sm-2 control-label">上传文件</label>
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="image_file" name="image_file" placeholder="image_file">
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="reset" class="btn btn-default">取消</button>
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>
-                            {% module xsrf_form_html() %}
-                        </form>
-                    </div>
-                </div>
-                {% end %}
+                
             </div>
             <footer class="cm-footer"><span class="pull-left">image-service</span><span class="pull-right">&copy; 5190m.top</span></footer>
         </div>

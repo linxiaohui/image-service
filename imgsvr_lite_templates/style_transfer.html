@@ -1,178 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap-clearmin.min.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/roboto.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>风格迁移</title>
-    </head>
-    <body class="cm-no-transition cm-1-navbar">
-        <div id="cm-menu">
-            <nav class="cm-navbar cm-navbar-primary">
-                <div class="cm-flex"><a href="index.html" class="cm-logo"></a></div>
-                <div class="btn btn-primary md-menu-white" data-toggle="cm-menu"></div>
-            </nav>
-            <div id="cm-menu-content">
-                <div id="cm-menu-items-wrapper">
-                    <div id="cm-menu-scroller">
-                        <ul class="cm-menu-items">
-                            <li class="active"><a href="index.html" class="sf-house">主页</a></li>
-                            <li><a href="cartoon.html" class="sf-snow-flake">卡通化</a></li>
-                            <li class="cm-submenu">
-                                <a class="sf-profile"> 人物 <span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="beauty_score.html">AI颜值评分</a></li>
-                                    <li><a href="face_sketch.html">人脸素描</a></li>
-                                    <li><a href="face_cartoon.html">人脸卡通化</a></li>
-                                </ul>
-                            </li>
-                            <li class="cm-submenu">
-                                <a class="sf-puzzle">抠图 <span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="fore_ground.html">前景分离</a></li>
-                                    <li><a href="cert_photo.html">证件照换底色</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="style_transfer.html" class="sf-file-picture">风格迁移</a></li>
-                            <li><a href="nsfw.html" class="sf-shield-warning">NSFW</a></li>
-                            <li class="cm-submenu">
-                                <a class="sf-puzzle">马赛克<span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="mosaic_app.html">手动马赛克</a></li>
-                                    <li><a href="nsfw_mosaic.html">NSFW马赛克</a></li>
-                                    <li><a href="roi_mosaic.html">ROI马赛克</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="roi_mark.html" class="sf-map-marker">区域标记</a></li>
-                            <li><a href="convert.html" class="sf-wrench-screwdriver">图片类型转换</a></li>
-                            <li><a href="ascii.html" class="sf-file-code">字符画</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+{% extends "base.html" %}
+
+{% block title %} 风格迁移 {% end %}
+
+{% block description %} 
+    <h2 style="margin-top:0;">风格迁移</h2> 
+    <p> 基于深度学习模型的风格迁移 </p>
+{% end %}
+
+{% block content %}
+    {% if image_uuid %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <img src="/image/input/{{image_uuid}}" style="max-width:100%">
         </div>
-        <header id="cm-header">
-            <nav class="cm-navbar cm-navbar-primary">
-                <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
-                <div class="cm-flex">
-                    <h1>Style Transfer</h1> 
-                    <form id="cm-search" action="index.html" method="get">
-                        <input type="search" name="q" autocomplete="off" placeholder="Search...">
-                    </form>
-                </div>
-                <div class="pull-right">
-                    <div id="cm-search-btn" class="btn btn-primary md-search-white" data-toggle="cm-search"></div>
-                </div>
-                <div class="dropdown pull-right">
-                    <button class="btn btn-primary md-notifications-white" data-toggle="dropdown"> <span class="label label-danger">0</span> </button>
-                    <div class="popover cm-popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <div class="list-group">
-                            </div>
-                            <div style="padding:10px"><a class="btn btn-success btn-block" href="#">更多...</a></div>
-                        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">选择图片风格</div>
+        <div class="panel-body">
+            <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
+                <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
+                <div class="form-group" style="margin-bottom:0">
+                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                        <select class="form-control" name="style">
+                            <option value="candy">candy</option>
+                            <option value="feathers">feathers</option>
+                            <option value="la_muse">la_muse</option>
+                            <option value="mosaic">mosaic</option>
+                            <option value="the_scream">the_scream</option>
+                            <option value="udnie">udnie</option>
+                            <option value="composition_vii">composition_vii</option>
+                            <option value="la_muse2">la_muse</option>
+                            <option value="starry_night">starry_night</option>
+                            <option value="the_wave">the_wave</option>
+                            <option value="monet" selected="selected">monet</option>
+                            <option value="cezanne">cezanne</option>
+                            <option value="vangogh">vangogh</option>
+                            <option value="ukiyoe">ukiyoe</option>
+                        </select>
                     </div>
                 </div>
-            </nav>
-        </header>
-        <div id="global">
-            <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">风格迁移</h2> 
-                <p> 基于深度学习模型的风格迁移 </p>
-            </div>
-            <div class="container-fluid">
-                {% if image_uuid %}
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <img src="/image/input/{{image_uuid}}" style="max-width:100%">
+                <div class="form-group" style="margin-bottom:0">
+                    <div class="col-sm-offset-2 col-sm-10 text-right">
+                        <button type="submit" class="btn btn-primary">提交</button>
                     </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">选择图片风格</div>
-                    <div class="panel-body">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <input type="hidden" name="image_uuid" value="{{image_uuid}}" />
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <select class="form-control" name="style">
-                                        <option value="candy">candy</option>
-                                        <option value="feathers">feathers</option>
-                                        <option value="la_muse">la_muse</option>
-                                        <option value="mosaic">mosaic</option>
-                                        <option value="the_scream">the_scream</option>
-                                        <option value="udnie">udnie</option>
-                                        <option value="composition_vii">composition_vii</option>
-                                        <option value="la_muse2">la_muse</option>
-                                        <option value="starry_night">starry_night</option>
-                                        <option value="the_wave">the_wave</option>
-                                        <option value="monet" selected="selected">monet</option>
-                                        <option value="cezanne">cezanne</option>
-                                        <option value="vangogh">vangogh</option>
-                                        <option value="ukiyoe">ukiyoe</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>                    
-                        </form>
-                    </div>
-                </div>
-
-                {% if style %}
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <img src="/image/style/{{style_uuid}}" style="max-width:100%">
-                    </div>
-                    <a href="/image/style/{{style_uuid}}" download="{{style_uuid}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
-                </div>
-                {% end %}
-
-
-                {% else %}
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <form class="form-horizontal" action="{{ request.path }}"  enctype="multipart/form-data" method="post">
-                            <div class="form-group">
-                                <label for="image_url" class="col-sm-2 control-label">图片地址</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="image_url" name="image_url" placeholder="输入图片URL">
-                                </div>
-                            </div>
-                            或
-                            <div class="form-group">
-                                <label for="image_file" class="col-sm-2 control-label">上传文件</label>
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="image_file" name="image_file" placeholder="image_file">
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-bottom:0">
-                                <div class="col-sm-offset-2 col-sm-10 text-right">
-                                    <button type="reset" class="btn btn-default">取消</button>
-                                    <button type="submit" class="btn btn-primary">提交</button>
-                                </div>
-                            </div>
-                            {% module xsrf_form_html() %}
-                        </form>
-                    </div>
-                </div>
-                {% end %}
-            </div>
-            <footer class="cm-footer"><span class="pull-left">image-service</span><span class="pull-right">&copy; 5190m.top</span></footer>
+                </div>                    
+            </form>
         </div>
-        <script src="assets/js/lib/jquery.min.js"></script>
-        <script src="assets/js/jquery.mousewheel.min.js"></script>
-        <script src="assets/js/jquery.cookie.min.js"></script>
-        <script src="assets/js/fastclick.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/clearmin.min.js"></script>
-        <script src="assets/js/demo/home.js"></script>
-    </body>
-</html>
+    </div>
+
+    {% if style %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <img src="/image/style/{{style_uuid}}" style="max-width:100%">
+        </div>
+        <a href="/image/style/{{style_uuid}}" download="{{style_uuid}}"><button type="button" class="btn btn-primary btn-sm">下载</button></a>
+    </div>
+    {% end %}
+
+
+    {% else %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {% include "upload_form.html" %}
+        </div>
+    </div>
+    {% end %}
+{% end %}
