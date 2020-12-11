@@ -17,6 +17,9 @@ RUN pip3 install --no-cache-dir pillow
 COPY nsfw.299x299.h5 /models/nsfw.299x299.h5
 COPY nsfw_predict.py /nsfw_predict.py
 COPY nsfw_rpc.py /nsfw_rpc.py
+COPY nsfw_server.py /nsfw_server.py
+COPY templates /templates
 ENV IMAGESERVICE_ROOT /
-CMD python3 /nsfw_rpc.py
+CMD (nohup python3 /nsfw_rpc.py &) && python3 -u nsfw_server.py
+
 
