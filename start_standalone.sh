@@ -32,6 +32,7 @@ cp -r FaceNet/facenet.py $IMAGESERVICE_ROOT/facenet.py
 cp -r FaceNet/calc_face_features.py $IMAGESERVICE_ROOT/calc_face_features.py
 cp -r imgsvr_templates $IMAGESERVICE_ROOT/imgsvr_templates
 cp -r imgsvr_static $IMAGESERVICE_ROOT/imgsvr_static
+cp -r image_utils.py $IMAGESERVICE_ROOT/image_utils.py
 cp -r image_service.py $IMAGESERVICE_ROOT/image_service.py
 cd $IMAGESERVICE_ROOT
 python3 -u $IMAGESERVICE_ROOT/image_service.py

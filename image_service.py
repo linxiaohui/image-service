@@ -21,7 +21,7 @@ import requests
 
 
 def get_db_conn():
-    _conn = sqlite3.connect("/db/image.db")
+    _conn = sqlite3.connect(os.path.join(os.environ['IMAGESERVICE_ROOT'], "db", "image.db"))
     return _conn
 
 def get_baidu_score(image_uuid, data):
@@ -738,7 +738,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        os.mkdir("/db")
+        os.mkdir(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'db'))
     except Exception as e:
         pass
     try:
