@@ -1,163 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap-clearmin.min.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/roboto.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
-        <title>image-services</title>
-    </head>
-    <body class="cm-no-transition cm-1-navbar">
-        <div id="cm-menu">
-            <nav class="cm-navbar cm-navbar-primary">
-                <div class="cm-flex"><a href="index.html" class="cm-logo"></a></div>
-                <div class="btn btn-primary md-menu-white" data-toggle="cm-menu"></div>
-            </nav>
-            <div id="cm-menu-content">
-                <div id="cm-menu-items-wrapper">
-                    <div id="cm-menu-scroller">
-                        <ul class="cm-menu-items">
-                            <li class="active"><a href="index.html" class="sf-house">主页</a></li>
-                            <li><a href="cartoon.html" class="sf-snow-flake">卡通化</a></li>
-                            <li class="cm-submenu">
-                                <a class="sf-profile"> 人物 <span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="beauty_score.html">AI颜值评分</a></li>
-                                    <li><a href="face_sketch.html">人脸素描</a></li>
-                                    <li><a href="face_cartoon.html">人脸卡通化</a></li>
-                                </ul>
-                            </li>
-                            <li class="cm-submenu">
-                                <a class="sf-puzzle">抠图 <span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="fore_ground.html">前景分离</a></li>
-                                    <li><a href="cert_photo.html">证件照换底色</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="style_transfer.html" class="sf-file-picture">风格迁移</a></li>
-                            <li><a href="nsfw.html" class="sf-shield-warning">NSFW</a></li>
-                            <li class="cm-submenu">
-                                <a class="sf-puzzle">马赛克<span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="mosaic_app.html">手动马赛克</a></li>
-                                    <li><a href="nsfw_mosaic.html">NSFW马赛克</a></li>
-                                    <li><a href="roi_mosaic.html">ROI马赛克</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="roi_mark.html" class="sf-map-marker">区域标记</a></li>
-                            <li><a href="convert.html" class="sf-wrench-screwdriver">图片类型转换</a></li>
-                            <li><a href="ascii.html" class="sf-file-code">字符画</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <header id="cm-header">
-            <nav class="cm-navbar cm-navbar-primary">
-                <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
-                <div class="cm-flex">
-                    <h1>Home</h1> 
-                    <form id="cm-search" action="index.html" method="get">
-                        <input type="search" name="q" autocomplete="off" placeholder="Search...">
-                    </form>
-                </div>
-                <div class="pull-right">
-                    <div id="cm-search-btn" class="btn btn-primary md-search-white" data-toggle="cm-search"></div>
-                </div>
-                <div class="dropdown pull-right">
-                    <button class="btn btn-primary md-notifications-white" data-toggle="dropdown"> <span class="label label-danger">0</span> </button>
-                    <div class="popover cm-popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <div class="list-group">
-                            </div>
-                            <div style="padding:10px"><a class="btn btn-success btn-block" href="#">更多...</a></div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
-        <div id="global">
-            <div class="container-fluid cm-container-white">
-                <h2 style="margin-top:0;">Image Service</h2> 
-                <p>基于Python+OpenCV+深度学习的图片处理相关应用演示。</p>
-            </div>
-            <div class="container-fluid">
-                <div class="row cm-fix-height">
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="cartoon.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/snow-flake.svg" alt="now-flake">
-                                </span>
-                                <h4>卡通</h4> <small> 生成输入图片的卡通化版本 </small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="beauty_score.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/device-camera.svg" alt="device-camera">
-                                </span>
-                                <h4>AI颜值评分</h4> <small>使用深度学习模型对人脸图片进行“颜值”的评分</small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="cert_photo.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/user-id.svg" alt="user-id">
-                                </span>
-                                <h4>证件照</h4> <small> 更换证件照的背景颜色 </small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="style_transfer.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/file-picture.svg" alt="file-picture">
-                                </span>
-                                <h4>风格迁移</h4> <small>基于深度学习模型的图片风格迁移</small>
+{% extends "base.html" %}
 
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="mosaic_app.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/magnify-less.svg" alt="magnify-less">
-                                </span>
-                                <h4>马赛克</h4> <small>输入图片，选择区域，对选定的区域进行马赛克处理</small>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                        <a href="roi_mark.html" class="panel panel-default thumbnail cm-thumbnail">
-                            <div class="panel-body text-center">
-                                <span class="svg-48">
-                                    <img src="assets/img/sf/map-marker.svg" alt="map-marker">
-                                </span>
-                                <h4>区域检测</h4> <small>根据深度学习预训练模型画出ROI区域</small>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+{% block title %} image-services {% endblock %}
+
+{% block description %} 
+<h2 style="margin-top:0;">Image Service</h2> 
+<p>基于Python+OpenCV+深度学习的图片处理相关应用演示。</p>
+{% endblock %}
+
+{% block content %}
+<div class="row cm-fix-height">
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="cartoon.html" class="panel panel-default thumbnail cm-thumbnail">
+            <div class="panel-body text-center">
+                <span class="svg-48">
+                    <img src="assets/img/sf/snow-flake.svg" alt="now-flake">
+                </span>
+                <h4>卡通</h4> <small> 生成输入图片的卡通化版本 </small>
             </div>
-            <footer class="cm-footer"><span class="pull-left">image-service</span><span class="pull-right">&copy; 5190m.top</span></footer>
-        </div>
-        <script src="assets/js/lib/jquery.min.js"></script>
-        <script src="assets/js/jquery.mousewheel.min.js"></script>
-        <script src="assets/js/jquery.cookie.min.js"></script>
-        <script src="assets/js/fastclick.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/clearmin.min.js"></script>
-        <script src="assets/js/demo/home.js"></script>
-    </body>
-</html>
+        </a>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="beauty_score.html" class="panel panel-default thumbnail cm-thumbnail">
+            <div class="panel-body text-center">
+                <span class="svg-48">
+                    <img src="assets/img/sf/device-camera.svg" alt="device-camera">
+                </span>
+                <h4>AI颜值评分</h4> <small>使用深度学习模型对人脸图片进行“颜值”的评分</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="cert_photo.html" class="panel panel-default thumbnail cm-thumbnail">
+            <div class="panel-body text-center">
+                <span class="svg-48">
+                    <img src="assets/img/sf/user-id.svg" alt="user-id">
+                </span>
+                <h4>证件照</h4> <small> 更换证件照的背景颜色 </small>
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="style_transfer.html" class="panel panel-default thumbnail cm-thumbnail">
+            <div class="panel-body text-center">
+                <span class="svg-48">
+                    <img src="assets/img/sf/file-picture.svg" alt="file-picture">
+                </span>
+                <h4>风格迁移</h4> <small>基于深度学习模型的图片风格迁移</small>
+
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="mosaic_app.html" class="panel panel-default thumbnail cm-thumbnail">
+            <div class="panel-body text-center">
+                <span class="svg-48">
+                    <img src="assets/img/sf/magnify-less.svg" alt="magnify-less">
+                </span>
+                <h4>马赛克</h4> <small>输入图片，选择区域，对选定的区域进行马赛克处理</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+        <a href="roi_mark.html" class="panel panel-default thumbnail cm-thumbnail">
+            <div class="panel-body text-center">
+                <span class="svg-48">
+                    <img src="assets/img/sf/map-marker.svg" alt="map-marker">
+                </span>
+                <h4>区域检测</h4> <small>根据深度学习预训练模型画出ROI区域</small>
+            </div>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
