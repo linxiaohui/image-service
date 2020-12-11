@@ -17,10 +17,7 @@ class FaceDetector(object):
 
     def face_mark(self, image_data):
         ext = imghdr.what(None, image_data)
-        fn = "{}.{}".format(time.time(), ext)
-        with open(fn, "wb") as fp:
-            fp.write(image_data)
-        img = cv2.imread(fn)
+        img = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
         img = cv2.resize(img, None, fx=self.factor, fy=self.factor, interpolation=cv2.INTER_CUBIC)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)

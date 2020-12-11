@@ -15,8 +15,8 @@ from dm_models.BiSeNet_model import BiSeNet
 
 netF = BiSeNet(num_classes=1, context_path='resnet18',train_flag=False)
 netX = BiSeNet(num_classes=1, context_path='resnet18',train_flag=False)
-netF.load_state_dict(torch.load("models/pretrained_models/add_face.pth"))
-netX.load_state_dict(torch.load("models/pretrained_models/add_youknow.pth"))
+netF.load_state_dict(torch.load(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'pretrained_models', 'add_face.pth')))
+netX.load_state_dict(torch.load(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'models', 'pretrained_models', 'add_youknow.pth')))
 netF.eval()
 netX.eval()
 # 不使用GPU
