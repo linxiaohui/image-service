@@ -21,33 +21,11 @@
                     <div id="cm-menu-scroller">
                         <ul class="cm-menu-items">
                             <li class="active"><a href="index.html" class="sf-house">主页</a></li>
-                            <li><a href="cartoon.html" class="sf-snow-flake">卡通化</a></li>
-                            <li class="cm-submenu">
-                                <a class="sf-profile"> 人物 <span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="beauty_score.html">AI颜值评分</a></li>
-                                    <li><a href="face_sketch.html">人脸素描</a></li>
-                                    <li><a href="face_cartoon.html">人脸卡通化</a></li>
-                                </ul>
-                            </li>
-                            <li class="cm-submenu">
-                                <a class="sf-puzzle">抠图 <span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="fore_ground.html">前景分离</a></li>
-                                    <li><a href="cert_photo.html">证件照换底色</a></li>
-                                </ul>
-                            </li>
+                            <li><a href="beauty_score.html" class="sf-flower">人脸检测及颜值评分</a></li>
+                            <li><a href="cartoon.html" class="sf-carton">卡通化</a></li>
+                            <li><a href="face_sketch.html" class="sf-pencil">人脸素描</a></li>
                             <li><a href="style_transfer.html" class="sf-file-picture">风格迁移</a></li>
-                            <li><a href="nsfw.html" class="sf-shield-warning">NSFW</a></li>
-                            <li class="cm-submenu">
-                                <a class="sf-puzzle">马赛克<span class="caret"></span></a>
-                                <ul>
-                                    <li><a href="mosaic_app.html">手动马赛克</a></li>
-                                    <li><a href="nsfw_mosaic.html">NSFW马赛克</a></li>
-                                    <li><a href="roi_mosaic.html">ROI马赛克</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="roi_mark.html" class="sf-map-marker">区域标记</a></li>
+                            <li><a href="fore_ground.html" class="sf-file-photoshop">AI抠图和背景替换</a></li>                            
                             <li><a href="convert.html" class="sf-wrench-screwdriver">图片类型转换</a></li>
                             <li><a href="ascii.html" class="sf-file-code">字符画</a></li>
                         </ul>
@@ -59,9 +37,9 @@
             <nav class="cm-navbar cm-navbar-primary">
                 <div class="btn btn-primary md-menu-white hidden-md hidden-lg" data-toggle="cm-menu"></div>
                 <div class="cm-flex">
-                    <h1>Home</h1> 
-                    <form id="cm-search" action="index.html" method="get">
-                        <input type="search" name="q" autocomplete="off" placeholder="Search...">
+                    <h1> {% block title %}{% end %} </h1> 
+                    <form id="cm-search" action="search.html" method="get">
+                        <input type="search" name="q" autocomplete="off" placeholder="搜索...">
                     </form>
                 </div>
                 <div class="pull-right">
