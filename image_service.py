@@ -9,6 +9,9 @@ import socket
 from abc import ABC
 import imghdr
 import platform
+import urllib3
+
+urllib3.disable_warnings()
 if platform.system() == "Windows":
     import asyncio
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -111,7 +114,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("beauty_score.html", image_uuid=None, params=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -154,7 +157,7 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("cartoon.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -188,7 +191,7 @@ class StyleTransferHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("style_transfer.html", image_uuid=None, style_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -236,7 +239,7 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("face_sketch.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -267,7 +270,7 @@ class CertPhotoHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("cert_photo.html", image_uuid=None, style_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -310,7 +313,7 @@ class FaceCartoonHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("face_cartoon.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -339,7 +342,7 @@ class NSFWMosiacHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("nsfw_mosaic.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -368,7 +371,7 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("fore_ground.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -397,7 +400,7 @@ class NSFWScoreHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("nsfw_score.html", image_uuid=None, score=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -431,7 +434,7 @@ class ROIMarkHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("roi_mark.html", image_uuid=None, roi_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -479,7 +482,7 @@ class ROIMosaicHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("roi_mosaic.html", image_uuid=None, roi_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -524,7 +527,7 @@ class MosaicAppHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("mosaic_app.html", image_uuid=None, roi_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -555,7 +558,7 @@ class ImgConvertHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("image_convert.html", image_uuid=None, convert_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -598,7 +601,7 @@ class AsciiHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("ascii.html", image_uuid=None, ascii_code=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
