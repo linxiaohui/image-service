@@ -9,6 +9,9 @@ import socket
 from abc import ABC
 import imghdr
 import platform
+import urllib3
+
+urllib3.disable_warnings()
 if platform.system() == "Windows":
     import asyncio
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -95,12 +98,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self, params=None):
         self.render("index.html")
 
-from beauty_predict import beauty_predict
-from face_decet_rpc import FaceDetector
-FACE_DETECTOR = FaceDetector()
-from face_rank import face_detector
-from calc_face_features import  FaceNet
-FACE_NET = FaceNet()
+
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
@@ -111,13 +109,14 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("beauty_score.html", image_uuid=None, params=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
+        # OpenCV、dlib、FaceNet等人脸检测效果
         image_landmark, face_rank = face_detector(data)
         scores = beauty_predict(data)
         if len(scores)>0:
@@ -154,7 +153,7 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("cartoon.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -172,36 +171,51 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("cartoon.html", image_uuid=image_uuid)
 
-
-from face_sketch import Sketcher
-SKETCHER = Sketcher()
-class FaceSketchHandler(tornado.web.RequestHandler, ABC):
+from style_transfer import transfer_style
+class StyleTransferHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
-        self.render("face_sketch.html", image_uuid=image_uuid)
-
+        self.render("style_transfer.html", image_uuid=None, style=None, style_uuid=None)
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
-            self.render("face_sketch.html", image_uuid=None)
-        if file_url:
-            resp = requests.get(file_url)
-            data = resp.content
-            filename = file_url
+        style = self.get_argument("style", None)
+        if not style:
+            # 上传图片，没有选择风格
+            file_metas = self.request.files.get('image_file', None)
+            file_url = self.get_argument("image_url", None)
+            if not file_metas and not file_url:
+                self.render("style_transfer.html", image_uuid=None, style_uuid=None)
+            if file_url:
+                resp = requests.get(file_url, verify=False)
+                data = resp.content
+                filename = file_url
+            else:
+                for meta in file_metas:
+                    filename = meta['filename']
+                    data = meta['body']
+            image_uuid = str(uuid.uuid4())
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                            (image_uuid, filename, data, "STYLE-TRANSFER"))
+            _conn.commit()
+            _conn.close()
+            self.render("style_transfer.html", image_uuid=image_uuid, style=None, style_uuid=None)
         else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
-        _data = SKETCHER.face_sketch(data)[0]
-        image_uuid = str(uuid.uuid4())
-        _conn = get_db_conn()
-        _cursor = _conn.cursor()
-        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
-                        (image_uuid, filename, data, "SKETCH"))
-        _cursor.execute("INSERT INTO sketch (image_uuid, image_sketch) VALUES (?,?)",
-                         (image_uuid, _data))
-        _conn.commit()
-        self.render("face_sketch.html", image_uuid=image_uuid)
+            image_uuid = self.get_argument("image_uuid", None)
+            _conn = get_db_conn()
+            _cursor = _conn.cursor()
+            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
+            image_data = _cursor.fetchone()
+            if image_data is None:
+                self.set_status(404)
+            image_data = image_data[0]
+            _data = transfer_style(image_data, style)
+            style_uuid = str(uuid.uuid4())
+            _cursor.execute("INSERT INTO style_transfer (image_uuid, style_uuid, style, image_style) VALUES (?,?,?,?)",
+                             (image_uuid, style_uuid, style, _data))
+            _conn.commit()
+            _conn.close()
+            self.render("style_transfer.html", image_uuid=image_uuid, style=style, style_uuid=style_uuid)
+
 
 from chg_bg import change_background
 class CertPhotoHandler(tornado.web.RequestHandler, ABC):
@@ -216,7 +230,7 @@ class CertPhotoHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("cert_photo.html", image_uuid=None, style_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -260,7 +274,7 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("fore_ground.html", image_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -278,6 +292,7 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("fore_ground.html", image_uuid=image_uuid)
 
+
 from roi_marker import DeepMosaics_ROIMarker
 ROI_MARKER = DeepMosaics_ROIMarker()
 class ROIMarkHandler(tornado.web.RequestHandler, ABC):
@@ -292,7 +307,7 @@ class ROIMarkHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("roi_mark.html", image_uuid=None, roi_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -337,7 +352,7 @@ class MosaicAppHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("mosaic_app.html", image_uuid=None, roi_uuid=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -368,7 +383,7 @@ class ImgConvertHandler(tornado.web.RequestHandler, ABC):
             if not file_metas and not file_url:
                 self.render("image_convert.html", image_uuid=None, convert_uuid=None)
             if file_url:
-                resp = requests.get(file_url)
+                resp = requests.get(file_url, verify=False)
                 data = resp.content
                 filename = file_url
             else:
@@ -411,7 +426,7 @@ class AsciiHandler(tornado.web.RequestHandler, ABC):
         if not file_metas and not file_url:
             self.render("ascii.html", image_uuid=None, ascii_code=None)
         if file_url:
-            resp = requests.get(file_url)
+            resp = requests.get(file_url, verify=False)
             data = resp.content
             filename = file_url
         else:
@@ -520,7 +535,6 @@ class Application(tornado.web.Application):
             (r"/index.html/?(.*)", IndexHandler),
             (r"/beauty_score.html/?(.*)", AIBeautyScoreHandler),
             (r"/cartoon.html/?(.*)", CartoonHandler),
-            (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
             (r"/fore_ground.html/?(.*)", ForeGroundHandler),
             (r"/cert_photo.html/?(.*)", CertPhotoHandler),
@@ -546,7 +560,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        os.mkdir("/db")
+        os.mkdir(os.path.join(os.environ['IMAGESERVICE_ROOT'], 'db'))
     except Exception as e:
         pass
     try:
