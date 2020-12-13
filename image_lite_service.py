@@ -216,6 +216,35 @@ class StyleTransferHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("style_transfer.html", image_uuid=image_uuid, style=style, style_uuid=style_uuid)
 
+from face_sketch import Sketcher
+SKETCHER = Sketcher()
+class FaceSketchHandler(tornado.web.RequestHandler, ABC):
+    def get(self, image_uuid=None):
+        self.render("face_sketch.html", image_uuid=image_uuid)
+
+    def post(self, image_uuid=None):
+        file_metas = self.request.files.get('image_file', None)
+        file_url = self.get_argument("image_url", None)
+        if not file_metas and not file_url:
+            self.render("face_sketch.html", image_uuid=None)
+        if file_url:
+            resp = requests.get(file_url, verify=False)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        _data = SKETCHER.face_sketch(data)[0]
+        image_uuid = str(uuid.uuid4())
+        _conn = get_db_conn()
+        _cursor = _conn.cursor()
+        _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
+                        (image_uuid, filename, data, "SKETCH"))
+        _cursor.execute("INSERT INTO sketch (image_uuid, image_sketch) VALUES (?,?)",
+                         (image_uuid, _data))
+        _conn.commit()
+        self.render("face_sketch.html", image_uuid=image_uuid)
 
 from chg_bg import change_background
 class CertPhotoHandler(tornado.web.RequestHandler, ABC):
@@ -524,7 +553,7 @@ class ImageMosaicHandler(tornado.web.RequestHandler, ABC):
 class Application(tornado.web.Application):
     def __init__(self):
         settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), "imgsvr_templates"),
+            template_path=os.path.join(os.path.dirname(__file__), "imgsvr_lite_templates"),
             static_path=os.path.join(os.path.dirname(__file__), "imgsvr_static"),
             xsrf_cookies=False,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
@@ -536,6 +565,7 @@ class Application(tornado.web.Application):
             (r"/beauty_score.html/?(.*)", AIBeautyScoreHandler),
             (r"/cartoon.html/?(.*)", CartoonHandler),
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
+            (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/fore_ground.html/?(.*)", ForeGroundHandler),
             (r"/cert_photo.html/?(.*)", CertPhotoHandler),
             (r"/mosaic_app.html/?(.*)", MosaicAppHandler),
