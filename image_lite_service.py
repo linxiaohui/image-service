@@ -98,7 +98,6 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self, params=None):
         self.render("index.html")
 
-
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
@@ -246,53 +245,7 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("face_sketch.html", image_uuid=image_uuid)
 
-from chg_bg import change_background
-class CertPhotoHandler(tornado.web.RequestHandler, ABC):
-    def get(self, image_uuid=None):
-        self.render("cert_photo.html", image_uuid=None, cert_uuid=None)
-
-    def post(self, image_uuid=None):
-        bg_color = self.get_argument("bg_color", None)
-        if not bg_color:
-            file_metas = self.request.files.get('image_file', None)
-            file_url = self.get_argument("image_url", None)
-            if not file_metas and not file_url:
-                self.render("cert_photo.html", image_uuid=None, style_uuid=None)
-            if file_url:
-                resp = requests.get(file_url, verify=False)
-                data = resp.content
-                filename = file_url
-            else:
-                for meta in file_metas:
-                    filename = meta['filename']
-                    data = meta['body']
-            image_uuid = str(uuid.uuid4())
-            _conn = get_db_conn()
-            _cursor = _conn.cursor()
-            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
-                            (image_uuid, filename, data, "CHANGE-BGCOLOR"))
-            _conn.commit()
-            _conn.close()
-            self.render("cert_photo.html", image_uuid=image_uuid, cert_uuid=None)
-        else:
-            image_uuid = self.get_argument("image_uuid", None)
-            _conn = get_db_conn()
-            _cursor = _conn.cursor()
-            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
-            image_data = _cursor.fetchone()
-            if image_data is None:
-                self.set_status(404)
-            image_data = image_data[0]
-            _data = change_background(image_data, bg_color)[0]
-            cert_uuid = str(uuid.uuid4())
-            _cursor.execute("INSERT INTO cert_photo (image_uuid, cert_uuid, bg_color, image_cert) VALUES (?,?,?,?)",
-                             (image_uuid, cert_uuid, bg_color, _data))
-            _conn.commit()
-            _conn.close()
-            self.render("cert_photo.html", image_uuid=image_uuid, cert_uuid=cert_uuid)
-
-
-from u2net_rpc import image_cutout
+from u2net_op import U2NetOp
 class ForeGroundHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("fore_ground.html", image_uuid=image_uuid)
@@ -310,7 +263,9 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        _data = image_cutout(data)[0]
+        op = U2NetOp()
+        _data = op.image_cutout(data)[0]
+        del op
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -320,55 +275,6 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
                         (image_uuid, _data))
         _conn.commit()
         self.render("fore_ground.html", image_uuid=image_uuid)
-
-
-from roi_marker import DeepMosaics_ROIMarker
-ROI_MARKER = DeepMosaics_ROIMarker()
-class ROIMarkHandler(tornado.web.RequestHandler, ABC):
-    def get(self, image_uuid=None):
-        self.render("roi_mark.html", image_uuid=None, roi_uuid=None)
-
-    def post(self, image_uuid=None):
-        roi_type = self.get_argument("roi_type", None)
-        if not roi_type:
-            file_metas = self.request.files.get('image_file', None)
-            file_url = self.get_argument("image_url", None)
-            if not file_metas and not file_url:
-                self.render("roi_mark.html", image_uuid=None, roi_uuid=None)
-            if file_url:
-                resp = requests.get(file_url, verify=False)
-                data = resp.content
-                filename = file_url
-            else:
-                for meta in file_metas:
-                    filename = meta['filename']
-                    data = meta['body']
-            image_uuid = str(uuid.uuid4())
-            _conn = get_db_conn()
-            _cursor = _conn.cursor()
-            _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
-                            (image_uuid, filename, data, "ROI-MARK"))
-            _conn.commit()
-            _conn.close()
-            self.render("roi_mark.html", image_uuid=image_uuid, roi_uuid=None)
-        else:
-            image_uuid = self.get_argument("image_uuid", None)
-            _conn = get_db_conn()
-            _cursor = _conn.cursor()
-            _cursor.execute("SELECT image_data FROM input_image WHERE image_uuid=?", (image_uuid, ))
-            image_data = _cursor.fetchone()
-            if image_data is None:
-                self.set_status(404)
-            image_data = image_data[0]
-            if roi_type == 'F':
-                roi_type = 'face'
-            _data = ROI_MARKER.roi_marker(image_data, roi_type)
-            roi_uuid = str(uuid.uuid4())
-            _cursor.execute("INSERT INTO roi_mark (image_uuid, roi_uuid, roi_type, image_roi) VALUES (?,?,?,?)",
-                             (image_uuid, roi_uuid, roi_type, _data))
-            _conn.commit()
-            _conn.close()
-            self.render("roi_mark.html", image_uuid=image_uuid, roi_uuid=roi_uuid)
 
 from mosaic_utils import domosaic
 class MosaicAppHandler(tornado.web.RequestHandler, ABC):
@@ -567,7 +473,6 @@ class Application(tornado.web.Application):
             (r"/style_transfer.html/?(.*)", StyleTransferHandler),
             (r"/face_sketch.html/?(.*)", FaceSketchHandler),
             (r"/fore_ground.html/?(.*)", ForeGroundHandler),
-            (r"/cert_photo.html/?(.*)", CertPhotoHandler),
             (r"/mosaic_app.html/?(.*)", MosaicAppHandler),
             (r"/convert.html/?(.*)", ImgConvertHandler),
             (r"/ascii.html/?(.*)", AsciiHandler),

@@ -3,13 +3,11 @@ rm -rf $IMAGESERVICE_ROOT
 mkdir -p $IMAGESERVICE_ROOT
 ln -s $(pwd)/models $IMAGESERVICE_ROOT/models
 cp -r U-2-Net/model $IMAGESERVICE_ROOT/model
-cp -r U-2-Net/u2net_rpc.py $IMAGESERVICE_ROOT/u2net_rpc.py
+cp -r U-2-Net/u2net_op.py $IMAGESERVICE_ROOT/u2net_op.py
 cp -r U-2-Net/data_loader.py $IMAGESERVICE_ROOT/data_loader.py
 cp -r StyleTransfer/style_transfer.py $IMAGESERVICE_ROOT/style_transfer.py
 cp -r ROI-Mark/dm_models $IMAGESERVICE_ROOT/dm_models
 cp -r ROI-Mark/roi_marker.py $IMAGESERVICE_ROOT/roi_marker.py
-cp -r NSFW-Mask/bbox_blur.py $IMAGESERVICE_ROOT/bbox_blur.py
-cp -r NSFW-Mask/mosaic_nsfw.py $IMAGESERVICE_ROOT/mosaic_nsfw.py
 cp -r Mosaic/mosaic_utils.py $IMAGESERVICE_ROOT/mosaic_utils.py
 cp -r BeautyPredict/beauty_predict.py $IMAGESERVICE_ROOT/beauty_predict.py
 cp -r Cartoonization/network.py $IMAGESERVICE_ROOT/network.py
@@ -20,7 +18,6 @@ cp -r FaceSketch/face_sketch.py $IMAGESERVICE_ROOT/face_sketch.py
 cp -r FaceRank/dlib_landmarks.py $IMAGESERVICE_ROOT/dlib_landmarks.py
 cp -r FaceRank/face_rank.py $IMAGESERVICE_ROOT/face_rank.py
 cp -r FaceDetect/face_decet_rpc.py $IMAGESERVICE_ROOT/face_decet_rpc.py
-cp -r FaceCartoonization/inference.py $IMAGESERVICE_ROOT/inference.py
 cp -r DeepMosaic/deep_mosaic.py $IMAGESERVICE_ROOT/deep_mosaic.py
 cp -r DeepMosaic/util $IMAGESERVICE_ROOT/util
 cp -r DeepStyle/util/__init__.py $IMAGESERVICE_ROOT/util/__init__.py
