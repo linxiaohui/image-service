@@ -10,6 +10,7 @@ from abc import ABC
 import imghdr
 import platform
 import urllib3
+import gc
 
 urllib3.disable_warnings()
 if platform.system() == "Windows":
@@ -21,7 +22,6 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import requests
-
 
 def get_db_conn():
     _conn = sqlite3.connect(os.path.join(os.environ['IMAGESERVICE_ROOT'], "db", "image.db"))
@@ -98,6 +98,11 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self, params=None):
         self.render("index.html")
 
+from face_detect_rpc import FaceDetector
+from facerank_op import FaceRankOp
+from beauty_predict_op import BeautyPredictOp
+from facenet_op import FaceNetOp
+from face_marker_op import FaceMarkerOp
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
@@ -115,15 +120,30 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        # OpenCV、dlib、FaceNet等人脸检测效果
-        image_landmark, face_rank = face_detector(data)
-        scores = beauty_predict(data)
-        if len(scores)>0:
+        # dlib landmark
+        facerank_op = FaceRankOp()
+        dlib_landmark, face_rank = facerank_op.face_detector(data)
+        del facerank_op
+        # dlib face_detector
+        bp_op = BeautyPredictOp()
+        scores, dlib_face = bp_op.beauty_predict(data)
+        del bp_op
+        if len(scores) > 0:
             bp_score = scores[0]
         else:
             bp_score = None
-        image_rect = FACE_DETECTOR.face_mark(data)
-        image_facenet = FACE_NET.mark_faces(data)
+        # OpenCV
+        FACE_DETECTOR = FaceDetector()
+        opencv_face = FACE_DETECTOR.face_mark(data)
+        del FACE_DETECTOR
+        # FaceNet MTCNN
+        FACE_NET = FaceNetOp()
+        mtcnn_face = FACE_NET.mark_faces(data)
+        del FACE_NET
+        # DeepMosaic Face
+        face_marker = FaceMarkerOp()
+        deepmosaic_face = face_marker.roi_marker(data)
+        del face_marker
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -132,16 +152,16 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         _cursor.execute("INSERT INTO input_image (image_uuid, file_name, image_data, params) VALUES (?,?,?,?)",
                         (image_uuid, filename, data, "BEAUTY-SCORE"))
         _cursor.execute("""INSERT INTO beauty_score 
-                           (image_uuid, image_landmark, image_rect, image_facenet, face_rank, beauty_predict, baidu_score, facepp_score)
-                           VALUES (?,?,?,?,?,?,?,?)""",
-                           (image_uuid, image_landmark, image_rect, image_facenet, face_rank, bp_score, baidu_score, facepp_score))
+                           (image_uuid, dlib_landmark, dlib_face, opencv_face, mtcnn_face, deepmosaic_face, face_rank, beauty_predict, baidu_score, facepp_score)
+                           VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                           (image_uuid, dlib_landmark, dlib_face, opencv_face, mtcnn_face, deepmosaic_face, face_rank, bp_score, baidu_score, facepp_score))
         _conn.commit()
         _conn.close()
         self.render("beauty_score.html", image_uuid=image_uuid, 
                     params=(face_rank, bp_score, baidu_score, facepp_score))
+        gc.collect()
 
 from cartoonize import Cartoonize
-CARTOONER = Cartoonize()
 class CartoonHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("cartoon.html", image_uuid=image_uuid)
@@ -159,7 +179,9 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
+        CARTOONER = Cartoonize()
         _data = CARTOONER.cartoonization(data)
+        del CARTOONER
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -234,7 +256,7 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
                 filename = meta['filename']
                 data = meta['body']
         op = SketcherOp()
-        _data = op.face_sketch(data)[0]
+        _data = op.image_sketch(data)[0]
         del op
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
@@ -392,18 +414,18 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
             _cursor.execute("SELECT image_sketch FROM sketch WHERE image_uuid=?",(image_uuid,))
         elif image_type == 'cert':
             _cursor.execute("SELECT image_cert FROM cert_photo WHERE cert_uuid=?", (image_uuid, ))
-        elif image_type == 'nsfw_mosaic':
-            _cursor.execute("SELECT image_mosaic FROM nsfw_mosaic WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'land_mark':
-            _cursor.execute("SELECT image_landmark FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+            _cursor.execute("SELECT dlib_landmark FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+        elif image_type == 'dlib_face':
+            _cursor.execute("SELECT dlib_face FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+        elif image_type == 'dm_face':
+            _cursor.execute("SELECT deepmosaic_face FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'face_box':
-            _cursor.execute("SELECT image_rect FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+            _cursor.execute("SELECT opencv_face FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'face_net':
-            _cursor.execute("SELECT image_facenet FROM beauty_score WHERE image_uuid=?", (image_uuid,))
+            _cursor.execute("SELECT mtcnn_face FROM beauty_score WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'fore_ground':
             _cursor.execute("SELECT image_fg FROM fore_ground WHERE image_uuid=?", (image_uuid,))
-        elif image_type == 'roi_mark':
-            _cursor.execute("SELECT image_roi FROM roi_mark WHERE roi_uuid=?", (image_uuid,))
         elif image_type == 'convert':
             _cursor.execute("SELECT image_converted FROM image_convert WHERE convert_uuid=?", (image_uuid,))
         elif image_type == 'mosaic':
@@ -507,9 +529,11 @@ if __name__ == "__main__":
                                                   insert_time datetime default current_timestamp)
         """)
         conn.execute("""CREATE TABLE beauty_score (image_uuid char(36), 
-                                                   image_landmark BLOB, 
-                                                   image_rect BLOB,
-                                                   image_facenet BLOB,
+                                                   dlib_landmark BLOB, 
+                                                   dlib_face BLOB,
+                                                   opencv_face BLOB,
+                                                   mtcnn_face BLOB,
+                                                   deepmosaic_face BLOB,
                                                    face_rank float,
                                                    beauty_predict float,
                                                    baidu_score float,
@@ -537,16 +561,8 @@ if __name__ == "__main__":
                                                  bg_color TEXT,
                                                  image_cert BLOB)
         """)
-        conn.execute("""CREATE TABLE nsfw_mosaic (image_uuid char(36),
-                                                  image_mosaic BLOB)
-        """)
         conn.execute("""CREATE TABLE fore_ground (image_uuid char(36), 
                                                   image_fg BLOB)
-        """)
-        conn.execute("""CREATE TABLE roi_mark (image_uuid char(36),
-                                               roi_uuid char(36),
-                                               roi_type TEXT,
-                                               image_roi BLOB)
         """)
         conn.execute("""CREATE TABLE mosaic_app (image_uuid char(36),
                                                  mosaic_uuid char(36),
