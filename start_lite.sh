@@ -14,7 +14,7 @@ cp -r Cartoonization/network.py $IMAGESERVICE_ROOT/network.py
 cp -r Cartoonization/guided_filter.py $IMAGESERVICE_ROOT/guided_filter.py
 cp -r Cartoonization/cartoonize.py $IMAGESERVICE_ROOT/cartoonize.py
 cp -r CertPhoto/chg_bg.py $IMAGESERVICE_ROOT/chg_bg.py
-cp -r FaceSketch/face_sketch.py $IMAGESERVICE_ROOT/face_sketch.py
+cp -r FaceSketch/sketch_op.py $IMAGESERVICE_ROOT/sketch_op.py
 cp -r FaceRank/dlib_landmarks.py $IMAGESERVICE_ROOT/dlib_landmarks.py
 cp -r FaceRank/face_rank.py $IMAGESERVICE_ROOT/face_rank.py
 cp -r FaceDetect/face_decet_rpc.py $IMAGESERVICE_ROOT/face_decet_rpc.py

@@ -215,8 +215,7 @@ class StyleTransferHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("style_transfer.html", image_uuid=image_uuid, style=style, style_uuid=style_uuid)
 
-from face_sketch import Sketcher
-SKETCHER = Sketcher()
+from sketch_op import SketcherOp
 class FaceSketchHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("face_sketch.html", image_uuid=image_uuid)
@@ -234,7 +233,9 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        _data = SKETCHER.face_sketch(data)[0]
+        op = SketcherOp()
+        _data = op.face_sketch(data)[0]
+        del op
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -350,7 +351,6 @@ class ImgConvertHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("image_convert.html", image_uuid=image_uuid, convert_uuid=convert_uuid)
 
-
 class AsciiHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("ascii.html", image_uuid=None, ascii_code=None)
@@ -377,7 +377,6 @@ class AsciiHandler(tornado.web.RequestHandler, ABC):
         _conn.close()
         ascii_code = image_utils.convert_image_to_ascii(data)
         self.render("ascii.html", image_uuid=image_uuid, ascii_code=ascii_code)
-
 
 class ImageHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_type, image_uuid):
