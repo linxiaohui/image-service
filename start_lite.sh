@@ -17,7 +17,7 @@ cp -r CertPhoto/chg_bg.py $IMAGESERVICE_ROOT/chg_bg.py
 cp -r FaceSketch/sketch_op.py $IMAGESERVICE_ROOT/sketch_op.py
 cp -r FaceRank/dlib_landmarks.py $IMAGESERVICE_ROOT/dlib_landmarks.py
 cp -r FaceRank/facerank_op.py $IMAGESERVICE_ROOT/facerank_op.py
-cp -r FaceDetect/face_decet_rpc.py $IMAGESERVICE_ROOT/face_decet_rpc.py
+cp -r FaceDetect/face_detect_rpc.py $IMAGESERVICE_ROOT/face_detect_rpc.py
 cp -r DeepMosaic/deep_mosaic.py $IMAGESERVICE_ROOT/deep_mosaic.py
 cp -r DeepMosaic/util $IMAGESERVICE_ROOT/util
 cp -r DeepStyle/util/__init__.py $IMAGESERVICE_ROOT/util/__init__.py
