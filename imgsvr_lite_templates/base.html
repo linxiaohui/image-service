@@ -8,6 +8,7 @@
         <link rel="stylesheet" type="text/css" href="assets/css/material-design.css">
         <link rel="stylesheet" type="text/css" href="assets/css/small-n-flat.css">
         <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+        {% block extra_css %} {% end %}
         <title>{% block title %}{% end %}</title>
     </head>
     <body class="cm-no-transition cm-1-navbar">
@@ -76,5 +77,6 @@
         <script src="assets/js/bootstrap.min.js"></script>
         <script src="assets/js/clearmin.min.js"></script>
         <script src="assets/js/demo/home.js"></script>
+        {% block extra_js %}{% end %}
     </body>
 </html>
