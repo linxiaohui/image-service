@@ -22,7 +22,9 @@ class REBNCONV(nn.Module):
 def _upsample_like(src,tar):
 
     # src = F.upsample(src,size=tar.shape[2:],mode='bilinear')
-    src = F.interpolate(src,size=tar.shape[2:],mode='bilinear',align_corners=True)
+    # src = F.interpolate(src,size=tar.shape[2:],mode='bilinear',align_corners=True)
+    # 为导出为ONNX格式的模型
+    src = F.interpolate(src,size=tar.shape[2:],mode='bilinear',align_corners=False)
 
     return src
 
