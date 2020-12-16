@@ -13,7 +13,8 @@ Dockers for Image Service
    2. 使用docker的方式组织
    3. 梳理预训练模型的下载方式以便于获取
    4. 示例代码描述功能以及调用、返回形式
-   5. 提供Web界面以便直观展示效果
+   5. 预训练模型的格式转换与推理（ONNX、OpenCV）
+   6. 提供Web界面以便直观展示效果
 
 # 内容
 
@@ -87,7 +88,7 @@ AI抠图
    * bash start_standalone.bash
 
 ## Demo
-`http://demo.5190m.top` 【demo运行环境资源有限，只运行部分功能】
+[http://demo.5190m.top](http://demo.5190m.top) 【demo运行环境资源有限，只运行部分功能】
 
 # 声明
    * 本项目仅对一些功能进行整理，并可能根据需要进行一定的适应性改动，目的是方便研究与可获取性；
