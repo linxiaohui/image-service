@@ -59,6 +59,7 @@ class BeautyPredictOp(object):
             resized_im = cv2.resize(croped_im, (224, 224))
             normed_im = np.array([(resized_im - 127.5) / 127.5])
             pred = self.model.predict(normed_im)
+            print(type(pred), pred.shape)
             ldList = pred[0]
             out = 1 * ldList[0] + 2 * ldList[1] + 3 * ldList[2] + 4 * ldList[3] + 5 * ldList[4]
             out = self.score_mapping(out)
@@ -69,3 +70,10 @@ class BeautyPredictOp(object):
         is_success, im_buf_arr = cv2.imencode("."+ext, im)
         byte_im = im_buf_arr.tobytes()
         return scores, byte_im
+
+if __name__ == "__main__":
+    with open("x.jpg", "rb") as fp:
+        dat = fp.read()
+    s = BeautyPredictOp()
+    r, img = s.beauty_predict(dat)
+    print(r)
