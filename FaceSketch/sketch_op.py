@@ -39,9 +39,13 @@ class SketcherOp(object):
         self.NET = U2NET(3, 1)
         # NET.load_state_dict(torch.load(MODEL_DIR,  map_location=lambda storage, loc: storage))
         self.NET.load_state_dict(torch.load(MODEL_DIR, map_location='cpu'))
-        if torch.cuda.is_available():
-            self.NET.cuda()
+        # if torch.cuda.is_available():
+        #    self.NET.cuda()
         self.NET.eval()
+
+        for i in self.NET.modules():
+            print(i)
+
 
     def gen_output(self, image_name, pred):
         predict = pred
@@ -73,7 +77,7 @@ class SketcherOp(object):
         result_list = []
         test_salobj_dataset = SalObjDataset(img_name_list=img_name_list,
                                             lbl_name_list=[],
-                                            transform=transforms.Compose([RescaleT(320), ToTensorLab(flag=0)])
+                                            transform=transforms.Compose([RescaleT(512), ToTensorLab(flag=0)])
                                             )
         test_salobj_dataloader = DataLoader(test_salobj_dataset,
                                             batch_size=1,
@@ -83,11 +87,11 @@ class SketcherOp(object):
         for i_test, data_test in enumerate(test_salobj_dataloader):
             inputs_test = data_test['image']
             inputs_test = inputs_test.type(torch.FloatTensor)
-            if torch.cuda.is_available():
-                inputs_test = Variable(inputs_test.cuda())
-            else:
-                inputs_test = Variable(inputs_test)
-
+            # if torch.cuda.is_available():
+            #    inputs_test = Variable(inputs_test.cuda())
+            # else:
+            #    inputs_test = Variable(inputs_test)
+            inputs_test = Variable(inputs_test)
             d1, d2, d3, d4, d5, d6, d7 = self.NET(inputs_test)
             # normalization
             pred = d1[:, 0, :, :]
@@ -101,6 +105,10 @@ class SketcherOp(object):
         return result_list
 
 if __name__ == "__main__":
-    s = zerorpc.Server(SketcherOp())
-    s.bind("tcp://0.0.0.0:54325")
-    s.run()
+    with open("x.jpg", "rb") as fp:
+        dat = fp.read()
+    s = SketcherOp()
+    r = s.image_sketch(dat)[0]
+    with open("rz.png", "wb") as fp:
+        fp.write(r)
+
