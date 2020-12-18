@@ -95,3 +95,6 @@ AI抠图
    * 本项目作者不对项目及引用的功能做任何形式的保证，对使用这些功能的结果不负任何形式的责任；
    * 所有功能和模型所有权或著作权属于原作者;
    * 如果所引用的项目的权利所有人认为本项目的引用侵犯了您的权益，请[联系项目维护者](https://github.com/linxiaohui/image-service/issues/new/choose)， 将在第一时间进行处理。
+
+# 致谢
+[![JetBrains PyCharm](./icon-pycharm.png "pycharm")](https://www.jetbrains.com/?from=image-service)以及其[JetBrains Open Source Support Program](https://www.jetbrains.com/community/opensource/#support)
