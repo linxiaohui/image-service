@@ -99,7 +99,7 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
         self.render("index.html")
 
 from beauty_predict import beauty_predict
-from face_decet_rpc import FaceDetector
+from face_detect_rpc import FaceDetector
 FACE_DETECTOR = FaceDetector()
 from face_rank import face_detector
 from calc_face_features import  FaceNet

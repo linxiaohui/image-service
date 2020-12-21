@@ -22,7 +22,7 @@ import tornado.options
 import tornado.web
 import requests
 
-from face_decet_rpc import FaceDetector
+from face_detect_rpc import FaceDetector
 
 DETECTOR = FaceDetector()
 

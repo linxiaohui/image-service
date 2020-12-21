@@ -33,7 +33,7 @@ COPY CertPhoto/chg_bg.py /chg_bg.py
 COPY FaceSketch/face_sketch.py /face_sketch.py
 COPY FaceRank/dlib_landmarks.py /dlib_landmarks.py
 COPY FaceRank/face_rank.py /face_rank.py
-COPY FaceDetect/face_decet_rpc.py /face_decet_rpc.py
+COPY FaceDetect/face_detect_rpc.py /face_detect_rpc.py
 COPY FaceCartoonization/inference.py /inference.py
 COPY DeepMosaic/deep_mosaic.py /deep_mosaic.py
 COPY DeepMosaic/util /util
