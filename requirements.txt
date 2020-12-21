@@ -14,3 +14,4 @@ torch==1.6.0+cpu
 torchvision==0.7.0+cpu
 tornado==6.1
 zerorpc==0.6.3
+onnxruntime==1.6.0
