@@ -17,7 +17,7 @@ RUN pip3 install --no-cache-dir dlib-binary
 RUN pip3 install --no-cache-dir keras==2.2.4 tensorflow==1.6
 RUN pip3 install --no-cache-dir scikit-image==0.14.0
 COPY U-2-Net/model /model
-COPY U-2-Net/models /models
+COPY U-2-Net/u2net.pth /models/u2net.pth
 COPY U-2-Net/u2net_rpc.py /u2net_rpc.py
 COPY U-2-Net/data_loader.py /data_loader.py
 COPY StyleTransfer/models /models
@@ -27,11 +27,11 @@ COPY ROI-Mark/pretrained_models /models/pretrained_models
 COPY ROI-Mark/roi_marker.py /roi_marker.py
 COPY NSFW-Mask/bbox_blur.py /bbox_blur.py
 COPY NSFW-Mask/mosaic_nsfw.py /mosaic_nsfw.py
-COPY NSFW-Mask/models /models
+COPY NSFW-Mask/inception_sp_0.9924_0.09_partialmodel.pb  /models/inception_sp_0.9924_0.09_partialmodel.pb 
 COPY Mosaic/mosaic_utils.py /mosaic_utils.py
 COPY BeautyPredict/beauty_predict.py /beauty_predict.py
 COPY BeautyPredict/models /models
-COPY Cartoonization/cartoon_model /cartoon_model
+COPY Cartoonization/cartoon_model /models/cartoon_model
 COPY Cartoonization/network.py /network.py
 COPY Cartoonization/guided_filter.py /guided_filter.py
 COPY Cartoonization/cartoonize.py /cartoonize.py
@@ -41,7 +41,7 @@ COPY FaceSketch/face_sketch.py /face_sketch.py
 COPY FaceRank/dlib_landmarks.py /dlib_landmarks.py
 COPY FaceRank/face_rank.py /face_rank.py
 COPY FaceRank/shape_predictor_68_face_landmarks.dat /models/shape_predictor_68_face_landmarks.dat
-COPY FaceDetect/face_decet_rpc.py /face_decet_rpc.py
+COPY FaceDetect/face_detect_rpc.py /face_detect_rpc.py
 COPY FaceCartoonization/inference.py /inference.py
 COPY FaceCartoonization/weight.pth /models/weight.pth
 COPY DeepMosaic/deep_mosaic.py /deep_mosaic.py
@@ -52,8 +52,14 @@ COPY DeepStyle/dm_models /dm_models
 COPY DeepStyle/deep_style.py /deep_style.py
 COPY NSFW/nsfw_predict.py /nsfw_predict.py
 COPY NSFW/nsfw.299x299.h5 /models/nsfw.299x299.h5
+COPY FaceNet/calc_face_features.py /calc_face_features.py
+COPY FaceNet/align /align
+COPY FaceNet/facenet.py /facenet.py
+COPY FaceNet/20180408-102900 /models/20180408-102900
 COPY imgsvr_templates /imgsvr_templates
 COPY imgsvr_static /imgsvr_static
 COPY image_service.py image_service.py
+COPY image_utils.py /image_utils.py
 ENV IMAGESERVICE_ROOT /
+ENV LANG C.UTF-8
 CMD python3 -u image_service.py
