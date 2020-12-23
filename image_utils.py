@@ -6,6 +6,8 @@ from PIL import Image
 
 def image_convert(image_data, convert_type):
     assert convert_type.lower() in ['jpg', 'jpeg', 'webp', 'png', 'gif']
+    if convert_type.lower()=='jpg':
+        convert_type='jpeg'
     input_type = imghdr.what(None, image_data)
     im = Image.open(io.BytesIO(image_data))
     if im.mode=="RGBA":
