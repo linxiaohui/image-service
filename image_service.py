@@ -407,7 +407,7 @@ class NSFWScoreHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        scores = nsfw_predict(data, 'png')
+        scores = nsfw_predict(data)
         for k in scores:
             score = scores[k]
         image_uuid = str(uuid.uuid4())
