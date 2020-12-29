@@ -49,4 +49,5 @@ COPY imgsvr_static /imgsvr_static
 COPY image_utils.py image_utils.py
 COPY image_service.py image_service.py
 ENV IMAGESERVICE_ROOT /
+ENV LANG C.UTF-8
 CMD python3 -u image_service.py
