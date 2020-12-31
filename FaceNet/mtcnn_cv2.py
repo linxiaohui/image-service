@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""
+根据https://github.com/zynpyetistiren/GraduationProject/tree/master/mtcnn对FaceNet中align的重新实现
+转换模型，使用OpenCV进行推理
+不依赖Tensorlow/keras
+"""
 import os
 
 import cv2
