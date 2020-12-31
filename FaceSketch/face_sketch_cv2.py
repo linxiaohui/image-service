@@ -60,7 +60,7 @@ class FaceSketcherCV2(object):
         tmpImg = tmpImg[np.newaxis, :, :, :]
         tmpImg = tmpImg.astype(np.float32)
         self.model.setInput(tmpImg)
-        out = self.model.forward()
+        out = self.model.forward('1883')
         pred = out[:, 0, :, :]
         pred = norm_pred(pred)
         dat = self.gen_output(image_data, pred)
