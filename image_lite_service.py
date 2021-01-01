@@ -100,9 +100,9 @@ class IndexHandler(tornado.web.RequestHandler, ABC):
 
 from face_detect_rpc import FaceDetector
 from facerank_op import FaceRankOp
-from beauty_predict_op import BeautyPredictOp
-from facenet_op import FaceNetOp
-from face_marker_op import FaceMarkerOp
+from beauty_predict_cv2 import BeautyPredictCV2
+from mtcnn_cv2 import MTCNN
+from face_marker_cv2 import FaceMarkerCV2
 class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("beauty_score.html", image_uuid=None, params=None)
@@ -125,7 +125,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         dlib_landmark, face_rank = facerank_op.face_detector(data)
         del facerank_op
         # dlib face_detector
-        bp_op = BeautyPredictOp()
+        bp_op = BeautyPredictCV2()
         scores, dlib_face = bp_op.beauty_predict(data)
         del bp_op
         if len(scores) > 0:
@@ -133,15 +133,15 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         else:
             bp_score = None
         # OpenCV
-        FACE_DETECTOR = FaceDetector()
-        opencv_face = FACE_DETECTOR.face_mark(data)
-        del FACE_DETECTOR
+        face_detct = FaceDetector()
+        opencv_face = face_detct.face_mark(data)
+        del face_detct
         # FaceNet MTCNN
-        FACE_NET = FaceNetOp()
-        mtcnn_face = FACE_NET.mark_faces(data)
-        del FACE_NET
+        mtcnn_net = MTCNN()
+        mtcnn_face = mtcnn_net.mark_faces(data)
+        del mtcnn_net
         # DeepMosaic Face
-        face_marker = FaceMarkerOp()
+        face_marker = FaceMarkerCV2()
         deepmosaic_face = face_marker.roi_marker(data)
         del face_marker
         image_uuid = str(uuid.uuid4())
@@ -161,7 +161,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
                     params=(face_rank, bp_score, baidu_score, facepp_score))
         gc.collect()
 
-from cartoonize import Cartoonize
+from cartoon_onnx import ONNXModel as CartoonONNX
 class CartoonHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("cartoon.html", image_uuid=image_uuid)
@@ -179,9 +179,9 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        CARTOONER = Cartoonize()
-        _data = CARTOONER.cartoonization(data)
-        del CARTOONER
+        cartoon_net = CartoonONNX()
+        _data = cartoon_net.cartoon(data)
+        del cartoon_net
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -237,7 +237,7 @@ class StyleTransferHandler(tornado.web.RequestHandler, ABC):
             _conn.close()
             self.render("style_transfer.html", image_uuid=image_uuid, style=style, style_uuid=style_uuid)
 
-from sketch_op import SketcherOp
+from face_sketch_cv2 import FaceSketcherCV2
 class FaceSketchHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("face_sketch.html", image_uuid=image_uuid)
@@ -255,8 +255,8 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        op = SketcherOp()
-        _data = op.image_sketch(data)[0]
+        op = FaceSketcherCV2()
+        _data = op.face_sketch(data)[0]
         del op
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
@@ -268,7 +268,7 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
         _conn.commit()
         self.render("face_sketch.html", image_uuid=image_uuid)
 
-from u2net_op import U2NetOp
+from u2net_cv2 import U2NetCV2
 class ForeGroundHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("fore_ground.html", image_uuid=image_uuid)
@@ -286,7 +286,7 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
             for meta in file_metas:
                 filename = meta['filename']
                 data = meta['body']
-        op = U2NetOp()
+        op = U2NetCV2()
         _data = op.image_cutout(data)[0]
         del op
         image_uuid = str(uuid.uuid4())
