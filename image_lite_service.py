@@ -142,7 +142,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         del mtcnn_net
         # DeepMosaic Face
         face_marker = FaceMarkerCV2()
-        deepmosaic_face = face_marker.roi_marker(data)
+        deepmosaic_face = face_marker.face_marker(data)
         del face_marker
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()

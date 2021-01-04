@@ -312,9 +312,9 @@ class MTCNN(object):
             cv2.circle(image, (keypoints['nose']), 2, (0, 155, 255), 2)
             cv2.circle(image, (keypoints['mouth_left']), 2, (0, 155, 255), 2)
             cv2.circle(image, (keypoints['mouth_right']), 2, (0, 155, 255), 2)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         is_success, im_buf_arr = cv2.imencode("." + ext, image)
         return im_buf_arr
-
 
     def __stage1(self, image, scales: list, stage_status: StageStatus):
         """
