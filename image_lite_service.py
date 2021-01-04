@@ -256,7 +256,7 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
                 filename = meta['filename']
                 data = meta['body']
         op = FaceSketcherCV2()
-        _data = op.face_sketch(data)[0]
+        _data = op.face_sketch(data)
         del op
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
@@ -287,7 +287,7 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
                 filename = meta['filename']
                 data = meta['body']
         op = U2NetCV2()
-        _data = op.image_cutout(data)[0]
+        _data = op.image_cutout(data)
         del op
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
@@ -409,9 +409,9 @@ class ImageHandler(tornado.web.RequestHandler, ABC):
         elif image_type == 'cartoon':
             _cursor.execute("SELECT image_cartoon FROM cartoon WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'style':
-            _cursor.execute("SELECT image_style FROM style_transfer WHERE style_uuid=?",(image_uuid,))
+            _cursor.execute("SELECT image_style FROM style_transfer WHERE style_uuid=?", (image_uuid,))
         elif image_type == 'sketch':
-            _cursor.execute("SELECT image_sketch FROM sketch WHERE image_uuid=?",(image_uuid,))
+            _cursor.execute("SELECT image_sketch FROM sketch WHERE image_uuid=?", (image_uuid,))
         elif image_type == 'cert':
             _cursor.execute("SELECT image_cert FROM cert_photo WHERE cert_uuid=?", (image_uuid, ))
         elif image_type == 'land_mark':
