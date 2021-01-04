@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
-根据https://github.com/zynpyetistiren/GraduationProject/tree/master/mtcnn对FaceNet中align的重新实现
+根据https://github.com/ipazc/mtcnn对FaceNet中align的重新实现
 转换模型，使用OpenCV进行推理
 不依赖Tensorlow/keras
 """
 import os
+import imghdr
 
 import cv2
 import numpy as np
@@ -50,9 +51,9 @@ class MTCNN(object):
         self._steps_threshold = steps_threshold
         self._scale_factor = scale_factor
         
-        self._pnet = cv2.dnn.readNetFromONNX(os.path.join(os.environ['IMAGE_SERVICE'], "models","pnet.onnx"))
-        self._rnet = cv2.dnn.readNetFromONNX(os.path.join(os.environ['IMAGE_SERVICE'], "models","rnet.onnx"))
-        self._onet = cv2.dnn.readNetFromONNX(os.path.join(os.environ['IMAGE_SERVICE'], "models","onet.onnx"))
+        self._pnet = cv2.dnn.readNetFromONNX(os.path.join(os.environ['IMAGESERVICE_ROOT'], "models", "pnet.onnx"))
+        self._rnet = cv2.dnn.readNetFromONNX(os.path.join(os.environ['IMAGESERVICE_ROOT'], "models", "rnet.onnx"))
+        self._onet = cv2.dnn.readNetFromONNX(os.path.join(os.environ['IMAGESERVICE_ROOT'], "models", "onet.onnx"))
         
     @property
     def min_face_size(self):
@@ -250,7 +251,7 @@ class MTCNN(object):
         :return: list containing all the bounding boxes detected with their keypoints.
         """
         if img is None or not hasattr(img, "shape"):
-            raise InvalidImage("Image not valid.")
+            raise Exception("Image not valid.")
 
         height, width, _ = img.shape
         stage_status = StageStatus(width=width, height=height)
@@ -289,6 +290,31 @@ class MTCNN(object):
             })
 
         return bounding_boxes
+
+    def mark_faces(self, image_data) -> bytes:
+        """
+        Mark all the faces
+        """
+        ext = imghdr.what(None, image_data)
+        im = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+        image = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+        results = self.detect_faces(image)
+        for result in results:
+            bounding_box = result['box']
+            keypoints = result['keypoints']
+            cv2.rectangle(image,
+                          (bounding_box[0], bounding_box[1]),
+                          (bounding_box[0] + bounding_box[2], bounding_box[1] + bounding_box[3]),
+                          (0, 155, 255),
+                          2)
+            cv2.circle(image, (keypoints['left_eye']), 2, (0, 155, 255), 2)
+            cv2.circle(image, (keypoints['right_eye']), 2, (0, 155, 255), 2)
+            cv2.circle(image, (keypoints['nose']), 2, (0, 155, 255), 2)
+            cv2.circle(image, (keypoints['mouth_left']), 2, (0, 155, 255), 2)
+            cv2.circle(image, (keypoints['mouth_right']), 2, (0, 155, 255), 2)
+        is_success, im_buf_arr = cv2.imencode("." + ext, image)
+        return im_buf_arr
+
 
     def __stage1(self, image, scales: list, stage_status: StageStatus):
         """

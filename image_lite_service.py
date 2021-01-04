@@ -126,7 +126,7 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         del facerank_op
         # dlib face_detector
         bp_op = BeautyPredictCV2()
-        scores, dlib_face = bp_op.beauty_predict(data)
+        scores, dlib_face = bp_op.beauty_score(data)
         del bp_op
         if len(scores) > 0:
             bp_score = scores[0]

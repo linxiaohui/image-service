@@ -60,7 +60,12 @@ class BeautyPredictCV2(object):
             out = 1 * ldList[0] + 2 * ldList[1] + 3 * ldList[2] + 4 * ldList[3] + 5 * ldList[4]
             out = score_mapping(out)
             scores.append(out)
-        return scores
+            cv2.rectangle(im, (face[0], face[1]), (face[2], face[3]), (0, 255, 0), 3)
+            cv2.putText(im, str('%.2f' % out), (face[0], face[3]), cv2.FONT_HERSHEY_SIMPLEX,
+                        1, (0, 0, 255), 2)
+        is_success, im_buf_arr = cv2.imencode("." + ext, im)
+        byte_im = im_buf_arr.tobytes()
+        return scores, byte_im
 
 if __name__ == "__main__":
     with open("x.jpg", "rb") as fp:
