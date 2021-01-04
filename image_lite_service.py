@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import base64
 import uuid
 import json
@@ -57,7 +56,7 @@ def get_baidu_score(image_uuid, data):
                 ret_json = json.loads(aip_return)
                 _score = ret_json['result']['face_list'][0]['beauty']
     except Exception as e2:
-        print("调用Baidu AI平台API错", ex)
+        print("调用Baidu AI平台API错", e2)
         _score = -1
     _conn.commit()
     _conn.close()
@@ -71,7 +70,7 @@ def get_face_plus_score(image_uuid, data):
         ak = os.environ['FACEPP_AK']
         sk = os.environ['FACEPP_SK']
     except Exception as e3:
-        print("没有配置旷视AI平台的Key")
+        print("没有配置旷视AI平台的Key", e3)
         return 0
     host = "https://api-cn.faceplusplus.com/facepp/v3/detect"
     req_data = {'api_key': ak,
@@ -84,7 +83,8 @@ def get_face_plus_score(image_uuid, data):
         resp = requests.post(host, data=req_data)
         if resp:
             facepp_return = resp.content
-            _cursor.execute("INSERT INTO facepp_result (image_uuid, facepp_return) VALUES (?,?)", (image_uuid, facepp_return))
+            _cursor.execute("INSERT INTO facepp_result (image_uuid, facepp_return) VALUES (?,?)",
+                            (image_uuid, facepp_return))
             ret_json = json.loads(facepp_return)
             _score = ret_json['faces'][0]['attributes']['beauty']['male_score']
     except Exception as e4:
