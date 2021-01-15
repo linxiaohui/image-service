@@ -94,6 +94,23 @@ def get_face_plus_score(image_uuid, data):
     _conn.close()
     return _score
 
+
+def retrieve_upload_data(req: tornado.web.RequestHandler):
+    file_metas = req.request.files.get('image_file', None)
+    file_url = req.get_argument("image_url", None)
+    if not file_metas and not file_url:
+        return False, None
+    else:
+        if file_url:
+            resp = requests.get(file_url, verify=False)
+            data = resp.content
+            filename = file_url
+        else:
+            for meta in file_metas:
+                filename = meta['filename']
+                data = meta['body']
+        return filename, data
+
 class IndexHandler(tornado.web.RequestHandler, ABC):
     def get(self, params=None):
         self.render("index.html")
@@ -108,18 +125,9 @@ class AIBeautyScoreHandler(tornado.web.RequestHandler, ABC):
         self.render("beauty_score.html", image_uuid=None, params=None)
 
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
+        filename, data = retrieve_upload_data(self)
+        if data is None:
             self.render("beauty_score.html", image_uuid=None, params=None)
-        if file_url:
-            resp = requests.get(file_url, verify=False)
-            data = resp.content
-            filename = file_url
-        else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
         # dlib landmark
         facerank_op = FaceRankOp()
         dlib_landmark, face_rank = facerank_op.face_detector(data)
@@ -167,18 +175,9 @@ class CartoonHandler(tornado.web.RequestHandler, ABC):
         self.render("cartoon.html", image_uuid=image_uuid)
 
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
+        filename, data = retrieve_upload_data(self)
+        if data is None:
             self.render("cartoon.html", image_uuid=None)
-        if file_url:
-            resp = requests.get(file_url, verify=False)
-            data = resp.content
-            filename = file_url
-        else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
         cartoon_net = CartoonONNX()
         _data = cartoon_net.cartoon(data)
         del cartoon_net
@@ -196,22 +195,14 @@ from style_transfer import transfer_style
 class StyleTransferHandler(tornado.web.RequestHandler, ABC):
     def get(self, image_uuid=None):
         self.render("style_transfer.html", image_uuid=None, style=None, style_uuid=None)
+
     def post(self, image_uuid=None):
         style = self.get_argument("style", None)
         if not style:
             # 上传图片，没有选择风格
-            file_metas = self.request.files.get('image_file', None)
-            file_url = self.get_argument("image_url", None)
-            if not file_metas and not file_url:
+            filename, data = retrieve_upload_data(self)
+            if data is None:
                 self.render("style_transfer.html", image_uuid=None, style_uuid=None)
-            if file_url:
-                resp = requests.get(file_url, verify=False)
-                data = resp.content
-                filename = file_url
-            else:
-                for meta in file_metas:
-                    filename = meta['filename']
-                    data = meta['body']
             image_uuid = str(uuid.uuid4())
             _conn = get_db_conn()
             _cursor = _conn.cursor()
@@ -243,18 +234,9 @@ class FaceSketchHandler(tornado.web.RequestHandler, ABC):
         self.render("face_sketch.html", image_uuid=image_uuid)
 
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
+        filename, data = retrieve_upload_data(self)
+        if data is None:
             self.render("face_sketch.html", image_uuid=None)
-        if file_url:
-            resp = requests.get(file_url, verify=False)
-            data = resp.content
-            filename = file_url
-        else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
         op = FaceSketcherCV2()
         _data = op.face_sketch(data)
         del op
@@ -274,18 +256,9 @@ class ForeGroundHandler(tornado.web.RequestHandler, ABC):
         self.render("fore_ground.html", image_uuid=image_uuid)
 
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
+        filename, data = retrieve_upload_data(self)
+        if data is None:
             self.render("fore_ground.html", image_uuid=None)
-        if file_url:
-            resp = requests.get(file_url, verify=False)
-            data = resp.content
-            filename = file_url
-        else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
         op = U2NetCV2()
         _data = op.image_cutout(data)
         del op
@@ -305,18 +278,9 @@ class MosaicAppHandler(tornado.web.RequestHandler, ABC):
         self.render("mosaic_app.html", image_uuid=None)
 
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
+        filename, data = retrieve_upload_data(self)
+        if data is None:
             self.render("mosaic_app.html", image_uuid=None, roi_uuid=None)
-        if file_url:
-            resp = requests.get(file_url, verify=False)
-            data = resp.content
-            filename = file_url
-        else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -336,18 +300,9 @@ class ImgConvertHandler(tornado.web.RequestHandler, ABC):
     def post(self, image_uuid=None):
         convert_type = self.get_argument("convert_type", None)
         if not convert_type:
-            file_metas = self.request.files.get('image_file', None)
-            file_url = self.get_argument("image_url", None)
-            if not file_metas and not file_url:
+            filename, data = retrieve_upload_data(self)
+            if data is None:
                 self.render("image_convert.html", image_uuid=None, convert_uuid=None)
-            if file_url:
-                resp = requests.get(file_url, verify=False)
-                data = resp.content
-                filename = file_url
-            else:
-                for meta in file_metas:
-                    filename = meta['filename']
-                    data = meta['body']
             image_uuid = str(uuid.uuid4())
             _conn = get_db_conn()
             _cursor = _conn.cursor()
@@ -378,18 +333,9 @@ class AsciiHandler(tornado.web.RequestHandler, ABC):
         self.render("ascii.html", image_uuid=None, ascii_code=None)
 
     def post(self, image_uuid=None):
-        file_metas = self.request.files.get('image_file', None)
-        file_url = self.get_argument("image_url", None)
-        if not file_metas and not file_url:
+        filename, data = retrieve_upload_data(self)
+        if data is None:
             self.render("ascii.html", image_uuid=None, ascii_code=None)
-        if file_url:
-            resp = requests.get(file_url, verify=False)
-            data = resp.content
-            filename = file_url
-        else:
-            for meta in file_metas:
-                filename = meta['filename']
-                data = meta['body']
         image_uuid = str(uuid.uuid4())
         _conn = get_db_conn()
         _cursor = _conn.cursor()
@@ -510,8 +456,8 @@ def main():
     http_server.listen(80)
     try:
         tornado.ioloop.IOLoop.instance().start()
-    except Exception as e:
-        print(e)
+    except Exception as e1:
+        print(e1)
         tornado.ioloop.IOLoop.instance().stop()
 
 if __name__ == "__main__":
